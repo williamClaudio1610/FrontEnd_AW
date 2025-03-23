@@ -1,1 +1,50 @@
-<p>header works!</p>
+<header class="header">
+    <!-- Top Bar -->
+    <div class="top-bar d-flex align-items-center justify-content-between p-3">
+      <!-- Logotipo -->
+      <div class="logo">
+        <a [routerLink]="['/']">
+          <span class="logo-text">XPTO</span>
+        </a>
+      </div>
+  
+      <!-- Barra de Pesquisa -->
+      <div class="search-bar">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="O que procuras?">
+          <span class="input-group-text">
+            <i class="fa fa-search"></i>
+          </span>
+        </div>
+      </div>
+  
+      <!-- Ícones à Direita -->
+      <div class="icons d-flex gap-3">
+        <a [routerLink]="['/login']" class="icon-link">
+          <i class="fa fa-user"></i> Entrar
+        </a>
+        <a href="#" class="icon-link">
+          <i class="fa fa-heart"></i>
+        </a>
+        <a href="#" class="icon-link">
+          <i class="fa fa-shopping-cart"></i>
+        </a>
+      </div>
+    </div>
+  
+    <!-- Menu de Navegação -->
+    <nav class="nav-bar d-flex align-items-center p-3">
+      <div class="menu-icon me-3">
+        <i class="fa fa-bars"></i>
+      </div>
+      <ul class="nav-links d-flex gap-4 m-0 p-0">
+        <li><a [routerLink]="['/todos-produtos']">Todos os Produtos</a></li>
+        <li><a [routerLink]="['/informatica']">Informática</a></li>
+        <li><a [routerLink]="['/escritorio-papelaria']">Escritório e Papelaria</a></li>
+        <li><a [routerLink]="['/eletrodomesticos']">Eletrodomésticos</a></li>
+        <li><a [routerLink]="['/smartphones-tablets']">Smartphones e Tablets</a></li>
+        <li><a [routerLink]="['/energia']">Energia</a></li>
+        <li><a [routerLink]="['/imagem-som']">Imagem e Som</a></li>
+      </ul>
+    </nav>
+  </header>
