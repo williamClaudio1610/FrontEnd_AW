@@ -1,0 +1,61 @@
+
+<div class="login-container">
+    <h2 class="text-center">Login</h2>
+    <form>
+      <!-- Campo Username -->
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-user"></i></span>
+          <input type="text" class="form-control" id="username" placeholder="Username" required>
+        </div>
+      </div>
+      
+      <!-- Campo Password com botão de mostrar/esconder -->
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-lock"></i></span>
+          <input [type]="mostrarPassword ? 'text' : 'password'" class="form-control" id="password" placeholder="Password" required>
+          <span class="input-group-text toggle-password" (click)="clicarMostrarPassword()">
+            <i class="fa" [ngClass]="mostrarPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleIcon"></i>
+          </span>
+        </div>
+      </div>
+      
+      <!-- Link Esqueceu a Senha -->
+      <div class="mb-3 text-end">
+        <a href="#" class="text-link">Esqueceu a senha?</a>
+      </div>
+      
+      <!-- Botão Login -->
+      <div class="d-grid mb-3">
+        <button type="submit" class="btn btn-login text-white">
+          <i class="fa fa-sign-in"></i> Login
+        </button>
+      </div>
+      
+      <!-- Link Criar Conta -->
+      <div class="text-center">
+        <span>Não tem conta?</span>
+        <a [routerLink]="['/register']" class="text-link">Cadastre-se</a>
+      </div>
+
+      <!-- Seção Se Conectar Com -->
+    <div class="text-center mb-3">
+        <span>Se conectar com</span>
+      </div>
+      <div class="social-login d-flex justify-content-center gap-3">
+        <a href="#" class="btn btn-social btn-google">
+          <i class="fa fa-google"></i>
+        </a>
+        <a href="#" class="btn btn-social btn-facebook">
+          <i class="fa fa-facebook"></i>
+        </a>
+        <a href="#" class="btn btn-social btn-twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="#" class="btn btn-social btn-github">
+          <i class="fa fa-github"></i>
+        </a>
+      </div>
+    </form>
+  </div>

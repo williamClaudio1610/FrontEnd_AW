@@ -1,0 +1,81 @@
+<div class="register-container">
+    <h2 class="text-center">Criar Conta</h2>
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <!-- Campo Username -->
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-user"></i></span>
+          <input type="text" class="form-control" id="username" placeholder="Username" [(ngModel)]="user.username" name="username" required>
+        </div>
+      </div>
+  
+      <!-- Campo Email -->
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+          <input type="email" class="form-control" id="email" placeholder="Email" [(ngModel)]="user.email" name="email" required email>
+        </div>
+      </div>
+  
+      <!-- Campo Password -->
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-lock"></i></span>
+          <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="password" placeholder="Password" [(ngModel)]="user.password" name="password" required minlength="6">
+          <span class="input-group-text toggle-password" (click)="togglePassword()">
+            <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleIcon"></i>
+          </span>
+        </div>
+      </div>
+  
+      <!-- Campo Confirmar Password -->
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-lock"></i></span>
+          <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" id="confirmPassword" placeholder="Confirmar Password" [(ngModel)]="user.confirmPassword" name="confirmPassword" required>
+          <span class="input-group-text toggle-password" (click)="toggleConfirmPassword()">
+            <i class="fa" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleConfirmIcon"></i>
+          </span>
+        </div>
+        <div *ngIf="registerForm.submitted && user.password !== user.confirmPassword" class="text-danger small">
+          As senhas não coincidem.
+        </div>
+      </div>
+  
+      <!-- Campo Número de Telefone -->
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-phone"></i></span>
+          <input type="text" class="form-control" id="phoneNumber" placeholder="+244 9XX XXX XXX" [(ngModel)]="user.phoneNumber" name="phoneNumber" required pattern="\+2449[0-9]{8}">
+        </div>
+        <!-- Ajuste aqui: errors.pattern para errors['pattern'] -->
+        <div *ngIf="registerForm.submitted && registerForm.controls['phoneNumber']?.errors?.['pattern']" class="text-danger small">
+          O número deve começar com +244 seguido de 9 dígitos numéricos.
+        </div>
+      </div>
+  
+      <!-- Campo Província -->
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-map-marker"></i></span>
+          <select class="form-control" id="province" [(ngModel)]="user.province" name="province" required>
+            <option value="" disabled selected>Selecione a província</option>
+            <option *ngFor="let province of provinces" [value]="province">{{ province }}</option>
+          </select>
+        </div>
+      </div>
+  
+      <!-- Botão Registrar -->
+      <div class="d-grid mb-3">
+        <button type="submit" class="btn btn-login text-white" [disabled]="!registerForm.valid">
+          <i class="fa fa-user-plus"></i> Criar conta
+        </button>
+      </div>
+  
+      <!-- Link Fazer Login -->
+      <div class="text-center">
+        <span>Já tem conta?</span>
+        <a [routerLink]="['/login']" class="text-link">Fazer login</a>
+      </div>
+    </form>
+  </div>

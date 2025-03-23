@@ -1,0 +1,5 @@
+.body {
+    background-color: #505f8b; /* Azul escuro */
+    height: 100vh; /* Garante que o fundo ocupe toda a altura da tela */
+    margin: 0; /* Remove margens padrão */
+  }
