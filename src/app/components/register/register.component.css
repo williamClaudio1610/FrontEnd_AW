@@ -6,7 +6,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
@@ -71,4 +71,41 @@
   
   .text-danger {
     margin-top: 5px;
+  }
+
+
+  .social-login {
+    margin-top: 10px;
+  }
+  
+  .btn-social {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.5rem;
+    transition: transform 0.2s;
+  }
+  
+  .btn-social:hover {
+    transform: scale(1.1);
+  }
+  
+  .btn-google {
+    background-color: #db4437; /* Cor do Google */
+  }
+  
+  .btn-facebook {
+    background-color: #3b5998; /* Cor do Facebook */
+  }
+  
+  .btn-twitter {
+    background-color: #1da1f2; /* Cor do Twitter/X */
+  }
+  
+  .btn-github {
+    background-color: #333; /* Cor do GitHub */
   }
