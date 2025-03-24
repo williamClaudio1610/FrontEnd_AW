@@ -17,6 +17,8 @@ import { SidebarModule } from 'primeng/sidebar';
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
 import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main-page.component';
+import { FuncionariosComponent } from './admin-pages/admin-links/funcionarios/funcionarios.component';
+import { ClientesComponent } from './admin-pages/admin-links/clientes/clientes.component';
 
 @NgModule({
   declarations: [
@@ -25,9 +27,7 @@ import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main
     RegisterComponent,
     PaginaInicialComponent,
     FooterComponent,
-    HeaderComponent,
-    DashboardComponent,
-    ProdutosComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +37,11 @@ import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main
     MenuModule, // Para o menu estilizado
     ButtonModule, // Para botões estilizados
     SideMenuComponent,
-    AdminMainPageComponent
+    AdminMainPageComponent,
+    DashboardComponent,
+    ProdutosComponent,
+    FuncionariosComponent,
+    ClientesComponent
 ],
   providers: [],
   bootstrap: [AppComponent]

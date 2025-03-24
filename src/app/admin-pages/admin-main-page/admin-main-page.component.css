@@ -1,11 +1,11 @@
 .admin-layout {
-    display: flex;
-  }
-  
-  .content {
-    margin-left: 250px; /* Largura do side menu */
-    padding: 30px;
-    width: calc(100% - 250px);
-    min-height: 100vh;
-    background-color: #77a0c8; /* Fundo cinza claro */
-  }
+  display: flex;
+}
+
+.content {
+  margin-left: 250px; /* Largura do side menu */
+  padding: 30px;
+  width: calc(100% - 250px);
+  min-height: 100vh;
+  background-color: #f9fafb; /* Fundo cinza claro */
+}

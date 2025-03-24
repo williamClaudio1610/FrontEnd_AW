@@ -1,60 +1,60 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-produtos',
+  selector: 'app-funcionarios',
   standalone: true,
   imports: [],
   template: `
-    <div class="produtos-page">
-      <h2>Produtos</h2>
-      <p>Gerencie os produtos da sua loja aqui.</p>
-      <table class="product-table">
+    <div class="funcionarios-page">
+      <h2>Funcionários</h2>
+      <p>Lista de funcionários da empresa.</p>
+      <table class="employee-table">
         <thead>
           <tr>
             <th>ID</th>
             <th>Nome</th>
-            <th>Preço</th>
-            <th>Estoque</th>
+            <th>Cargo</th>
+            <th>Departamento</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>1</td>
-            <td>Smartphone XYZ</td>
-            <td>1.200.000 AOA</td>
-            <td>50</td>
+            <td>Carlos Mendes</td>
+            <td>Gerente</td>
+            <td>Vendas</td>
           </tr>
           <tr>
             <td>2</td>
-            <td>Laptop ABC</td>
-            <td>2.500.000 AOA</td>
-            <td>30</td>
+            <td>Ana Costa</td>
+            <td>Analista</td>
+            <td>TI</td>
           </tr>
         </tbody>
       </table>
     </div>
   `,
   styles: [`
-    .produtos-page {
+    .funcionarios-page {
       padding: 20px;
     }
-    .product-table {
+    .employee-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
     }
-    .product-table th, .product-table td {
+    .employee-table th, .employee-table td {
       padding: 10px;
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
-    .product-table th {
+    .employee-table th {
       background-color: #f1f5f9;
       color: #333;
     }
-    .product-table tr:hover {
+    .employee-table tr:hover {
       background-color: #f9fafb;
     }
   `]
 })
-export class ProdutosComponent {}
+export class FuncionariosComponent {}

@@ -1,26 +1,26 @@
 <div class="sidebar">
-    <!-- Perfil do Usuário -->
-    <div class="user-profile text-center p-3">
-      <i class="pi pi-user user-icon"></i>
-      <h5 class="mt-2">Admin User</h5>
-      <a href="#" class="edit-profile">Edit Profile</a>
-    </div>
-  
-    <!-- Menu de Navegação -->
-    <p-menu [model]="menuItems" class="menu">
-      <ng-template pTemplate="item" let-item>
-        <a [routerLink]="item.routerLink" class="p-menuitem-link" [routerLinkActive]="['active']">
-          <i [class]="item.icon"></i>
-          <span>{{ item.label }}</span>
-        </a>
-      </ng-template>
-    </p-menu>
-  
-    <!-- Botão de Logout -->
-    <div class="logout-section p-3">
-      <a [routerLink]="['/login']" class="logout-link">
-        <i class="pi pi-sign-out"></i>
-        <span>Logout</span>
-      </a>
-    </div>
+  <!-- Perfil do Usuário -->
+  <div class="user-profile text-center p-3">
+    <i class="pi pi-user user-icon"></i>
+    <h5 class="mt-2">Admin User</h5>
+    <a href="#" class="edit-profile">Edit Profile</a>
   </div>
+
+  <!-- Menu de Navegação -->
+  <ul class="menu">
+    <li *ngFor="let item of menuItems">
+      <a [routerLink]="item.routerLink" [routerLinkActive]="['active']" class="menu-item">
+        <i [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </li>
+  </ul>
+
+  <!-- Botão de Logout -->
+  <div class="logout-section p-3">
+    <a [routerLink]="['/login']" class="logout-link">
+      <i class="pi pi-sign-out"></i>
+      <span>Logout</span>
+    </a>
+  </div>
+</div>

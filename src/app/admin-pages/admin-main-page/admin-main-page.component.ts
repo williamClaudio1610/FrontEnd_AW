@@ -10,8 +10,6 @@ import { SideMenuComponent } from '../side-menu/side-menu.component';
     SideMenuComponent
   ],
   templateUrl: './admin-main-page.component.html',
-  styleUrl: './admin-main-page.component.css'
+  styleUrls: ['./admin-main-page.component.css']
 })
-export class AdminMainPageComponent {
-
-}
+export class AdminMainPageComponent {}
