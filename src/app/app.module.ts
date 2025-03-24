@@ -8,6 +8,15 @@ import { RegisterComponent } from './components/register/register.component';
 import { PaginaInicialComponent } from './components/pagina-inicial/pagina-inicial.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
+import { SideMenuComponent } from './admin-pages/side-menu/side-menu.component';
+import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
+import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
+
+// PrimeNG Modules
+import { SidebarModule } from 'primeng/sidebar';
+import { MenuModule } from 'primeng/menu';
+import { ButtonModule } from 'primeng/button';
+import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main-page.component';
 
 @NgModule({
   declarations: [
@@ -16,13 +25,20 @@ import { HeaderComponent } from './components/header/header.component';
     RegisterComponent,
     PaginaInicialComponent,
     FooterComponent,
-    HeaderComponent
+    HeaderComponent,
+    DashboardComponent,
+    ProdutosComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule // Adicione o FormsModule ao array de imports
-  ],
+    FormsModule, // Adicione o FormsModule ao array de imports
+    SidebarModule, // Para o side menu
+    MenuModule, // Para o menu estilizado
+    ButtonModule, // Para botões estilizados
+    SideMenuComponent,
+    AdminMainPageComponent
+],
   providers: [],
   bootstrap: [AppComponent]
 })
