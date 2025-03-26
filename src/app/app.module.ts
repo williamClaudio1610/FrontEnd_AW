@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'; // Importe o FormsModule
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Importar o módulo de animações
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
@@ -18,7 +19,7 @@ import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
 import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main-page.component';
 import { FuncionariosComponent } from './admin-pages/admin-links/funcionarios/funcionarios.component';
-import { ClientesComponent } from './admin-pages/admin-links/clientes/clientes.component';
+import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.component';
 
 @NgModule({
   declarations: [
@@ -36,12 +37,13 @@ import { ClientesComponent } from './admin-pages/admin-links/clientes/clientes.c
     SidebarModule, // Para o side menu
     MenuModule, // Para o menu estilizado
     ButtonModule, // Para botões estilizados
+    BrowserAnimationsModule,
     SideMenuComponent,
     AdminMainPageComponent,
     DashboardComponent,
     ProdutosComponent,
     FuncionariosComponent,
-    ClientesComponent
+    UsuariosComponent
 ],
   providers: [],
   bootstrap: [AppComponent]

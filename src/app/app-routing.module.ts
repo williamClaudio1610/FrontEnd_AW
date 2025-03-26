@@ -11,7 +11,7 @@ import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main
 import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
 import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
 import { FuncionariosComponent } from './admin-pages/admin-links/funcionarios/funcionarios.component';
-import { ClientesComponent } from './admin-pages/admin-links/clientes/clientes.component';
+import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.component';
 
 const routes: Routes = [
   {path: 'login',component: LoginComponent},
@@ -26,7 +26,7 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'produtos', component: ProdutosComponent },
       { path: 'funcionarios', component: FuncionariosComponent }, // Adicionado
-      {path: 'clientes', component: ClientesComponent},
+      {path: 'usuarios', component: UsuariosComponent},
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

@@ -18,7 +18,7 @@ export class SideMenuComponent implements OnInit {
     { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/admin/dashboard'] },
     { label: 'Produtos', icon: 'pi pi-box', routerLink: ['/admin/produtos'] },
     { label: 'Funcionários', icon: 'pi pi-briefcase', routerLink: ['/admin/funcionarios'] } ,
-    { label: 'Clientes', icon: 'pi pi-briefcase', routerLink: ['/admin/clientes'] } 
+    { label: 'Usuarios', icon: 'pi pi-briefcase', routerLink: ['/admin/usuarios'] } 
   ];
 
   ngOnInit() {

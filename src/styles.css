@@ -1,1 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+
+/* Estilos globais do seu projeto */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+@import 'primeng/resources/primeng.min.css';
+@import 'primeicons/primeicons.css';
+@import '@primeng/themes/lara-light/theme.css';
+/* Importar o Bootstrap */
+@import 'bootstrap/dist/css/bootstrap.min.css';
