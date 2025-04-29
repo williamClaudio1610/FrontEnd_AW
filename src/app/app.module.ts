@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms'; // Importe o FormsModule
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Importar o módulo de animações
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
+
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { PaginaInicialComponent } from './components/pagina-inicial/pagina-inicial.component';
@@ -12,6 +15,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { SideMenuComponent } from './admin-pages/side-menu/side-menu.component';
 import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
 import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
+
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 // PrimeNG Modules
 import { SidebarModule } from 'primeng/sidebar';
@@ -24,11 +29,12 @@ import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.c
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
     RegisterComponent,
     PaginaInicialComponent,
     FooterComponent,
-    HeaderComponent
+    HeaderComponent,
+    LoginComponent
+
   ],
   imports: [
     BrowserModule,
@@ -43,9 +49,13 @@ import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.c
     DashboardComponent,
     ProdutosComponent,
     FuncionariosComponent,
-    UsuariosComponent
+    UsuariosComponent,
+    HttpClientModule,
+    
 ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
-})
+  })
 export class AppModule { }

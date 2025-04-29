@@ -8,7 +8,8 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
-import { DropdownModule } from 'primeng/dropdown';
+import { UsuarioService } from '../../../services/usuario.service';
+import { Usuario, UsuarioLoginDTO, UsuarioRegistroDTO, UsuarioUpdateDTO } from '../../../models/usuario';
 
 @Component({
   selector: 'app-usuarios',
@@ -20,8 +21,7 @@ import { DropdownModule } from 'primeng/dropdown';
     InputTextModule,
     FormsModule,
     ToastModule,
-    ConfirmDialogModule,
-    DropdownModule
+    ConfirmDialogModule
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -31,6 +31,10 @@ import { DropdownModule } from 'primeng/dropdown';
 
       <h2>Usuários</h2>
       <p>Lista de Usuários</p>
+
+      <div class="search-bar">
+        <input pInputText type="text" placeholder="Pesquisar por nome..." [(ngModel)]="searchTerm" (input)="searchUsers()" />
+      </div>
 
       <div class="add-button">
         <button type="button" class="btn btn-success" (click)="showDialog()">Adicionar Usuário</button>
@@ -53,24 +57,17 @@ import { DropdownModule } from 'primeng/dropdown';
         </div>
         <div class="form-field">
           <label for="email">E-mail *</label>
-          <input #nomeInput pInputText id="nome" [(ngModel)]="usuario.email" [ngClass]="{'invalid': formSubmitted && !usuario.email}" />
+          <input pInputText id="email" [(ngModel)]="usuario.email" [ngClass]="{'invalid': formSubmitted && !usuario.email}" />
           <small *ngIf="formSubmitted && !usuario.email" class="error-message">E-mail é obrigatório.</small>
         </div>
-        <div class="form-field">
-          <label for="cargo">Cargo *</label>
-          <input pInputText id="cargo" [(ngModel)]="usuario.cargo" [ngClass]="{'invalid': formSubmitted && !usuario.cargo}" />
-          <small *ngIf="formSubmitted && !usuario.cargo" class="error-message">Cargo é obrigatório.</small>
+        <div class="form-field" *ngIf="editIndex === null">
+          <label for="senha">Senha *</label>
+          <input pInputText type="password" id="senha" [(ngModel)]="senha" [ngClass]="{'invalid': formSubmitted && !senha && editIndex === null}" />
+          <small *ngIf="formSubmitted && !senha && editIndex === null" class="error-message">Senha é obrigatória.</small>
         </div>
         <div class="form-field">
-          <label for="departamento">Departamento *</label>
-          <p-dropdown
-            id="departamento"
-            [options]="departamentos"
-            [(ngModel)]="usuario.departamento"
-            placeholder="Selecione um departamento"
-            [ngClass]="{'invalid': formSubmitted && !usuario.departamento}"
-          ></p-dropdown>
-          <small *ngIf="formSubmitted && !usuario.departamento" class="error-message">Departamento é obrigatório.</small>
+          <label for="isAdmin">Administrador</label>
+          <input type="checkbox" id="isAdmin" [(ngModel)]="usuario.isAdmin" />
         </div>
         <p-footer>
           <p-button label="Salvar" severity="success" (onClick)="saveUsuario()" />
@@ -83,9 +80,8 @@ import { DropdownModule } from 'primeng/dropdown';
           <tr>
             <th>ID</th>
             <th>Nome</th>
-            <th>Cargo</th>
-            <th>Departamento</th>
-            <th>Tipo</th>
+            <th>E-mail</th>
+            <th>Administrador</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -93,9 +89,8 @@ import { DropdownModule } from 'primeng/dropdown';
           <tr *ngFor="let u of usuarios; let i = index">
             <td>{{ u.id }}</td>
             <td>{{ u.nome }}</td>
-            <td>{{ u.cargo }}</td>
-            <td>{{ u.departamento }}</td>
-            <td>{{ u.tipo }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.isAdmin ? 'Sim' : 'Não' }}</td>
             <td>
               <button class="action-button" title="Editar" (click)="editUsuario(i)">
                 <i class="pi pi-pencil"></i>
@@ -127,6 +122,19 @@ import { DropdownModule } from 'primeng/dropdown';
     p {
       color: #6b7280;
       margin-bottom: 20px;
+    }
+
+    .search-bar {
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      max-width: 300px;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.9rem;
     }
 
     .add-button {
@@ -202,8 +210,7 @@ import { DropdownModule } from 'primeng/dropdown';
       color: #374151;
     }
 
-    .form-field input,
-    .form-field p-dropdown {
+    .form-field input {
       width: 100%;
       padding: 8px;
       border-radius: 4px;
@@ -251,25 +258,54 @@ import { DropdownModule } from 'primeng/dropdown';
 })
 export class UsuariosComponent {
   displayDialog: boolean = false;
-  usuario: any = { id: 0, nome: '', cargo: '', departamento: '' };
-  usuarios = [
-    { id: 1, nome: 'Carlos Mendes', cargo: 'Gerente', departamento: 'Vendas', tipo: 'Normal' },
-    { id: 2, nome: 'Ana Costa', cargo: 'Analista', departamento: 'TI' , tipo: 'Normal'},
-    { id: 3, nome: 'João Silva', cargo: 'Analista', departamento: 'TI' , tipo: 'Normal'},
-  ];
-  departamentos = ['Vendas', 'TI', 'RH', 'Marketing'];
+  usuario: Usuario = { id: 0, nome: '', email: '', senhaHash: '', isAdmin: false };
+  usuarios: Usuario[] = [];
+  searchTerm: string = '';
   editIndex: number | null = null;
   formSubmitted: boolean = false;
+  senha: string = ''; // Para capturar a senha no formulário de registro
 
   @ViewChild('nomeInput') nomeInput!: ElementRef;
 
   constructor(
+    private usuarioService: UsuarioService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
-  ) {}
+  ) {
+    this.loadUsuarios();
+  }
+
+  loadUsuarios() {
+    this.usuarioService.getAllUsuarios().subscribe({
+      next: (usuarios) => {
+        this.usuarios = usuarios;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar usuários:', err);
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
+      }
+    });
+  }
+
+  searchUsers() {
+    if (!this.searchTerm) {
+      this.loadUsuarios();
+      return;
+    }
+    this.usuarioService.searchUsuarios(this.searchTerm).subscribe({
+      next: (usuarios) => {
+        this.usuarios = usuarios;
+      },
+      error: (err) => {
+        console.error('Erro ao pesquisar usuários:', err);
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
+      }
+    });
+  }
 
   showDialog() {
-    this.usuario = { id: this.usuarios.length + 1, nome: '', cargo: '', departamento: '', tipo: '' };
+    this.usuario = { id: 0, nome: '', email: '', senhaHash: '', isAdmin: false };
+    this.senha = '';
     this.editIndex = null;
     this.formSubmitted = false;
     this.displayDialog = true;
@@ -285,25 +321,61 @@ export class UsuariosComponent {
   saveUsuario() {
     this.formSubmitted = true;
 
-    if (!this.usuario.nome || !this.usuario.cargo || !this.usuario.departamento) {
+    if (!this.usuario.nome || !this.usuario.email) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Preencha todos os campos obrigatórios.' });
       return;
     }
 
-    const nomeRegex = /^[a-zA-Z\s]+$/;
-    if (!nomeRegex.test(this.usuario.nome)) {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'O nome deve conter apenas letras e espaços.' });
+    if (this.editIndex === null && !this.senha) {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A senha é obrigatória para novos usuários.' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.usuario.email)) {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'E-mail inválido.' });
       return;
     }
 
     if (this.editIndex !== null) {
-      this.usuarios[this.editIndex] = { ...this.usuario };
-      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado com sucesso!' });
+      // Atualizar usuário existente
+      const updateDTO: UsuarioUpdateDTO = {
+        id: this.usuario.id,
+        nome: this.usuario.nome,
+        email: this.usuario.email,
+        isAdmin: this.usuario.isAdmin
+      };
+      this.usuarioService.updateUsuario(updateDTO).subscribe({
+        next: (updatedUser) => {
+          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado com sucesso!' });
+          this.loadUsuarios();
+          this.displayDialog = false;
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar usuário:', err);
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
+        }
+      });
     } else {
-      this.usuarios.push({ ...this.usuario });
-      this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado com sucesso!' });
+      // Registrar novo usuário
+      const registroDTO: UsuarioRegistroDTO = {
+        nome: this.usuario.nome,
+        email: this.usuario.email,
+        senha: this.senha,
+        isAdmin: this.usuario.isAdmin
+      };
+      this.usuarioService.registrar(registroDTO).subscribe({
+        next: (newUser) => {
+          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário registrado com sucesso!' });
+          this.loadUsuarios();
+          this.displayDialog = false;
+        },
+        error: (err) => {
+          console.error('Erro ao registrar usuário:', err);
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
+        }
+      });
     }
-    this.displayDialog = false;
   }
 
   confirmDelete(index: number) {
@@ -318,8 +390,17 @@ export class UsuariosComponent {
   }
 
   deleteUsuario(index: number) {
-    this.usuarios.splice(index, 1);
-    this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário excluído com sucesso!' });
+    const usuarioId = this.usuarios[index].id;
+    this.usuarioService.deleteUsuario(usuarioId).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário excluído com sucesso!' });
+        this.loadUsuarios();
+      },
+      error: (err) => {
+        console.error('Erro ao excluir usuário:', err);
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
+      }
+    });
   }
 
   onDialogShow() {
@@ -330,6 +411,7 @@ export class UsuariosComponent {
 
   onDialogHide() {
     this.formSubmitted = false;
-    this.usuario = { id: 0, nome: '', cargo: '', departamento: '' };
+    this.usuario = { id: 0, nome: '', email: '', senhaHash: '', isAdmin: false };
+    this.senha = '';
   }
 }
