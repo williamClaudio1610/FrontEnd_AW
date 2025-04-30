@@ -56,7 +56,6 @@ export class SubsistemaSaudeService {
     return {
       id: dto.id,
       nome: dto.nome,
-      descricao: dto.descricao || 'Não Disponivel', // Adicionando valor padrão para descrição
     };
   }
 
