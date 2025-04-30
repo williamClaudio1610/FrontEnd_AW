@@ -371,6 +371,7 @@ export class UsuariosComponent {
         perfil: this.usuario.isAdmin ? 'Administrador' : 'UtenteRegistado',
         telemovel: '', // Opcional no backend
         morada: '', // Opcional no backend
+        provincia: '',
         dataNascimento: undefined,
         genero: undefined,
         fotografia: undefined,

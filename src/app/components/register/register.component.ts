@@ -1,8 +1,11 @@
+
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router'; // Para redirecionamento
-import { UsuarioService } from '../../services/usuario.service'; // Ajuste o caminho conforme sua estrutura
-import { RegisterUser, CreateUserDTO } from '../../models/usuario';
+import { Router } from '@angular/router';
+import { UsuarioService } from '../../services/usuario.service';
+import { CreateUserDTO } from '../../models/usuario';
+import { MessageService } from 'primeng/api';
+
 
 @Component({
   selector: 'app-register',
@@ -11,21 +14,21 @@ import { RegisterUser, CreateUserDTO } from '../../models/usuario';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent implements OnInit {
-  user: RegisterUser = {
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phoneNumber: '',
-    province: '',
-    perfil: '',
-  };
-
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
-  mensagemSucesso: string | null = null;
-  mensagemErro: string | null = null;
-
+  confirmarSenha: string = '';
+  user: CreateUserDTO = {
+    nome: '',
+    email: '',
+    senhaHash: '',
+    perfil: '',
+    telemovel: '',
+    morada: '',
+    dataNascimento: undefined,
+    genero: '',
+    fotografia: undefined,
+    provincia: '', // Campo adicional para província
+  };
   provinces: string[] = [
     'Bengo', 'Benguela', 'Bié', 'Cabinda', 'Cuando Cubango', 'Cuanza Norte',
     'Cuanza Sul', 'Cunene', 'Huambo', 'Huíla', 'Luanda', 'Lunda Norte',
@@ -34,7 +37,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private usuarioService: UsuarioService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {}
@@ -47,51 +51,52 @@ export class RegisterComponent implements OnInit {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.user.fotografia = reader.result as string; // Armazena a imagem como base64
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   onSubmit(): void {
-    if (this.user.password !== this.user.confirmPassword) {
-      this.mensagemErro = 'As senhas não coincidem.';
-      this.mensagemSucesso = null;
+    // Validar se as senhas coincidem
+    if (this.user.senhaHash !== this.confirmarSenha) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'As senhas não coincidem.',
+      });
       return;
     }
 
-    const userDto: CreateUserDTO = {
-      nome: this.user.username,
-      email: this.user.email,
-      senhaHash: this.user.password,
-      telemovel: this.user.phoneNumber,
-      morada: this.user.province,
-      perfil: this.user.perfil,
-      dataNascimento: undefined, // Opcional
-      genero: undefined, // Opcional
-      fotografia: undefined, // Opcional
-    };
+    // Combinar morada e província
+    this.user.morada = `${this.user.morada}, ${this.user.provincia}`;
 
-    this.usuarioService.cadastrarUsuario(userDto).subscribe({
+    // Chamar o serviço para registrar o usuário
+    this.usuarioService.cadastrarUsuario(this.user).subscribe({
       next: (response) => {
-        this.mensagemSucesso = `Usuário ${response.nome} cadastrado com sucesso!`;
-        this.mensagemErro = null;
-        this.resetForm();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: `Usuário ${response.nome} cadastrado com sucesso!`,
+        });
         // Redirecionar para a tela de login após 2 segundos
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 2000);
       },
       error: (err) => {
-        this.mensagemErro = err.message;
-        this.mensagemSucesso = null;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: err.message,
+        });
       },
     });
-  }
-
-  private resetForm(): void {
-    this.user = {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      phoneNumber: '',
-      province: '',
-      perfil: '',
-    };
   }
 }

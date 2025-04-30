@@ -17,7 +17,7 @@ export class SideMenuComponent implements OnInit {
   menuItems = [
     { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/admin/dashboard'] },
     { label: 'Produtos', icon: 'pi pi-box', routerLink: ['/admin/produtos'] },
-    { label: 'Funcionários', icon: 'pi pi-briefcase', routerLink: ['/admin/funcionarios'] } ,
+    { label: 'Profissionais', icon: 'pi pi-briefcase', routerLink: ['/admin/profissionais'] } ,
     { label: 'Usuarios', icon: 'pi pi-briefcase', routerLink: ['/admin/usuarios'] } 
   ];
 

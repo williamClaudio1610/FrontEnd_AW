@@ -1,14 +1,26 @@
 <div class="register-container">
+  <!-- Componente Toast do PrimeNG para exibir mensagens -->
+  <p-toast></p-toast>
+
   <h2 class="text-center">Criar Conta</h2>
   <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
-    <!-- Campo Username -->
+    <!-- Campo Nome -->
     <div class="mb-3">
       <div class="input-group">
         <span class="input-group-text"><i class="fa fa-user"></i></span>
-        <input type="text" class="form-control" id="username" placeholder="Username" [(ngModel)]="user.username" name="username" required>
+        <input
+          type="text"
+          class="form-control"
+          id="nome"
+          placeholder="Nome completo"
+          [(ngModel)]="user.nome"
+          name="nome"
+          #nome="ngModel"
+          required
+        />
       </div>
-      <div *ngIf="registerForm.submitted && registerForm.controls['username']?.errors?.['required']" class="text-danger small">
-        O nome de usuário é obrigatório.
+      <div *ngIf="registerForm.submitted && nome.errors?.['required']" class="text-danger small">
+        O nome completo é obrigatório.
       </div>
     </div>
 
@@ -16,58 +28,162 @@
     <div class="mb-3">
       <div class="input-group">
         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-        <input type="email" class="form-control" id="email" placeholder="Email" [(ngModel)]="user.email" name="email" required email>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          placeholder="Email"
+          [(ngModel)]="user.email"
+          name="email"
+          #email="ngModel"
+          required
+          email
+        />
       </div>
-      <div *ngIf="registerForm.submitted && registerForm.controls['email']?.errors?.['required']" class="text-danger small">
+      <div *ngIf="registerForm.submitted && email.errors?.['required']" class="text-danger small">
         O email é obrigatório.
       </div>
-      <div *ngIf="registerForm.submitted && registerForm.controls['email']?.errors?.['email']" class="text-danger small">
+      <div *ngIf="registerForm.submitted && email.errors?.['email']" class="text-danger small">
         O email deve ser válido.
       </div>
     </div>
 
-    <!-- Campo Password -->
+    <!-- Campo Senha -->
     <div class="mb-3">
       <div class="input-group">
         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-        <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="password" placeholder="Password" [(ngModel)]="user.password" name="password" required minlength="6">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          class="form-control"
+          id="senha"
+          placeholder="Senha"
+          [(ngModel)]="user.senhaHash"
+          name="senha"
+          #senha="ngModel"
+          required
+          minlength="6"
+        />
         <span class="input-group-text toggle-password" (click)="togglePassword()">
           <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleIcon"></i>
         </span>
       </div>
-      <div *ngIf="registerForm.submitted && registerForm.controls['password']?.errors?.['required']" class="text-danger small">
+      <div *ngIf="registerForm.submitted && senha.errors?.['required']" class="text-danger small">
         A senha é obrigatória.
       </div>
-      <div *ngIf="registerForm.submitted && registerForm.controls['password']?.errors?.['minlength']" class="text-danger small">
+      <div *ngIf="registerForm.submitted && senha.errors?.['minlength']" class="text-danger small">
         A senha deve ter pelo menos 6 caracteres.
       </div>
     </div>
 
-    <!-- Campo Confirmar Password -->
+    <!-- Campo Confirmar Senha -->
     <div class="mb-3">
       <div class="input-group">
         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-        <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" id="confirmPassword" placeholder="Confirmar Password" [(ngModel)]="user.confirmPassword" name="confirmPassword" required>
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          class="form-control"
+          id="confirmarSenha"
+          placeholder="Confirmar Senha"
+          [(ngModel)]="confirmarSenha"
+          name="confirmarSenha"
+          #confirmarSenhaInput="ngModel"
+          required
+        />
         <span class="input-group-text toggle-password" (click)="toggleConfirmPassword()">
           <i class="fa" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleConfirmIcon"></i>
         </span>
       </div>
-      <div *ngIf="registerForm.submitted && user.password !== user.confirmPassword" class="text-danger small">
+      <div *ngIf="registerForm.submitted && confirmarSenhaInput.errors?.['required']" class="text-danger small">
+        A confirmação de senha é obrigatória.
+      </div>
+      <div *ngIf="registerForm.submitted && user.senhaHash !== confirmarSenha" class="text-danger small">
         As senhas não coincidem.
       </div>
     </div>
 
-    <!-- Campo Número de Telefone -->
+    <!-- Campo Data de Nascimento -->
+    <div class="mb-3">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        <input
+          type="date"
+          class="form-control"
+          id="dataNascimento"
+          [(ngModel)]="user.dataNascimento"
+          name="dataNascimento"
+          #dataNascimento="ngModel"
+          required
+        />
+      </div>
+      <div *ngIf="registerForm.submitted && dataNascimento.errors?.['required']" class="text-danger small">
+        A data de nascimento é obrigatória.
+      </div>
+    </div>
+
+    <!-- Campo Gênero -->
+    <div class="mb-3">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa fa-venus-mars"></i></span>
+        <select
+          class="form-control"
+          id="genero"
+          [(ngModel)]="user.genero"
+          name="genero"
+          #genero="ngModel"
+          required
+        >
+          <option value="" disabled selected>Selecione o gênero</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Feminino">Feminino</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+      <div *ngIf="registerForm.submitted && genero.errors?.['required']" class="text-danger small">
+        O gênero é obrigatório.
+      </div>
+    </div>
+
+    <!-- Campo Telemóvel -->
     <div class="mb-3">
       <div class="input-group">
         <span class="input-group-text"><i class="fa fa-phone"></i></span>
-        <input type="text" class="form-control" id="phoneNumber" placeholder="+244 9XX XXX XXX" [(ngModel)]="user.phoneNumber" name="phoneNumber" required pattern="\+2449[0-9]{8}">
+        <input
+          type="text"
+          class="form-control"
+          id="telemovel"
+          placeholder="+244 9XX XXX XXX"
+          [(ngModel)]="user.telemovel"
+          name="telemovel"
+          #telemovel="ngModel"
+          required
+          pattern="\+2449[0-9]{8}"
+        />
       </div>
-      <div *ngIf="registerForm.submitted && registerForm.controls['phoneNumber']?.errors?.['required']" class="text-danger small">
+      <div *ngIf="registerForm.submitted && telemovel.errors?.['required']" class="text-danger small">
         O número de telefone é obrigatório.
       </div>
-      <div *ngIf="registerForm.submitted && registerForm.controls['phoneNumber']?.errors?.['pattern']" class="text-danger small">
+      <div *ngIf="registerForm.submitted && telemovel.errors?.['pattern']" class="text-danger small">
         O número deve começar com +244 seguido de 9 dígitos numéricos.
+      </div>
+    </div>
+
+    <!-- Campo Morada -->
+    <div class="mb-3">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa fa-map-marker"></i></span>
+        <input
+          type="text"
+          class="form-control"
+          id="morada"
+          placeholder="Morada"
+          [(ngModel)]="user.morada"
+          name="morada"
+          #morada="ngModel"
+          required
+        />
+      </div>
+      <div *ngIf="registerForm.submitted && morada.errors?.['required']" class="text-danger small">
+        A morada é obrigatória.
       </div>
     </div>
 
@@ -75,12 +191,19 @@
     <div class="mb-3">
       <div class="input-group">
         <span class="input-group-text"><i class="fa fa-map-marker"></i></span>
-        <select class="form-control" id="province" [(ngModel)]="user.province" name="province" required>
+        <select
+          class="form-control"
+          id="provincia"
+          [(ngModel)]="user.provincia"
+          name="provincia"
+          #provincia="ngModel"
+          required
+        >
           <option value="" disabled selected>Selecione a província</option>
           <option *ngFor="let province of provinces" [value]="province">{{ province }}</option>
         </select>
       </div>
-      <div *ngIf="registerForm.submitted && registerForm.controls['province']?.errors?.['required']" class="text-danger small">
+      <div *ngIf="registerForm.submitted && provincia.errors?.['required']" class="text-danger small">
         A província é obrigatória.
       </div>
     </div>
@@ -89,21 +212,46 @@
     <div class="mb-3">
       <div class="input-group">
         <span class="input-group-text"><i class="fa fa-user-tag"></i></span>
-        <select class="form-control" id="perfil" [(ngModel)]="user.perfil" name="perfil" required>
+        <select
+          class="form-control"
+          id="perfil"
+          [(ngModel)]="user.perfil"
+          name="perfil"
+          #perfil="ngModel"
+          required
+        >
           <option value="" disabled selected>Selecione o perfil</option>
           <option value="UtenteRegistado">Utente Registado</option>
           <option value="Administrativo">Administrativo</option>
           <option value="Administrador">Administrador</option>
         </select>
       </div>
-      <div *ngIf="registerForm.submitted && registerForm.controls['perfil']?.errors?.['required']" class="text-danger small">
+      <div *ngIf="registerForm.submitted && perfil.errors?.['required']" class="text-danger small">
         O perfil é obrigatório.
+      </div>
+    </div>
+
+    <!-- Campo Fotografia (Opcional) -->
+    <div class="mb-3">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa fa-camera"></i></span>
+        <input
+          type="file"
+          class="form-control"
+          id="fotografia"
+          (change)="onFileChange($event)"
+          name="fotografia"
+        />
       </div>
     </div>
 
     <!-- Botão Registrar -->
     <div class="d-grid mb-3">
-      <button type="submit" class="btn btn-login text-white" [disabled]="!registerForm.valid || user.password !== user.confirmPassword">
+      <button
+        type="submit"
+        class="btn btn-login text-white"
+        [disabled]="!registerForm.valid || user.senhaHash !== confirmarSenha"
+      >
         <i class="fa fa-user-plus"></i> Criar conta
       </button>
     </div>
@@ -130,12 +278,4 @@
       </a>
     </div>
   </form>
-
-  <!-- Mensagens de Sucesso e Erro -->
-  <div *ngIf="mensagemSucesso" class="alert alert-success mt-3">
-    {{ mensagemSucesso }}
-  </div>
-  <div *ngIf="mensagemErro" class="alert alert-danger mt-3">
-    {{ mensagemErro }}
-  </div>
 </div>

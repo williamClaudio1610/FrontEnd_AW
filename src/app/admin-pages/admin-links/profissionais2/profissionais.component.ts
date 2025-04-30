@@ -1,20 +1,19 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-funcionarios',
+  selector: 'app-profissionais',
   standalone: true,
   imports: [],
   template: `
-    <div class="funcionarios-page">
-      <h2>Funcionários</h2>
-      <p>Lista de funcionários da empresa.</p>
+    <div class="profissionais-page">
+      <h2>Profissionais</h2>
+      <p>Lista de profissionais da clinica.</p>
       <table class="employee-table">
         <thead>
           <tr>
             <th>ID</th>
             <th>Nome</th>
-            <th>Cargo</th>
-            <th>Departamento</th>
+            <th>Especialidade</th>
           </tr>
         </thead>
         <tbody>
@@ -22,13 +21,11 @@ import { Component } from '@angular/core';
             <td>1</td>
             <td>Carlos Mendes</td>
             <td>Gerente</td>
-            <td>Vendas</td>
           </tr>
           <tr>
             <td>2</td>
             <td>Ana Costa</td>
             <td>Analista</td>
-            <td>TI</td>
           </tr>
         </tbody>
       </table>
@@ -57,4 +54,4 @@ import { Component } from '@angular/core';
     }
   `]
 })
-export class FuncionariosComponent {}
+export class ProfissionaisComponent {}

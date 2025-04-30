@@ -21,6 +21,7 @@ export interface CreateUserDTO {
   morada: string;
   senhaHash: string;
   perfil: string;
+  provincia?: string;
 }
 
 export interface UpdateUserDTO {

@@ -10,7 +10,8 @@ import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main
 //componentes do admin
 import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
 import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
-import { FuncionariosComponent } from './admin-pages/admin-links/funcionarios/funcionarios.component';
+
+import { ProfissionaisComponent } from './admin-pages/admin-links/profissionais2/profissionais.component';
 import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.component';
 
 const routes: Routes = [
@@ -25,7 +26,7 @@ const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'produtos', component: ProdutosComponent },
-      { path: 'funcionarios', component: FuncionariosComponent }, // Adicionado
+      { path: 'profissionais', component: ProfissionaisComponent }, // Adicionado
       {path: 'usuarios', component: UsuariosComponent},
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
