@@ -61,3 +61,7 @@ export interface Usuario {
   senhaHash: string;
   isAdmin: boolean;
 }
+
+export class Usuario {
+
+}
