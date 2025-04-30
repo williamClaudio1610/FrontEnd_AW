@@ -6,6 +6,7 @@ import { RegisterUser, CreateUserDTO } from '../../models/usuario';
 
 @Component({
   selector: 'app-register',
+  standalone: false,
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
 })

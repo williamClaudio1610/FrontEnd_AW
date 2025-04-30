@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-
+import { ToastModule } from 'primeng/toast'; // Importar o ToastModule
 
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -51,6 +51,7 @@ import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.c
     FuncionariosComponent,
     UsuariosComponent,
     HttpClientModule,
+    ToastModule
     
 ],
   providers: [

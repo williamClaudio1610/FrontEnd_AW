@@ -1,6 +1,9 @@
 <div class="login-container">
+  <!-- Componente Toast do PrimeNG para exibir mensagens -->
+  <p-toast></p-toast>
+
   <h2 class="text-center">Login</h2>
-  <form (ngSubmit)="login()">
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
     <!-- Campo E-mail -->
     <div class="mb-3">
       <div class="input-group">
@@ -13,7 +16,14 @@
           [(ngModel)]="loginDTO.email"
           placeholder="E-mail"
           required
+          email
         />
+      </div>
+      <div *ngIf="loginForm.submitted && loginForm.controls['email']?.errors?.['required']" class="text-danger small">
+        O email é obrigatório.
+      </div>
+      <div *ngIf="loginForm.submitted && loginForm.controls['email']?.errors?.['email']" class="text-danger small">
+        O email deve ser válido.
       </div>
     </div>
 
@@ -34,6 +44,9 @@
           <i class="fa" [ngClass]="mostrarPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleIcon"></i>
         </span>
       </div>
+      <div *ngIf="loginForm.submitted && loginForm.controls['senha']?.errors?.['required']" class="text-danger small">
+        A senha é obrigatória.
+      </div>
     </div>
 
     <!-- Link Esqueceu a Senha -->
@@ -43,7 +56,7 @@
 
     <!-- Botão Login -->
     <div class="d-grid mb-3">
-      <button type="submit" class="btn btn-login text-white">
+      <button type="submit" class="btn btn-login text-white" [disabled]="!loginForm.valid">
         <i class="fa fa-sign-in"></i> Login
       </button>
     </div>

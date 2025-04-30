@@ -9,7 +9,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { UsuarioService } from '../../../services/usuario.service';
-import { Usuario, UsuarioLoginDTO, UsuarioRegistroDTO, UsuarioUpdateDTO } from '../../../models/usuario';
+import { UserDTO, CreateUserDTO, UpdateUserDTO, RegisterUser, LoginDTO, Usuario } from '../../../models/usuario';
 
 @Component({
   selector: 'app-usuarios',
@@ -339,11 +339,17 @@ export class UsuariosComponent {
 
     if (this.editIndex !== null) {
       // Atualizar usuário existente
-      const updateDTO: UsuarioUpdateDTO = {
+      const updateDTO: UpdateUserDTO = {
         id: this.usuario.id,
         nome: this.usuario.nome,
         email: this.usuario.email,
-        isAdmin: this.usuario.isAdmin
+        perfil: this.usuario.isAdmin ? 'Administrador' : 'UtenteRegistado',
+        fotografia: undefined,
+        dataNascimento: undefined,
+        genero: undefined,
+        telemovel: undefined,
+        morada: undefined,
+        senhaHash: this.senha || undefined,
       };
       this.usuarioService.updateUsuario(updateDTO).subscribe({
         next: (updatedUser) => {
@@ -357,14 +363,19 @@ export class UsuariosComponent {
         }
       });
     } else {
-      // Registrar novo usuário
-      const registroDTO: UsuarioRegistroDTO = {
+      // Criar novo usuário
+      const createUserDTO: CreateUserDTO = {
         nome: this.usuario.nome,
         email: this.usuario.email,
-        senha: this.senha,
-        isAdmin: this.usuario.isAdmin
+        senhaHash: this.senha,
+        perfil: this.usuario.isAdmin ? 'Administrador' : 'UtenteRegistado',
+        telemovel: '', // Opcional no backend
+        morada: '', // Opcional no backend
+        dataNascimento: undefined,
+        genero: undefined,
+        fotografia: undefined,
       };
-      this.usuarioService.registrar(registroDTO).subscribe({
+      this.usuarioService.cadastrarUsuario(createUserDTO).subscribe({
         next: (newUser) => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário registrado com sucesso!' });
           this.loadUsuarios();
