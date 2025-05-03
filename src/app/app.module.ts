@@ -25,6 +25,8 @@ import { ButtonModule } from 'primeng/button';
 import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main-page.component';
 import {ProfissionaisComponent} from './admin-pages/admin-links/profissionais2/profissionais.component';
 import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.component';
+import { SubsistemaSaudeComponent } from './admin-pages/admin-links/subsistema-saude/subsistema-saude.component';
+import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-consulta-exame/tipo-de-consulta-exame.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,8 @@ import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.c
     DashboardComponent,
     ProdutosComponent,
     ProfissionaisComponent,
+    SubsistemaSaudeComponent,
+    TipoDeConsultaExameComponent,
     UsuariosComponent,
     HttpClientModule,
     ToastModule

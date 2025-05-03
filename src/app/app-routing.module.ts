@@ -10,9 +10,11 @@ import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main
 //componentes do admin
 import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
 import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
-
 import { ProfissionaisComponent } from './admin-pages/admin-links/profissionais2/profissionais.component';
 import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.component';
+import { SubsistemaSaudeComponent } from './admin-pages/admin-links/subsistema-saude/subsistema-saude.component';
+import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-consulta-exame/tipo-de-consulta-exame.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 const routes: Routes = [
   {path: 'login',component: LoginComponent},
@@ -28,6 +30,8 @@ const routes: Routes = [
       { path: 'produtos', component: ProdutosComponent },
       { path: 'profissionais', component: ProfissionaisComponent }, // Adicionado
       {path: 'usuarios', component: UsuariosComponent},
+      {path: 'subsistemaSaude', component: SubsistemaSaudeComponent},
+      {path: 'tipoDeExameConsulta', component: TipoDeConsultaExameComponent},
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

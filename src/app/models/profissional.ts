@@ -4,7 +4,7 @@ export interface ProfissionalDTO {
   especialidade: string;
   numeroLicenca: string;
   email: string;
-  telemovel: string;
+  telefone: string;
 }
 
 export interface CreateProfissionalDTO {
@@ -12,7 +12,7 @@ export interface CreateProfissionalDTO {
   especialidade: string;
   numeroLicenca: string;
   email: string;
-  telemovel: string;
+  telefone: string;
 }
 
 export interface UpdateProfissionalDTO {
@@ -21,7 +21,7 @@ export interface UpdateProfissionalDTO {
   especialidade?: string;
   numeroLicenca?: string;
   email?: string;
-  telemovel?: string;
+  telefone?: string;
 }
 
 export interface Profissional {
@@ -30,5 +30,5 @@ export interface Profissional {
   especialidade: string;
   numeroLicenca: string;
   email: string;
-  telemovel: string;
+  telefone: string;
 }

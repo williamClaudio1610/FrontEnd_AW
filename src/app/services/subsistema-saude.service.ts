@@ -2,19 +2,24 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { SubsistemaSaudeDTO, CreateSubsistemaSaudeDTO, UpdateSubsistemaSaudeDTO, SubsistemaSaude } from '../models/subsistema-saude';
+import {
+  SubsistemaSaudeDTO,
+  CreateSubsistemaSaudeDTO,
+  UpdateSubsistemaSaudeDTO,
+  SubsistemaSaude
+} from '../models/subsistema-saude';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubsistemaSaudeService {
-  private apiUrl = 'https://localhost:7273/api/subsistemasaude';
+  private apiUrl = 'https://localhost:7273/api/subsistema-saude';
 
   constructor(private http: HttpClient) {}
 
   // Listar todos os subsistemas de saúde
   getAllSubsistemasSaude(): Observable<SubsistemaSaude[]> {
-    return this.http.get<SubsistemaSaudeDTO[]>(this.apiUrl).pipe(
+    return this.http.get<SubsistemaSaudeDTO[]>(`${this.apiUrl}/todos`).pipe(
       map(subsistemas => subsistemas.map(dto => this.mapSubsistemaSaudeDtoToSubsistemaSaude(dto))),
       catchError(this.handleError)
     );
@@ -28,9 +33,17 @@ export class SubsistemaSaudeService {
     );
   }
 
+  // Obter subsistema por nome
+  getSubsistemaSaudeByNome(nome: string): Observable<SubsistemaSaude> {
+    return this.http.get<SubsistemaSaudeDTO>(`${this.apiUrl}/nome/${nome}`).pipe(
+      map(dto => this.mapSubsistemaSaudeDtoToSubsistemaSaude(dto)),
+      catchError(this.handleError)
+    );
+  }
+
   // Criar um novo subsistema de saúde
   criarSubsistemaSaude(subsistemaDto: CreateSubsistemaSaudeDTO): Observable<SubsistemaSaude> {
-    return this.http.post<SubsistemaSaudeDTO>(this.apiUrl, subsistemaDto).pipe(
+    return this.http.post<SubsistemaSaudeDTO>(`${this.apiUrl}/criar`, subsistemaDto).pipe(
       map(dto => this.mapSubsistemaSaudeDtoToSubsistemaSaude(dto)),
       catchError(this.handleError)
     );
@@ -38,7 +51,7 @@ export class SubsistemaSaudeService {
 
   // Atualizar um subsistema de saúde existente
   atualizarSubsistemaSaude(subsistemaDto: UpdateSubsistemaSaudeDTO): Observable<SubsistemaSaude> {
-    return this.http.put<SubsistemaSaudeDTO>(`${this.apiUrl}/${subsistemaDto.id}`, subsistemaDto).pipe(
+    return this.http.put<SubsistemaSaudeDTO>(`${this.apiUrl}/atualizar`, subsistemaDto).pipe(
       map(dto => this.mapSubsistemaSaudeDtoToSubsistemaSaude(dto)),
       catchError(this.handleError)
     );
@@ -46,7 +59,7 @@ export class SubsistemaSaudeService {
 
   // Deletar um subsistema de saúde
   deletarSubsistemaSaude(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -56,6 +69,7 @@ export class SubsistemaSaudeService {
     return {
       id: dto.id,
       nome: dto.nome,
+      descricao: dto.descricao || ''
     };
   }
 

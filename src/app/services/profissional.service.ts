@@ -8,13 +8,13 @@ import { Profissional, CreateProfissionalDTO, ProfissionalDTO, UpdateProfissiona
   providedIn: 'root'
 })
 export class ProfissionalService {
-  private apiUrl = 'https://localhost:7273/api/profissional'; // Ajustado para a URL do seu backend
+  private apiUrl = 'https://localhost:7273/api/Profissional';
 
   constructor(private http: HttpClient) {}
 
   // Listar todos os profissionais
   getAllProfissionais(): Observable<Profissional[]> {
-    return this.http.get<ProfissionalDTO[]>(this.apiUrl).pipe(
+    return this.http.get<ProfissionalDTO[]>(`${this.apiUrl}/todos`).pipe(
       map(profissionais => profissionais.map(dto => this.mapProfissionalDtoToProfissional(dto))),
       catchError(this.handleError)
     );
@@ -30,23 +30,23 @@ export class ProfissionalService {
 
   // Criar um novo profissional
   criarProfissional(profissionalDto: CreateProfissionalDTO): Observable<Profissional> {
-    return this.http.post<ProfissionalDTO>(this.apiUrl, profissionalDto).pipe(
+    return this.http.post<ProfissionalDTO>(`${this.apiUrl}/criar`, profissionalDto).pipe(
       map(dto => this.mapProfissionalDtoToProfissional(dto)),
       catchError(this.handleError)
     );
   }
 
-  // Atualizar um profissional existente
+  // Atualizar um profissional existente (corrigido)
   atualizarProfissional(profissionalDto: UpdateProfissionalDTO): Observable<Profissional> {
-    return this.http.put<ProfissionalDTO>(`${this.apiUrl}/${profissionalDto.id}`, profissionalDto).pipe(
+    return this.http.put<ProfissionalDTO>(`${this.apiUrl}/atualizar`, profissionalDto).pipe(
       map(dto => this.mapProfissionalDtoToProfissional(dto)),
       catchError(this.handleError)
     );
   }
 
-  // Deletar um profissional
+  // Deletar um profissional (corrigido)
   deletarProfissional(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -59,9 +59,10 @@ export class ProfissionalService {
       especialidade: dto.especialidade,
       numeroLicenca: dto.numeroLicenca,
       email: dto.email,
-      telemovel: dto.telemovel,
+      telefone: dto.telefone,
     };
   }
+
   // Tratamento de erros
   private handleError(error: HttpErrorResponse): Observable<never> {
     console.error('Erro na requisição:', error);
@@ -77,7 +78,4 @@ export class ProfissionalService {
     }
     return throwError(() => new Error(errorMessage));
   }
- 
- 
-
 }

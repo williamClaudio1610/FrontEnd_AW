@@ -18,7 +18,9 @@ export class SideMenuComponent implements OnInit {
     { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/admin/dashboard'] },
     { label: 'Produtos', icon: 'pi pi-box', routerLink: ['/admin/produtos'] },
     { label: 'Profissionais', icon: 'pi pi-briefcase', routerLink: ['/admin/profissionais'] } ,
-    { label: 'Usuarios', icon: 'pi pi-briefcase', routerLink: ['/admin/usuarios'] } 
+    { label: 'Tipode de Exame/Consulta', icon: 'pi pi-briefcase', routerLink: ['/admin/tipoDeExameConsulta'] } ,
+    { label: 'Subsistema de Saúde', icon: 'pi pi-briefcase', routerLink: ['/admin/subsistemaSaude'] } ,
+    { label: 'Usuários', icon: 'pi pi-briefcase', routerLink: ['/admin/usuarios'] } 
   ];
 
   ngOnInit() {
