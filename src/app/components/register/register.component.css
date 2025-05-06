@@ -1,111 +1,145 @@
 .register-container {
-    max-width: 450px;
-    width: 100%;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  
-  .register-container h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .form-control {
-    padding: 8px;
-    font-size: 0.9rem;
-    width: 80%;
-  }
-  
-  .input-group {
-    width: 100%;
-  }
-  
-  .input-group-text {
-    background-color: #f8f9fa;
-    border: 1px solid #ced4da;
-    border-right: none;
-  }
-  
-  .input-group-text.toggle-password {
-    border-left: none;
-    cursor: pointer;
-    background-color: #f8f9fa;
-  }
-  
-  .form-control:focus {
-    box-shadow: none;
-    border-color: #007bff;
-  }
-  
-  .btn-login {
-    background-color: #007bff;
-    border: none;
-    padding: 8px;
-    font-size: 0.9rem;
-    width: 100%;
-  }
-  
-  .btn-login:hover {
-    background-color: #0056b3;
-  }
-  
-  .text-link {
-    font-size: 0.85rem;
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .text-link:hover {
-    text-decoration: underline;
-  }
-  
-  .text-center a {
-    margin-left: 5px;
-  }
-  
-  .text-danger {
-    margin-top: 5px;
-  }
+  min-height: 100vh;
+  background: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
 
+.register-form {
+  max-width: 700px;
+  width: 100%;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-  .social-login {
-    margin-top: 10px;
-  }
-  
-  .btn-social {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    color: white;
-    font-size: 1.5rem;
-    transition: transform 0.2s;
-  }
-  
-  .btn-social:hover {
-    transform: scale(1.1);
-  }
-  
-  .btn-google {
-    background-color: #db4437; /* Cor do Google */
-  }
-  
-  .btn-facebook {
-    background-color: #3b5998; /* Cor do Facebook */
-  }
-  
-  .btn-twitter {
-    background-color: #1da1f2; /* Cor do Twitter/X */
-  }
-  
-  .btn-github {
-    background-color: #333; /* Cor do GitHub */
-  }
+.register-form .input-group {
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.register-form .input-group:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.register-form .input-group-text {
+  background-color: #f8f9fa;
+  border-right: none;
+}
+
+.register-form .form-control {
+  border-left: none;
+  border-radius: 0 5px 5px 0;
+  transition: all 0.3s ease;
+}
+
+.register-form .form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  border-color: #86b7fe;
+  transform: scale(1.01);
+}
+
+.toggle-password {
+  cursor: pointer;
+  background-color: #f8f9fa;
+  border-left: none;
+  transition: all 0.3s ease;
+}
+
+.toggle-password:hover {
+  background-color: #e9ecef;
+}
+
+.btn-dark {
+  background-color: #000;
+  border-color: #000;
+  transition: all 0.3s ease;
+}
+
+.btn-dark:hover {
+  background-color: #333;
+  transform: translateY(-2px);
+}
+
+.btn-outline-secondary.btn-social {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-secondary.btn-social:hover {
+  background-color: #000;
+  color: #fff;
+  transform: rotate(5deg);
+}
+
+.text-danger {
+  margin-top: 5px;
+}
+
+/* Animações com Animate.css */
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+.fadeIn {
+  animation-name: fadeIn;
+}
+
+.slideInLeft {
+  animation-name: slideInLeft;
+}
+
+.slideInRight {
+  animation-name: slideInRight;
+}
+
+.bounceIn {
+  animation-name: bounceIn;
+}
+
+.zoomIn {
+  animation-name: zoomIn;
+}
+
+/* Keyframes para animações personalizadas (se necessário) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes bounceIn {
+  from, 20%, 40%, 60%, 80%, to { animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000); }
+  0% { opacity: 0; transform: scale3d(.3, .3, .3); }
+  20% { transform: scale3d(1.1, 1.1, 1.1); }
+  40% { transform: scale3d(.9, .9, .9); }
+  60% { opacity: 1; transform: scale3d(1.03, 1.03, 1.03); }
+  80% { transform: scale3d(.97, .97, .97); }
+  to { opacity: 1; transform: scale3d(1, 1, 1); }
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale3d(.3, .3, .3); }
+  50% { opacity: 1; }
+  to { transform: scale3d(1, 1, 1); }
+}

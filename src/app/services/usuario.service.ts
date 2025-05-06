@@ -3,70 +3,84 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { UserDTO, CreateUserDTO, UpdateUserDTO, LoginDTO, Usuario } from '../models/usuario';
-
 @Injectable({
   providedIn: 'root',
 })
 export class UsuarioService {
-  private apiUrl = 'https://localhost:7273/api/usuario'; // Ajustado para a URL do seu backend
+  private apiUrl = 'https://localhost:7273/api/Usuario';
 
   constructor(private http: HttpClient) {}
 
-  // Buscar todos os usuários
   getAllUsuarios(): Observable<Usuario[]> {
-    return this.http.get<UserDTO[]>(this.apiUrl).pipe(
-      map((users: UserDTO[]) => users.map(user => this.mapUserDtoToUsuario(user))),
+    return this.http.get<UserDTO[]>(`${this.apiUrl}/buscarTodos`).pipe(
+      map(users => users.map(this.mapUserDtoToUsuario)),
       catchError(this.handleError)
     );
   }
 
-  // Buscar usuários por termo (nome ou email)
-  searchUsuarios(term: string): Observable<Usuario[]> {
-    return this.http.get<UserDTO[]>(`${this.apiUrl}?search=${term}`).pipe(
-      map((users: UserDTO[]) => users.map(user => this.mapUserDtoToUsuario(user))),
+  getUsuarioById(id: number): Observable<Usuario> {
+    return this.http.get<UserDTO>(`${this.apiUrl}/buscarPeloId/${id}`).pipe(
+      map(this.mapUserDtoToUsuario),
       catchError(this.handleError)
     );
   }
 
-  // Cadastrar um novo usuário
   cadastrarUsuario(userDto: CreateUserDTO): Observable<Usuario> {
     return this.http.post<UserDTO>(`${this.apiUrl}/criarUser`, userDto).pipe(
-      map(user => this.mapUserDtoToUsuario(user)),
+      map(this.mapUserDtoToUsuario),
       catchError(this.handleError)
     );
   }
 
-  // Atualizar um usuário existente
   updateUsuario(updateDTO: UpdateUserDTO): Observable<Usuario> {
-    return this.http.put<UserDTO>(`${this.apiUrl}/${updateDTO.id}`, updateDTO).pipe(
-      map(user => this.mapUserDtoToUsuario(user)),
+    return this.http.put<UserDTO>(`${this.apiUrl}/atualizarUser/${updateDTO.id}`, updateDTO).pipe(
+      map(this.mapUserDtoToUsuario),
       catchError(this.handleError)
     );
   }
 
-  // Excluir um usuário
   deleteUsuario(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/eliminarUser/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Autenticar um usuário (login)
   login(loginDTO: LoginDTO): Observable<Usuario> {
     return this.http.post<UserDTO>(`${this.apiUrl}/login`, loginDTO).pipe(
-      map(user => this.mapUserDtoToUsuario(user)),
+      map(userDto => {
+        const user = this.mapUserDtoToUsuario(userDto);
+        // Armazenar token no localStorage
+        if (user.token) {
+          localStorage.setItem('token', user.token);
+        }
+        return user;
+      }),
       catchError(this.handleError)
     );
   }
 
-  // Função auxiliar para mapear UserDTO para Usuario
+  logout(): void {
+    localStorage.removeItem('token');
+    // Redirecionamento pode ser feito aqui ou em outro serviço
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
   private mapUserDtoToUsuario(userDto: UserDTO): Usuario {
     return {
       id: userDto.id,
-      nome: userDto.nome,
-      email: userDto.email,
-      senhaHash: '', // Não retornamos a senha
-      isAdmin: userDto.perfil === 'Administrador',
+      numeroUtente: userDto.numeroUtente || '',
+      nome: userDto.nome || '',
+      email: userDto.email || '',
+      perfil: userDto.perfil || '',
+      token: userDto.token,
+      dataNascimento: userDto.dataNascimento ? new Date(userDto.dataNascimento).toISOString().split('T')[0] : '',
+      genero: userDto.genero || '',
+      telemovel: userDto.telemovel || '',
+      morada: userDto.morada || '',
+      fotografia: userDto.fotografia
     };
   }
 

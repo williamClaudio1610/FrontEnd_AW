@@ -1,27 +1,27 @@
 export interface UserDTO {
   id: number;
-  numeroUtente: string;
+  numeroUtente?: string;
   nome: string;
   email: string;
   perfil: string;
-  token?: string; // Opcional, já que o backend não retorna um token real
+  token?: string;
   dataNascimento?: Date;
   genero?: string;
   telemovel?: string;
   morada?: string;
+  fotografia?: string; // adicionar se pretende que o back-end envie futuramente
 }
 
 export interface CreateUserDTO {
   fotografia?: string;
   nome: string;
   dataNascimento?: Date;
-  genero?: string;
+  genero: string;
   telemovel: string;
   email: string;
   morada: string;
-  senhaHash: string;
+  senha: string;
   perfil: string;
-  provincia?: string;
 }
 
 export interface UpdateUserDTO {
@@ -33,7 +33,7 @@ export interface UpdateUserDTO {
   telemovel?: string;
   email?: string;
   morada?: string;
-  senhaHash?: string;
+  senha?: string;
   perfil?: string;
 }
 
@@ -42,26 +42,16 @@ export interface LoginDTO {
   senha: string;
 }
 
-// Modelo para o formulário de registro
-export interface RegisterUser {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  phoneNumber: string;
-  province: string;
-  perfil: string;
-}
-
-// Modelo para o usuário no contexto do componente que você forneceu
 export interface Usuario {
   id: number;
+  numeroUtente: string;
   nome: string;
   email: string;
-  senhaHash: string;
-  isAdmin: boolean;
-}
-
-export class Usuario {
-
+  perfil: string;
+  token?: string;
+  telemovel: string;
+  morada: string;
+  dataNascimento: string; // Alterado para string
+  genero: string;
+  fotografia?: string;
 }

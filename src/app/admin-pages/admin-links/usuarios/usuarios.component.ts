@@ -1,40 +1,27 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
-import { CommonModule } from '@angular/common';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { UsuarioService } from '../../../services/usuario.service';
-import { UserDTO, CreateUserDTO, UpdateUserDTO, RegisterUser, LoginDTO, Usuario } from '../../../models/usuario';
+import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [
-    CommonModule,
-    ButtonModule,
-    DialogModule,
-    InputTextModule,
-    FormsModule,
-    ToastModule,
-    ConfirmDialogModule
-  ],
+  imports: [CommonModule, FormsModule, ButtonModule, DialogModule, InputTextModule, ToastModule, ConfirmDialogModule],
   providers: [MessageService, ConfirmationService],
   template: `
     <div class="usuarios-page">
       <p-toast></p-toast>
-      <p-confirmDialog header="Confirmação" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+      <p-confirmDialog header="Confirmação" icon="pi pi-exclamation-triangle" [style]="{width: '400px'}"></p-confirmDialog>
 
       <h2>Usuários</h2>
       <p>Lista de Usuários</p>
-
-      <div class="search-bar">
-        <input pInputText type="text" placeholder="Pesquisar por nome..." [(ngModel)]="searchTerm" (input)="searchUsers()" />
-      </div>
 
       <div class="add-button">
         <button type="button" class="btn btn-success" (click)="showDialog()">Adicionar Usuário</button>
@@ -51,6 +38,11 @@ import { UserDTO, CreateUserDTO, UpdateUserDTO, RegisterUser, LoginDTO, Usuario 
         (onShow)="onDialogShow()"
       >
         <div class="form-field">
+          <label for="fotografia">Fotografia *</label>
+          <input pInputText id="fotografia" [(ngModel)]="usuario.fotografia" [ngClass]="{'invalid': formSubmitted && !usuario.fotografia}" />
+          <small *ngIf="formSubmitted && !usuario.fotografia" class="error-message">Fotografia é obrigatória.</small>
+        </div>
+        <div class="form-field">
           <label for="nome">Nome *</label>
           <input #nomeInput pInputText id="nome" [(ngModel)]="usuario.nome" [ngClass]="{'invalid': formSubmitted && !usuario.nome}" />
           <small *ngIf="formSubmitted && !usuario.nome" class="error-message">Nome é obrigatório.</small>
@@ -66,31 +58,73 @@ import { UserDTO, CreateUserDTO, UpdateUserDTO, RegisterUser, LoginDTO, Usuario 
           <small *ngIf="formSubmitted && !senha && editIndex === null" class="error-message">Senha é obrigatória.</small>
         </div>
         <div class="form-field">
-          <label for="isAdmin">Administrador</label>
-          <input type="checkbox" id="isAdmin" [(ngModel)]="usuario.isAdmin" />
+          <label for="telemovel">Telemóvel *</label>
+          <input pInputText id="telemovel" [(ngModel)]="usuario.telemovel" [ngClass]="{'invalid': formSubmitted && !usuario.telemovel}" />
+          <small *ngIf="formSubmitted && !usuario.telemovel" class="error-message">Telemóvel é obrigatório.</small>
         </div>
-        <p-footer>
-          <p-button label="Salvar" severity="success" (onClick)="saveUsuario()" />
-          <p-button label="Cancelar" severity="secondary" (onClick)="displayDialog = false" />
-        </p-footer>
+        <div class="form-field">
+          <label for="morada">Morada *</label>
+          <input pInputText id="morada" [(ngModel)]="usuario.morada" [ngClass]="{'invalid': formSubmitted && !usuario.morada}" />
+          <small *ngIf="formSubmitted && !usuario.morada" class="error-message">Morada é obrigatória.</small>
+        </div>
+        <div class="form-field">
+          <label for="dataNascimento">Data de Nascimento *</label>
+          <input pInputText id="dataNascimento" type="date" [(ngModel)]="usuario.dataNascimento" [ngClass]="{'invalid': formSubmitted && !usuario.dataNascimento}" />
+          <small *ngIf="formSubmitted && !usuario.dataNascimento" class="error-message">Data de nascimento é obrigatória.</small>
+        </div>
+        <div class="form-field">
+          <label for="genero">Gênero *</label>
+          <select id="genero" [(ngModel)]="usuario.genero" [ngClass]="{'invalid': formSubmitted && !usuario.genero}">
+            <option value="">Selecione o gênero</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Outro">Outro</option>
+          </select>
+          <small *ngIf="formSubmitted && !usuario.genero" class="error-message">Gênero é obrigatório.</small>
+        </div>
+        <div class="form-field">
+          <label for="perfil">Perfil *</label>
+          <select id="perfil" [(ngModel)]="usuario.perfil" [ngClass]="{'invalid': formSubmitted && !usuario.perfil}">
+            <option value="">Selecione um perfil</option>
+            <option value="Administrador">Administrador</option>
+            <option value="Utente Registado">Utente Registado</option>
+            <option value="Administrativo">Administrativo</option>
+            <option value="UtenteAnónimo">Utente Anónimo</option>
+          </select>
+          <small *ngIf="formSubmitted && !usuario.perfil" class="error-message">Perfil é obrigatório.</small>
+        </div>
+        <ng-template pTemplate="footer">
+          <p-button label="Cancelar" severity="secondary" (onClick)="displayDialog = false" styleClass="p-button-text" />
+          <p-button label="Salvar" severity="success" (onClick)="saveUsuario()" styleClass="p-button-raised" />
+        </ng-template>
       </p-dialog>
 
       <table class="employee-table">
         <thead>
           <tr>
             <th>ID</th>
+            <th>Número Utente</th>
             <th>Nome</th>
             <th>E-mail</th>
-            <th>Administrador</th>
+            <th>Telemóvel</th>
+            <th>Morada</th>
+            <th>Data de Nascimento</th>
+            <th>Gênero</th>
+            <th>Perfil</th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let u of usuarios; let i = index">
             <td>{{ u.id }}</td>
+            <td>{{ u.numeroUtente || '-' }}</td>
             <td>{{ u.nome }}</td>
             <td>{{ u.email }}</td>
-            <td>{{ u.isAdmin ? 'Sim' : 'Não' }}</td>
+            <td>{{ u.telemovel || '-' }}</td>
+            <td>{{ u.morada || '-' }}</td>
+            <td>{{ u.dataNascimento ? (u.dataNascimento | date:'dd-MM-yyyy') : '-' }}</td>
+            <td>{{ u.genero || '-' }}</td>
+            <td>{{ u.perfil || '-' }}</td>
             <td>
               <button class="action-button" title="Editar" (click)="editUsuario(i)">
                 <i class="pi pi-pencil"></i>
@@ -102,6 +136,10 @@ import { UserDTO, CreateUserDTO, UpdateUserDTO, RegisterUser, LoginDTO, Usuario 
           </tr>
         </tbody>
       </table>
+      <ng-template #noData>
+        <p class="no-data">Nenhum usuário encontrado.</p>
+      </ng-template>
+      <p *ngIf="erro" class="erro-msg">{{ erro }}</p>
     </div>
   `,
   styles: [`
@@ -122,19 +160,6 @@ import { UserDTO, CreateUserDTO, UpdateUserDTO, RegisterUser, LoginDTO, Usuario 
     p {
       color: #6b7280;
       margin-bottom: 20px;
-    }
-
-    .search-bar {
-      margin-bottom: 20px;
-    }
-
-    .search-bar input {
-      width: 100%;
-      max-width: 300px;
-      padding: 8px;
-      border-radius: 4px;
-      border: 1px solid #e5e7eb;
-      font-size: 0.9rem;
     }
 
     .add-button {
@@ -210,11 +235,13 @@ import { UserDTO, CreateUserDTO, UpdateUserDTO, RegisterUser, LoginDTO, Usuario 
       color: #374151;
     }
 
-    .form-field input {
+    .form-field input,
+    .form-field select {
       width: 100%;
       padding: 8px;
       border-radius: 4px;
       font-size: 0.9rem;
+      border: 1px solid #e5e7eb;
     }
 
     .invalid {
@@ -226,6 +253,16 @@ import { UserDTO, CreateUserDTO, UpdateUserDTO, RegisterUser, LoginDTO, Usuario 
       font-size: 0.8rem;
       margin-top: 4px;
       display: block;
+    }
+
+    .no-data {
+      margin-top: 15px;
+      color: #666;
+    }
+
+    .erro-msg {
+      color: red;
+      margin-top: 15px;
     }
 
     :host ::ng-deep .p-dialog {
@@ -254,16 +291,39 @@ import { UserDTO, CreateUserDTO, UpdateUserDTO, RegisterUser, LoginDTO, Usuario 
       justify-content: flex-end;
       gap: 8px;
     }
+
+    :host ::ng-deep .p-confirm-dialog {
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    :host ::ng-deep .p-confirm-dialog .p-dialog-content {
+      background-color: #fff;
+      color: #1f2937;
+      padding: 20px;
+    }
+
+    :host ::ng-deep .p-confirm-dialog .p-dialog-footer {
+      padding: 16px;
+      background-color: #f9fafb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    :host ::ng-deep .p-confirm-dialog .p-button {
+      margin-left: 8px;
+    }
   `]
 })
-export class UsuariosComponent {
+export class UsuariosComponent implements OnInit {
   displayDialog: boolean = false;
-  usuario: Usuario = { id: 0, nome: '', email: '', senhaHash: '', isAdmin: false };
+  usuario: Usuario = { id: 0, numeroUtente: '', nome: '', email: '', perfil: '', token: undefined, telemovel: '', morada: '', dataNascimento: new Date().toISOString().split('T')[0], genero: '', fotografia: '' };
   usuarios: Usuario[] = [];
-  searchTerm: string = '';
   editIndex: number | null = null;
   formSubmitted: boolean = false;
-  senha: string = ''; // Para capturar a senha no formulário de registro
+  erro: string | null = null;
+  senha: string = '';
 
   @ViewChild('nomeInput') nomeInput!: ElementRef;
 
@@ -271,7 +331,9 @@ export class UsuariosComponent {
     private usuarioService: UsuarioService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.loadUsuarios();
   }
 
@@ -281,30 +343,21 @@ export class UsuariosComponent {
         this.usuarios = usuarios;
       },
       error: (err) => {
-        console.error('Erro ao carregar usuários:', err);
+        this.erro = 'Erro ao carregar usuários: ' + err.message;
+        console.error('Erro ao carregar usuários:', err.message);
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
       }
     });
   }
 
-  searchUsers() {
-    if (!this.searchTerm) {
-      this.loadUsuarios();
-      return;
-    }
-    this.usuarioService.searchUsuarios(this.searchTerm).subscribe({
-      next: (usuarios) => {
-        this.usuarios = usuarios;
-      },
-      error: (err) => {
-        console.error('Erro ao pesquisar usuários:', err);
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
-      }
-    });
+  parseDate(dateStr: string): Date | null {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split('-');
+    return new Date(Number(year), Number(month) - 1, Number(day));
   }
 
   showDialog() {
-    this.usuario = { id: 0, nome: '', email: '', senhaHash: '', isAdmin: false };
+    this.usuario = { id: 0, numeroUtente: '', nome: '', email: '', perfil: '', token: undefined, telemovel: '', morada: '', dataNascimento: new Date().toISOString().split('T')[0], genero: '', fotografia: '' };
     this.senha = '';
     this.editIndex = null;
     this.formSubmitted = false;
@@ -321,7 +374,7 @@ export class UsuariosComponent {
   saveUsuario() {
     this.formSubmitted = true;
 
-    if (!this.usuario.nome || !this.usuario.email) {
+    if (!this.usuario.fotografia || !this.usuario.nome || !this.usuario.email || !this.usuario.telemovel || !this.usuario.morada || !this.usuario.dataNascimento || !this.usuario.genero || !this.usuario.perfil) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Preencha todos os campos obrigatórios.' });
       return;
     }
@@ -337,54 +390,62 @@ export class UsuariosComponent {
       return;
     }
 
+    const parsedDataNascimento = this.parseDate(this.usuario.dataNascimento);
+
+    if (!parsedDataNascimento) {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Data de nascimento inválida.' });
+      return;
+    }
+
     if (this.editIndex !== null) {
-      // Atualizar usuário existente
       const updateDTO: UpdateUserDTO = {
         id: this.usuario.id,
         nome: this.usuario.nome,
         email: this.usuario.email,
-        perfil: this.usuario.isAdmin ? 'Administrador' : 'UtenteRegistado',
-        fotografia: undefined,
-        dataNascimento: undefined,
-        genero: undefined,
-        telemovel: undefined,
-        morada: undefined,
-        senhaHash: this.senha || undefined,
+        perfil: this.usuario.perfil,
+        fotografia: this.usuario.fotografia,
+        dataNascimento: parsedDataNascimento,
+        genero: this.usuario.genero,
+        telemovel: this.usuario.telemovel,
+        morada: this.usuario.morada,
+        senha: this.senha || undefined,
       };
       this.usuarioService.updateUsuario(updateDTO).subscribe({
-        next: (updatedUser) => {
+        next: (updatedUser: Usuario) => {
+          this.usuarios[this.editIndex!] = updatedUser;
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado com sucesso!' });
           this.loadUsuarios();
           this.displayDialog = false;
         },
         error: (err) => {
+          this.erro = `Erro ao atualizar usuário: ${err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message)}`;
           console.error('Erro ao atualizar usuário:', err);
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message) });
         }
       });
     } else {
-      // Criar novo usuário
       const createUserDTO: CreateUserDTO = {
+        fotografia: this.usuario.fotografia,
         nome: this.usuario.nome,
         email: this.usuario.email,
-        senhaHash: this.senha,
-        perfil: this.usuario.isAdmin ? 'Administrador' : 'UtenteRegistado',
-        telemovel: '', // Opcional no backend
-        morada: '', // Opcional no backend
-        provincia: '',
-        dataNascimento: undefined,
-        genero: undefined,
-        fotografia: undefined,
+        senha: this.senha,
+        perfil: this.usuario.perfil,
+        telemovel: this.usuario.telemovel,
+        morada: this.usuario.morada,
+        dataNascimento: parsedDataNascimento,
+        genero: this.usuario.genero,
       };
       this.usuarioService.cadastrarUsuario(createUserDTO).subscribe({
-        next: (newUser) => {
-          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário registrado com sucesso!' });
+        next: (newUser: Usuario) => {
+          this.usuarios.push(newUser);
+          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado com sucesso!' });
           this.loadUsuarios();
           this.displayDialog = false;
         },
         error: (err) => {
-          console.error('Erro ao registrar usuário:', err);
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
+          this.erro = 'Erro ao adicionar usuário: ' + (err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message));
+          console.error('Erro ao adicionar usuário:', err);
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message) });
         }
       });
     }
@@ -409,21 +470,22 @@ export class UsuariosComponent {
         this.loadUsuarios();
       },
       error: (err) => {
-        console.error('Erro ao excluir usuário:', err);
+        this.erro = 'Erro ao eliminar usuário: ' + err.message;
+        console.error('Erro ao eliminar usuário:', err.message);
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
       }
     });
   }
 
   onDialogShow() {
-    if (this.nomeInput) {
+    if (this.displayDialog && this.nomeInput && !document.activeElement) {
       this.nomeInput.nativeElement.focus();
     }
   }
 
   onDialogHide() {
     this.formSubmitted = false;
-    this.usuario = { id: 0, nome: '', email: '', senhaHash: '', isAdmin: false };
+    this.usuario = { id: 0, numeroUtente: '', nome: '', email: '', perfil: '', token: undefined, telemovel: '', morada: '', dataNascimento: new Date().toISOString().split('T')[0], genero: '', fotografia: '' };
     this.senha = '';
   }
 }

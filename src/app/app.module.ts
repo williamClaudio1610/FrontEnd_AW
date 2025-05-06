@@ -7,7 +7,9 @@ import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast'; // Importar o ToastModule
 import { MessageService } from 'primeng/api';
-
+import { CardModule } from 'primeng/card';
+import Aura from '@primeng/themes/aura'
+import laraLight from '@primeng/themes/lara'; 
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { PaginaInicialComponent } from './components/pagina-inicial/pagina-inicial.component';
@@ -27,6 +29,7 @@ import {ProfissionaisComponent} from './admin-pages/admin-links/profissionais2/p
 import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.component';
 import { SubsistemaSaudeComponent } from './admin-pages/admin-links/subsistema-saude/subsistema-saude.component';
 import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-consulta-exame/tipo-de-consulta-exame.component';
+import { providePrimeNG } from 'primeng/config';
 
 @NgModule({
   declarations: [
@@ -56,11 +59,18 @@ import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-
     TipoDeConsultaExameComponent,
     UsuariosComponent,
     HttpClientModule,
-    ToastModule
+    ToastModule,
+    CardModule
     
 ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, MessageService, 
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, MessageService,
+    providePrimeNG({
+      theme:{
+        preset: Aura
+        
+      }
+    }) 
   ],
   bootstrap: [AppComponent]
   })

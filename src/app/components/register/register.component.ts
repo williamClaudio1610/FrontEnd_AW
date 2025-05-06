@@ -1,11 +1,9 @@
-
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UsuarioService } from '../../services/usuario.service';
 import { CreateUserDTO } from '../../models/usuario';
 import { MessageService } from 'primeng/api';
-
 
 @Component({
   selector: 'app-register',
@@ -17,23 +15,27 @@ export class RegisterComponent implements OnInit {
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
   confirmarSenha: string = '';
+  provincia: string = '';
   user: CreateUserDTO = {
+    fotografia: '',
     nome: '',
     email: '',
-    senhaHash: '',
-    perfil: '',
+    senha: '',
+    perfil: 'Utente Registado',
     telemovel: '',
     morada: '',
     dataNascimento: undefined,
     genero: '',
-    fotografia: undefined,
-    provincia: '', // Campo adicional para província
   };
   provinces: string[] = [
     'Bengo', 'Benguela', 'Bié', 'Cabinda', 'Cuando Cubango', 'Cuanza Norte',
     'Cuanza Sul', 'Cunene', 'Huambo', 'Huíla', 'Luanda', 'Lunda Norte',
     'Lunda Sul', 'Malanje', 'Moxico', 'Namibe', 'Uíge', 'Zaire',
   ];
+
+  errorMessage: string = '';
+  successMessage: string = '';
+  
 
   constructor(
     private usuarioService: UsuarioService,
@@ -57,15 +59,29 @@ export class RegisterComponent implements OnInit {
       const file = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
-        this.user.fotografia = reader.result as string; // Armazena a imagem como base64
+        this.user.fotografia = reader.result as string;
       };
       reader.readAsDataURL(file);
+    } else {
+      this.user.fotografia = '';
     }
   }
 
   onSubmit(): void {
-    // Validar se as senhas coincidem
-    if (this.user.senhaHash !== this.confirmarSenha) {
+    console.log('Valores do formulário:', {
+      nome: this.user.nome,
+      email: this.user.email,
+      senha: this.user.senha,
+      telemovel: this.user.telemovel,
+      morada: this.user.morada,
+      dataNascimento: this.user.dataNascimento,
+      genero: this.user.genero,
+      provincia: this.provincia,
+      confirmarSenha: this.confirmarSenha,
+      fotografia: this.user.fotografia,
+    });
+
+    if (this.user.senha !== this.confirmarSenha) {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
@@ -74,10 +90,57 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    // Combinar morada e província
-    this.user.morada = `${this.user.morada}, ${this.user.provincia}`;
+    if (
+      !this.user.nome ||
+      !this.user.email ||
+      !this.user.senha ||
+      !this.user.telemovel ||
+      !this.user.morada ||
+      !this.user.dataNascimento ||
+      !this.user.genero
+    ) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Preencha todos os campos obrigatórios.',
+      });
+      return;
+    }
 
-    // Chamar o serviço para registrar o usuário
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.user.email)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'E-mail inválido.',
+      });
+      return;
+    }
+
+    const telemovelRegex = /^\+244\d{9}$/;
+    if (!telemovelRegex.test(this.user.telemovel)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'O número de telemóvel deve seguir o formato +244 seguido de 9 dígitos.',
+      });
+      return;
+    }
+
+    this.user.morada = `${this.user.morada}, ${this.provincia}`;
+
+    const userDTO: CreateUserDTO = {
+      fotografia: this.user.fotografia || '',
+      nome: this.user.nome,
+      email: this.user.email,
+      senha: this.user.senha,
+      perfil: 'Utente Registado',
+      telemovel: this.user.telemovel,
+      morada: this.user.morada,
+      dataNascimento: new Date(this.user.dataNascimento),
+      genero: this.user.genero,
+    };
+
     this.usuarioService.cadastrarUsuario(this.user).subscribe({
       next: (response) => {
         this.messageService.add({
@@ -85,7 +148,6 @@ export class RegisterComponent implements OnInit {
           summary: 'Sucesso',
           detail: `Usuário ${response.nome} cadastrado com sucesso!`,
         });
-        // Redirecionar para a tela de login após 2 segundos
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 2000);
@@ -94,7 +156,7 @@ export class RegisterComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: err.message,
+          detail: err.error?.message || JSON.stringify(err.error),
         });
       },
     });
