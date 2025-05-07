@@ -9,7 +9,8 @@ import { ToastModule } from 'primeng/toast'; // Importar o ToastModule
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import Aura from '@primeng/themes/aura'
-import laraLight from '@primeng/themes/lara'; 
+import { CarouselModule } from 'primeng/carousel';
+
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { PaginaInicialComponent } from './components/pagina-inicial/pagina-inicial.component';
@@ -19,7 +20,8 @@ import { SideMenuComponent } from './admin-pages/side-menu/side-menu.component';
 import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
 import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
-
+import { InputTextModule } from 'primeng/inputtext';
+import { MenubarModule } from 'primeng/menubar';
 // PrimeNG Modules
 import { SidebarModule } from 'primeng/sidebar';
 import { MenuModule } from 'primeng/menu';
@@ -60,8 +62,10 @@ import { providePrimeNG } from 'primeng/config';
     UsuariosComponent,
     HttpClientModule,
     ToastModule,
-    CardModule
-    
+    CardModule,
+    InputTextModule, // Para p-inputText
+    MenubarModule,
+    CarouselModule
 ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, MessageService,

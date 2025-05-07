@@ -20,7 +20,7 @@ export interface CreateUserDTO {
   telemovel: string;
   email: string;
   morada: string;
-  senha: string;
+  senhaHash: string;
   perfil: string;
 }
 
@@ -33,7 +33,7 @@ export interface UpdateUserDTO {
   telemovel?: string;
   email?: string;
   morada?: string;
-  senha?: string;
+  senhaHash?: string;
   perfil?: string;
 }
 

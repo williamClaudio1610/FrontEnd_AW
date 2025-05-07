@@ -135,7 +135,7 @@
       </div>
     </div>
 
-    <!-- Senha e Confirmar Senha -->
+    <!-- senhaHash e Confirmar senhaHash -->
     <div class="row mb-5">
       <div class="col-md-6 mb-3 mb-md-0">
         <div class="input-group">
@@ -143,11 +143,11 @@
           <input
             [type]="showPassword ? 'text' : 'password'"
             class="form-control"
-            id="senha"
-            placeholder="Senha"
-            [(ngModel)]="user.senha"
-            name="senha"
-            #senha="ngModel"
+            id="senhaHash"
+            placeholder="senhaHash"
+            [(ngModel)]="user.senhaHash"
+            name="senhaHash"
+            #senhaHash="ngModel"
             required
             minlength="6"
           />
@@ -155,11 +155,11 @@
             <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleIcon"></i>
           </span>
         </div>
-        <div *ngIf="registerForm.submitted && senha.errors?.['required']" class="text-danger small">
-          A senha é obrigatória.
+        <div *ngIf="registerForm.submitted && senhaHash.errors?.['required']" class="text-danger small">
+          A senhaHash é obrigatória.
         </div>
-        <div *ngIf="registerForm.submitted && senha.errors?.['minlength']" class="text-danger small">
-          A senha deve ter pelo menos 6 caracteres.
+        <div *ngIf="registerForm.submitted && senhaHash.errors?.['minlength']" class="text-danger small">
+          A senhaHash deve ter pelo menos 6 caracteres.
         </div>
       </div>
       <div class="col-md-6">
@@ -168,22 +168,22 @@
           <input
             [type]="showConfirmPassword ? 'text' : 'password'"
             class="form-control"
-            id="confirmarSenha"
-            placeholder="Confirmar Senha"
-            [(ngModel)]="confirmarSenha"
-            name="confirmarSenha"
-            #confirmarSenhaInput="ngModel"
+            id="confirmarsenhaHash"
+            placeholder="Confirmar senhaHash"
+            [(ngModel)]="confirmarsenhaHash"
+            name="confirmarsenhaHash"
+            #confirmarsenhaHashInput="ngModel"
             required
           />
           <span class="input-group-text toggle-password" (click)="toggleConfirmPassword()">
             <i class="fa" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleConfirmIcon"></i>
           </span>
         </div>
-        <div *ngIf="registerForm.submitted && confirmarSenhaInput.errors?.['required']" class="text-danger small">
-          A confirmação de senha é obrigatória.
+        <div *ngIf="registerForm.submitted && confirmarsenhaHashInput.errors?.['required']" class="text-danger small">
+          A confirmação de senhaHash é obrigatória.
         </div>
-        <div *ngIf="registerForm.submitted && user.senha !== confirmarSenha" class="text-danger small">
-          As senhas não coincidem.
+        <div *ngIf="registerForm.submitted && user.senhaHash !== confirmarsenhaHash" class="text-danger small">
+          As senhaHashs não coincidem.
         </div>
       </div>
     </div>

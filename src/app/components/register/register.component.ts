@@ -14,13 +14,13 @@ import { MessageService } from 'primeng/api';
 export class RegisterComponent implements OnInit {
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
-  confirmarSenha: string = '';
+  confirmarsenhaHash: string = '';
   provincia: string = '';
   user: CreateUserDTO = {
     fotografia: '',
     nome: '',
     email: '',
-    senha: '',
+    senhaHash: '',
     perfil: 'Utente Registado',
     telemovel: '',
     morada: '',
@@ -71,21 +71,21 @@ export class RegisterComponent implements OnInit {
     console.log('Valores do formulário:', {
       nome: this.user.nome,
       email: this.user.email,
-      senha: this.user.senha,
+      senhaHash: this.user.senhaHash,
       telemovel: this.user.telemovel,
       morada: this.user.morada,
       dataNascimento: this.user.dataNascimento,
       genero: this.user.genero,
       provincia: this.provincia,
-      confirmarSenha: this.confirmarSenha,
+      confirmarsenhaHash: this.confirmarsenhaHash,
       fotografia: this.user.fotografia,
     });
 
-    if (this.user.senha !== this.confirmarSenha) {
+    if (this.user.senhaHash !== this.confirmarsenhaHash) {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
-        detail: 'As senhas não coincidem.',
+        detail: 'As senhaHashs não coincidem.',
       });
       return;
     }
@@ -93,7 +93,7 @@ export class RegisterComponent implements OnInit {
     if (
       !this.user.nome ||
       !this.user.email ||
-      !this.user.senha ||
+      !this.user.senhaHash ||
       !this.user.telemovel ||
       !this.user.morada ||
       !this.user.dataNascimento ||
@@ -133,7 +133,7 @@ export class RegisterComponent implements OnInit {
       fotografia: this.user.fotografia || '',
       nome: this.user.nome,
       email: this.user.email,
-      senha: this.user.senha,
+      senhaHash: this.user.senhaHash,
       perfil: 'Utente Registado',
       telemovel: this.user.telemovel,
       morada: this.user.morada,

@@ -1,50 +1,96 @@
-<header class="header">
-    <!-- Top Bar -->
-    <div class="top-bar d-flex align-items-center justify-content-between p-3">
-      <!-- Logotipo -->
-      <div class="logo">
-        <a [routerLink]="['/']">
-          <span class="logo-text">XPTO</span>
-        </a>
-      </div>
-  
-      <!-- Barra de Pesquisa -->
-      <div class="search-bar">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="O que procuras?">
-          <span class="input-group-text">
-            <i class="fa fa-search"></i>
-          </span>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-lg py-3 fixed-top">
+  <div class="container-fluid px-5">
+    <!-- Logo + Nome -->
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+      <img src="assets/logo.png" alt="Insove" height="50" />
+      <span class="ms-3 text-primary fs-3 fw-bold">ClinicaXPTO</span>
+    </a>
+
+    <!-- Botão de mobile -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Links de Navegação -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/']">Início</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/sobre']">Sobre Nós</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/servicos']">Serviços</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/agendamento']">Agendamento</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/medicos']">Médicos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/contato']">Contato</a>
+        </li>
+      </ul>
+
+      <!-- Barra de Pesquisa + Contact + Botões -->
+      <div class="d-flex align-items-center gap-3">
+        <!-- Barra de Pesquisa -->
+        <div class="d-flex align-items-center">
+          <p-inputText
+            [(ngModel)]="searchQuery"
+            placeholder="Pesquisar..."
+            styleClass="p-inputtext-lg rounded-start border-end-0"
+            class="me-0"
+          ></p-inputText>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-search"
+            class="p-button-primary rounded-end border-start-0"
+            (click)="onSearch()"
+          ></button>
+        </div>
+
+        <!-- Localização e Telefone (visível apenas em telas grandes) -->
+        <div class="d-none d-lg-flex align-items-center me-4">
+          <i class="pi pi-map-marker text-secondary me-2"></i>
+          <small class="text-secondary">ISPTEC, Talaton, LD</small>
+        </div>
+        <div class="d-none d-lg-flex align-items-center me-4">
+          <i class="pi pi-phone text-secondary me-2"></i>
+          <small class="text-secondary">(+244) 949-276-083</small>
+        </div>
+
+        <!-- Botões de Login e Criar Conta -->
+        <div class="d-flex gap-2">
+          <button
+            pButton
+            type="button"
+            label="Entrar"
+            icon="pi pi-sign-in"
+            class="p-button-outlined p-button-primary"
+            [routerLink]="['/login']"
+          ></button>
+          <button
+            pButton
+            type="button"
+            label="Criar Conta"
+            icon="pi pi-user-plus"
+            class="p-button-primary"
+            [routerLink]="['/register']"
+          ></button>
         </div>
       </div>
-  
-      <!-- Ícones à Direita -->
-      <div class="icons d-flex gap-3">
-        <a [routerLink]="['/login']" class="icon-link">
-          <i class="fa fa-user"></i> Entrar
-        </a>
-        <a href="#" class="icon-link">
-          <i class="fa fa-heart"></i>
-        </a>
-        <a href="#" class="icon-link">
-          <i class="fa fa-shopping-cart"></i>
-        </a>
-      </div>
     </div>
-  
-    <!-- Menu de Navegação -->
-    <nav class="nav-bar d-flex align-items-center p-3">
-      <div class="menu-icon me-3">
-        <i class="fa fa-bars"></i>
-      </div>
-      <ul class="nav-links d-flex gap-4 m-0 p-0">
-        <li><a [routerLink]="['/todos-produtos']">Todos os Produtos</a></li>
-        <li><a [routerLink]="['/informatica']">Informática</a></li>
-        <li><a [routerLink]="['/escritorio-papelaria']">Escritório e Papelaria</a></li>
-        <li><a [routerLink]="['/eletrodomesticos']">Eletrodomésticos</a></li>
-        <li><a [routerLink]="['/smartphones-tablets']">Smartphones e Tablets</a></li>
-        <li><a [routerLink]="['/energia']">Energia</a></li>
-        <li><a [routerLink]="['/imagem-som']">Imagem e Som</a></li>
-      </ul>
-    </nav>
-  </header>
+  </div>
+</nav>

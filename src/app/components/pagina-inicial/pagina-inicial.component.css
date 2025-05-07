@@ -1,0 +1,64 @@
+/* Hero section */
+.hero-section {
+    background-color: #f0fafb;
+    padding: 4rem 0;
+  }
+  
+  /* Carousel item */
+  .carousel-item-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+  }
+  
+  .carousel-item-card img {
+    max-height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Estatísticas */
+  .stats-section {
+    background-color: #fff;
+  }
+  
+  .stats-section h2 {
+    font-size: 2.5rem;
+    color: #00bcd4;
+  }
+  .stats-section p {
+    font-size: 1rem;
+  }
+  
+
+
+
+
+  .services-section {
+    background-color: #00c4cc;
+    border-radius: 0.75rem;
+    margin: 2rem 0;
+  }
+  
+  .services-section h2,
+  .services-section p {
+    color: #fff;
+  }
+  
+  .service-card {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+  }
+  
+  .service-icon {
+    font-size: 2rem;
+    color: #00b9c5;
+  }
+  
+  /* Responsividade do texto */
+  @media (max-width: 767px) {
+    .services-section {
+      text-align: center;
+    }
+  }
+  

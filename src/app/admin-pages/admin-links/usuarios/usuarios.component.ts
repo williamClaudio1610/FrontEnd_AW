@@ -408,7 +408,7 @@ export class UsuariosComponent implements OnInit {
         genero: this.usuario.genero,
         telemovel: this.usuario.telemovel,
         morada: this.usuario.morada,
-        senha: this.senha || undefined,
+        senhaHash: this.senha || undefined,
       };
       this.usuarioService.updateUsuario(updateDTO).subscribe({
         next: (updatedUser: Usuario) => {
@@ -428,11 +428,11 @@ export class UsuariosComponent implements OnInit {
         fotografia: this.usuario.fotografia,
         nome: this.usuario.nome,
         email: this.usuario.email,
-        senha: this.senha,
+        senhaHash: this.senha,
         perfil: this.usuario.perfil,
         telemovel: this.usuario.telemovel,
         morada: this.usuario.morada,
-        dataNascimento: parsedDataNascimento,
+        dataNascimento: this.parseDate(this.usuario.dataNascimento) || undefined,
         genero: this.usuario.genero,
       };
       this.usuarioService.cadastrarUsuario(createUserDTO).subscribe({
