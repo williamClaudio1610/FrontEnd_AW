@@ -91,30 +91,12 @@
 
     <!-- Primeira Fila de Cards -->
     <div class="row g-4 mb-4">
-      <div class="col-md-4">
+      <div class="col-md-4" *ngFor="let servico of servicos">
         <div class="card service-card h-100 border-0 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80" class="card-img-top" alt="Consultas">
+          <img [src]="servico.imagem" class="card-img-top" [alt]="servico.alt">
           <div class="card-body">
-            <h5 class="card-title">Consultas Especializadas</h5>
-            <p class="card-text">Agende consultas com especialistas em cardiologia, pediatria e mais.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card service-card h-100 border-0 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80" class="card-img-top" alt="Exames">
-          <div class="card-body">
-            <h5 class="card-title">Exames Laboratoriais</h5>
-            <p class="card-text">Realize exames de sangue, urina e outros com resultados rápidos.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card service-card h-100 border-0 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80" class="card-img-top" alt="Ultrassom">
-          <div class="card-body">
-            <h5 class="card-title">Ultrassom</h5>
-            <p class="card-text">Exames de imagem para diagnóstico preciso e seguro.</p>
+            <h5 class="card-title">{{ servico.titulo }}</h5>
+            <p class="card-text">{{ servico.descricao }}</p>
           </div>
         </div>
       </div>
@@ -122,34 +104,16 @@
 
     <!-- Segunda Fila de Cards -->
     <div class="row g-4">
-      <div class="col-md-4">
+      <div class="col-md-4" *ngFor="let servico of servicos">
         <div class="card service-card h-100 border-0 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80" class="card-img-top" alt="Raio-X">
+          <img [src]="servico.imagem" class="card-img-top" [alt]="servico.alt">
           <div class="card-body">
-            <h5 class="card-title">Raio-X</h5>
-            <p class="card-text">Exames de raio-X para ossos e órgãos internos.</p>
+            <h5 class="card-title">{{ servico.titulo }}</h5>
+            <p class="card-text">{{ servico.descricao }}</p>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card service-card h-100 border-0 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80" class="card-img-top" alt="Acompanhamento">
-          <div class="card-body">
-            <h5 class="card-title">Acompanhamento Médico</h5>
-            <p class="card-text">Acompanhe seu tratamento com nossa equipe dedicada.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card service-card h-100 border-0 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80" class="card-img-top" alt="Vacinação">
-          <div class="card-body">
-            <h5 class="card-title">Vacinação</h5>
-            <p class="card-text">Proteja-se com vacinas para todas as idades.</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    </div>    
   </div>
   <div class="text-center">
     <button pButton type="button" label="ver serviços" class="mt-4 p-button-primary btn-blue" [routerLink]="['/consultasExames']"></button>

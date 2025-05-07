@@ -33,8 +33,11 @@ import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.c
 import { SubsistemaSaudeComponent } from './admin-pages/admin-links/subsistema-saude/subsistema-saude.component';
 import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-consulta-exame/tipo-de-consulta-exame.component';
 import { providePrimeNG } from 'primeng/config';
-import { ConsultasExamesComponent } from './components/consultas-exames/consultas-exames.component';
+import { ConsultasExamesComponent } from './components/paginas-menu/consultas-exames/consultas-exames.component';
 import { NewsletterFaqSectionComponent } from './components/pagina-inicial/newsletter-faq-section/newsletter-faq-section.component';
+import { SobreNosComponent } from './components/paginas-menu/sobre-nos/sobre-nos.component';
+import { ContacteNosComponent } from './components/paginas-menu/contacte-nos/contacte-nos.component';
+import { EquipaComponent } from './components/paginas-menu/equipa/equipa.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +49,9 @@ import { NewsletterFaqSectionComponent } from './components/pagina-inicial/newsl
     LoginComponent,
     ConsultasExamesComponent,
     NewsletterFaqSectionComponent,
+    SobreNosComponent,
+    ContacteNosComponent,
+    EquipaComponent,
 
 
   ],

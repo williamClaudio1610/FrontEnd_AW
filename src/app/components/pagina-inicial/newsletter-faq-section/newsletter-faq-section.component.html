@@ -15,17 +15,18 @@
         <!-- Subscrição à Newsletter -->
         <div class="col-md-6 mb-4 mb-md-0">
           <div class="newsletter-section p-4">
-            <h3 class="text-center mb-3 text-white">Subscreva a Nossa Newsletter</h3>
+            <h2 class="h3 mb-2">Subscreva a Nossa Newsletter</h2>
             <p class="text-center mb-4 text-white">Receba atualizações sobre saúde, promoções e novidades diretamente no seu e-mail.</p>
             <div class="d-flex justify-content-center">
               <div class="w-75">
                 <div class="d-flex align-items-center gap-2">
-                  <p-inputText
-                    [(ngModel)]="email"
-                    placeholder="Digite seu e-mail"
-                    styleClass="p-inputtext-lg w-100 newsletter-input"
-                    required
-                  ></p-inputText>
+                  <input
+                  pInputText
+                  [(ngModel)]="email"
+                  placeholder="Digite seu e-mail"
+                  class="form-control newsletter-input"
+                  required
+                    />
                   <button
                     pButton
                     type="button"

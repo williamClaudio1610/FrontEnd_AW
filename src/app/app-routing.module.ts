@@ -6,7 +6,10 @@ import { PaginaInicialComponent } from './components/pagina-inicial/pagina-inici
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main-page.component'; // Importar o FormsModule
-import { ConsultasExamesComponent } from './components/consultas-exames/consultas-exames.component';
+import { ConsultasExamesComponent } from './components/paginas-menu/consultas-exames/consultas-exames.component';
+import { ContacteNosComponent } from './components/paginas-menu/contacte-nos/contacte-nos.component';
+import { EquipaComponent } from './components/paginas-menu/equipa/equipa.component';
+import { SobreNosComponent } from './components/paginas-menu/sobre-nos/sobre-nos.component';
 //componentes do admin
 import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
 import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
@@ -23,6 +26,9 @@ const routes: Routes = [
   {path: 'header',component: HeaderComponent},
   {path: 'footer',component: FooterComponent},
   {path: 'consultasExames',component: ConsultasExamesComponent},
+  {path: 'contacteNos',component: ContacteNosComponent},
+  {path: 'equipa',component: EquipaComponent},
+  {path: 'sobreNos',component: SobreNosComponent},
   {
     path: 'admin',
     component: AdminMainPageComponent,
@@ -36,8 +42,8 @@ const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
-  {path: '',redirectTo: '/login',pathMatch: 'full'},
-  { path: '**', redirectTo: '/login' } // Rota curinga para redirecionar qualquer rota inválida
+  {path: '',redirectTo: '/paginaInicial',pathMatch: 'full'},
+  { path: '**', redirectTo: '/paginaInicial' } // Rota curinga para redirecionar qualquer rota inválida
   
 ];
 

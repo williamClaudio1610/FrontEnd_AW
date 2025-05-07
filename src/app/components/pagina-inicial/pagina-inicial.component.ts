@@ -49,6 +49,27 @@ export class PaginaInicialComponent implements OnInit, AfterViewInit {
     { key: 'experiencia', label: 'Anos de experiencia', value: 10 },
   ];
 
+  servicos = [
+    {
+    titulo: 'Consulta de rotina',
+    descricao: 'Consulta médica de rotina para avaliação geral da saúde.',
+    imagem: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
+    alt: 'Imagem de consulta médica'
+    },
+    {
+      titulo: 'Exames laboratoriais',
+      descricao: 'Realização de exames laboratoriais para diagnóstico preciso.',
+      imagem: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
+      alt: 'Imagem de exames laboratoriais'
+    },
+    {
+      titulo: 'Vacinação',
+      descricao: 'Aplicação de vacinas para prevenção de doenças.',
+      imagem: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
+      alt: 'Imagem de vacinação'
+    },
+  ]
+
   // Contadores animados
   animatedCounts: { [key: string]: number } = {
     pacientes: 0,
