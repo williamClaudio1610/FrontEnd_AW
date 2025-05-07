@@ -35,14 +35,14 @@
 }
 
 .edit-profile {
-  color: #60a5fa; /* Azul suave */
+  color: #00bcd4; /* Azul suave */
   font-size: 0.9rem;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .edit-profile:hover {
-  color: #93c5fd;
+  color: #00bcd4;
   text-decoration: underline;
 }
 
@@ -78,11 +78,11 @@
   background-color: #2d3748;
   color: #fff;
   font-weight: 600;
-  border-left: 4px solid #60a5fa; /* Destaque lateral azul */
+  border-left: 4px solid #00bcd4; /* Destaque lateral azul */
 }
 
 .menu-item.active i {
-  color: #60a5fa; /* Ícone azul quando ativo */
+  color: #00bcd4; /* Ícone azul quando ativo */
 }
 
 .logout-section {

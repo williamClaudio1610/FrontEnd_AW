@@ -6,7 +6,7 @@ import { PaginaInicialComponent } from './components/pagina-inicial/pagina-inici
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdminMainPageComponent } from './admin-pages/admin-main-page/admin-main-page.component'; // Importar o FormsModule
-
+import { ConsultasExamesComponent } from './components/consultas-exames/consultas-exames.component';
 //componentes do admin
 import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
 import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
@@ -22,6 +22,7 @@ const routes: Routes = [
   {path: 'paginaInicial',component: PaginaInicialComponent},
   {path: 'header',component: HeaderComponent},
   {path: 'footer',component: FooterComponent},
+  {path: 'consultasExames',component: ConsultasExamesComponent},
   {
     path: 'admin',
     component: AdminMainPageComponent,

@@ -1,0 +1,25 @@
+<section class="services-page py-5" style="background-color: #1a252f; color: #ffffff;">
+    <div class="container">
+      <h2 class="text-teal-400 mb-5 text-center" style="font-size: 2.5rem; font-weight: bold;">Nossos Serviços</h2>
+      <div class="row">
+        <!-- Consultas -->
+        <div class="col-md-6 mb-4">
+          <h3 class="text-teal-400">Consultas</h3>
+          <ul class="list-unstyled">
+            <li class="mb-2" *ngFor="let consulta of consultas">
+              <i class="pi pi-check-circle text-teal-400 me-2"></i> {{ consulta.nome }} - {{ consulta.descricao }}
+            </li>
+          </ul>
+        </div>
+        <!-- Exames -->
+        <div class="col-md-6 mb-4">
+          <h3 class="text-teal-400">Exames</h3>
+          <ul class="list-unstyled">
+            <li class="mb-2" *ngFor="let exame of exames">
+              <i class="pi pi-check-circle text-teal-400 me-2"></i> {{ exame.nome }} - {{ exame.descricao }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>

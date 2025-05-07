@@ -10,6 +10,7 @@ import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import Aura from '@primeng/themes/aura'
 import { CarouselModule } from 'primeng/carousel';
+import { AccordionModule } from 'primeng/accordion';
 
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -32,6 +33,8 @@ import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.c
 import { SubsistemaSaudeComponent } from './admin-pages/admin-links/subsistema-saude/subsistema-saude.component';
 import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-consulta-exame/tipo-de-consulta-exame.component';
 import { providePrimeNG } from 'primeng/config';
+import { ConsultasExamesComponent } from './components/consultas-exames/consultas-exames.component';
+import { NewsletterFaqSectionComponent } from './components/pagina-inicial/newsletter-faq-section/newsletter-faq-section.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +44,8 @@ import { providePrimeNG } from 'primeng/config';
     FooterComponent,
     HeaderComponent,
     LoginComponent,
+    ConsultasExamesComponent,
+    NewsletterFaqSectionComponent,
 
 
   ],
@@ -65,7 +70,8 @@ import { providePrimeNG } from 'primeng/config';
     CardModule,
     InputTextModule, // Para p-inputText
     MenubarModule,
-    CarouselModule
+    CarouselModule,
+    AccordionModule
 ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, MessageService,

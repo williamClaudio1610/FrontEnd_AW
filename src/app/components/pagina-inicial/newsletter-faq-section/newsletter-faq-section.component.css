@@ -1,0 +1,55 @@
+
+/* Newsletter and FAQ */
+.newsletter-faq-section {
+    background-color: #f8f9fa;
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+  
+  .newsletter-faq-section .newsletter-section {
+    background-color: #00b9c5;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  
+  .newsletter-faq-section .newsletter-input {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #ced4da;
+    border-radius: 4px 0 0 4px;
+  }
+  
+  .newsletter-faq-section .p-button-primary {
+    background-color: #00b9c5;
+    border-color: #00b9c5;
+    border-radius: 0 4px 4px 0;
+    color: #ffffff;
+  }
+  
+  .newsletter-faq-section .p-button-primary:hover {
+    background-color: #00b9c5;
+    border-color: #c82333;
+  }
+  
+  .newsletter-faq-section .faq-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  
+  .newsletter-faq-section .faq-section h3 {
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: #000000;
+  }
+  
+  .newsletter-faq-section .p-accordion .p-accordion-header-link {
+    background-color: #f8f9fa;
+    color: #dc3545;
+  }
+  
+  .newsletter-faq-section .p-accordion .p-accordion-content {
+    background-color: #ffffff;
+    color: #6c757d;
+  }

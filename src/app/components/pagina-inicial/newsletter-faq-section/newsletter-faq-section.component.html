@@ -1,0 +1,67 @@
+<section class="newsletter-section py-5">
+    <div class="container text-center">
+      <h2 class="h3 mb-3">Subscreva a Nossa Newsletter</h2>
+      <p class="text-secondary mb-4">Receba atualizações sobre saúde, promoções e novidades diretamente no seu e-mail.</p>
+      <div class="row justify-content-center">
+
+      </div>
+    </div>
+  </section>
+  
+  
+  <section class="newsletter-faq-section py-5">
+    <div class="container">
+      <div class="row">
+        <!-- Subscrição à Newsletter -->
+        <div class="col-md-6 mb-4 mb-md-0">
+          <div class="newsletter-section p-4">
+            <h3 class="text-center mb-3 text-white">Subscreva a Nossa Newsletter</h3>
+            <p class="text-center mb-4 text-white">Receba atualizações sobre saúde, promoções e novidades diretamente no seu e-mail.</p>
+            <div class="d-flex justify-content-center">
+              <div class="w-75">
+                <div class="d-flex align-items-center gap-2">
+                  <p-inputText
+                    [(ngModel)]="email"
+                    placeholder="Digite seu e-mail"
+                    styleClass="p-inputtext-lg w-100 newsletter-input"
+                    required
+                  ></p-inputText>
+                  <button
+                    pButton
+                    type="button"
+                    label="Subscrever"
+                    icon="pi pi-envelope"
+                    class="p-button-primary"
+                    (click)="onSubscribe()"
+                  ></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Perguntas Frequentes -->
+        <div class="col-md-6">
+          <div class="faq-section p-4">
+            <h3 class="mb-3">Dúvidas Frequentes</h3>
+            <p-accordion>
+              <p-accordionTab header="Sobre a nova variante COVID-19">
+                <p>Informações atualizadas sobre a nova variante do coronavírus e medidas de prevenção.</p>
+              </p-accordionTab>
+              <p-accordionTab header="Achados e perdidos">
+                <p>Entre em contato com nossa recepção para relatar itens perdidos ou encontrados.</p>
+              </p-accordionTab>
+              <p-accordionTab header="Alimentação para internados">
+                <p>Oferecemos refeições balanceadas para pacientes internados, com opções personalizadas.</p>
+              </p-accordionTab>
+              <p-accordionTab header="Internamento e altas">
+                <p>Consulte os procedimentos para internação e alta com nossa equipe administrativa.</p>
+              </p-accordionTab>
+              <p-accordionTab header="Parque de estacionamento">
+                <p>Disponibilizamos estacionamento gratuito para visitantes e pacientes.</p>
+              </p-accordionTab>
+            </p-accordion>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

@@ -1,18 +1,22 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectorRef} from '@angular/core';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-pagina-inicial',
   standalone: false,
   templateUrl: './pagina-inicial.component.html',
-  styleUrl: './pagina-inicial.component.css'
+  styleUrl: './pagina-inicial.component.css',
+  providers: [MessageService]
 })
 export class PaginaInicialComponent implements OnInit, AfterViewInit {
   // Imagens públicas para o carousel
   carouselImages: string[] = [
-    'https://source.unsplash.com/collection/190727/800x600',
-    'https://source.unsplash.com/collection/190728/800x600',
-    'https://source.unsplash.com/collection/190729/800x600',
+    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
+    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
+    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
   ];
+
+  email: string = '';
 
   services = [
     {
@@ -27,12 +31,12 @@ export class PaginaInicialComponent implements OnInit, AfterViewInit {
     },
     {
       icon: 'fa fa-apple-alt',
-      title: 'Nutritional Support',
+      title: 'Acompanhamento Nutricional',
       desc: 'Lorem ipsum dolor sit amet consectetur adipiscing elit.',
     },
     {
       icon: 'fa fa-pills',
-      title: 'Pharmaceutical Care',
+      title: 'Serviços farmacéuticos',
       desc: 'Lorem ipsum dolor sit amet consectetur adipiscing elit.',
     }
   ];
@@ -53,7 +57,7 @@ export class PaginaInicialComponent implements OnInit, AfterViewInit {
     experiencia: 0,
   };
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(private cd: ChangeDetectorRef, private messageService: MessageService) {}
 
   ngOnInit(): void {}
 
