@@ -9,8 +9,14 @@ import { ToastModule } from 'primeng/toast'; // Importar o ToastModule
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import Aura from '@primeng/themes/aura'
+
 import { CarouselModule } from 'primeng/carousel';
 import { AccordionModule } from 'primeng/accordion';
+import { TableModule } from 'primeng/table';
+import { CalendarModule } from 'primeng/calendar';
+import { DropdownModule } from 'primeng/dropdown';
+
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -19,7 +25,6 @@ import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { SideMenuComponent } from './admin-pages/side-menu/side-menu.component';
 import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
-import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
@@ -38,6 +43,7 @@ import { NewsletterFaqSectionComponent } from './components/pagina-inicial/newsl
 import { SobreNosComponent } from './components/paginas-menu/sobre-nos/sobre-nos.component';
 import { ContacteNosComponent } from './components/paginas-menu/contacte-nos/contacte-nos.component';
 import { EquipaComponent } from './components/paginas-menu/equipa/equipa.component';
+import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.component';
 
 @NgModule({
   declarations: [
@@ -52,8 +58,7 @@ import { EquipaComponent } from './components/paginas-menu/equipa/equipa.compone
     SobreNosComponent,
     ContacteNosComponent,
     EquipaComponent,
-
-
+    MarcacaoComponent,
   ],
   imports: [
     BrowserModule,
@@ -66,7 +71,6 @@ import { EquipaComponent } from './components/paginas-menu/equipa/equipa.compone
     SideMenuComponent,
     AdminMainPageComponent,
     DashboardComponent,
-    ProdutosComponent,
     ProfissionaisComponent,
     SubsistemaSaudeComponent,
     TipoDeConsultaExameComponent,
@@ -77,14 +81,17 @@ import { EquipaComponent } from './components/paginas-menu/equipa/equipa.compone
     InputTextModule, // Para p-inputText
     MenubarModule,
     CarouselModule,
-    AccordionModule
+    AccordionModule,
+    TableModule,
+    CalendarModule,
+    DropdownModule,
+    ReactiveFormsModule
 ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, MessageService,
     providePrimeNG({
       theme:{
         preset: Aura
-        
       }
     }) 
   ],

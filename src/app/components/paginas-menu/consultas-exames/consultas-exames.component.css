@@ -1,9 +1,113 @@
-.services-page {
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
-  
-  h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
+::ng-deep body {
+  padding-top: 90px;
+}
+
+/* Apply light theme styles to this component only */
+:host {
+  /* Override PrimeNG dark theme variables with light theme values */
+  --surface-a: #ffffff;
+  --surface-b: #f8f9fa;
+  --surface-c: #e9ecef;
+  --surface-d: #dee2e6;
+  --surface-e: #ffffff;
+  --surface-f: #f8f9fa;
+  --text-color: #495057;
+  --text-color-secondary: #6c757d;
+  --primary-color: #007bff;
+  --primary-color-text: #ffffff;
+  --border-color: #ced4da;
+  --focus-ring: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Ensure all PrimeNG components within this host use light styles */
+:host .p-component {
+  background-color: var(--surface-a);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+:host .p-inputtext,
+:host .p-dropdown,
+:host .p-calendar {
+  background-color: var(--surface-e);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+}
+
+/* Specific styles for p-table to enforce light theme */
+:host .p-datatable {
+  background-color: var(--surface-e);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+:host .p-datatable .p-datatable-header {
+  background-color: var(--surface-b);
+  color: var(--text-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+:host .p-datatable .p-datatable-table {
+  background-color: var(--surface-e);
+}
+
+:host .p-datatable .p-datatable-thead > tr > th {
+  background-color: var(--surface-c);
+  color: var(--text-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+:host .p-datatable .p-datatable-tbody > tr > td {
+  background-color: var(--surface-e);
+  color: var(--text-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+:host .p-datatable .p-paginator {
+  background-color: var(--surface-b);
+  border-top: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+:host .p-datatable .p-paginator .p-paginator-page,
+:host .p-datatable .p-paginator .p-paginator-first,
+:host .p-datatable .p-paginator .p-paginator-prev,
+:host .p-datatable .p-paginator .p-paginator-next,
+:host .p-datatable .p-paginator .p-paginator-last {
+  background-color: var(--surface-e);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+:host .p-datatable .p-paginator .p-paginator-page:hover,
+:host .p-datatable .p-paginator .p-paginator-first:hover,
+:host .p-datatable .p-paginator .p-paginator-prev:hover,
+:host .p-datatable .p-paginator .p-paginator-next:hover,
+:host .p-datatable .p-paginator .p-paginator-last:hover {
+  background-color: var(--surface-d);
+}
+
+:host .btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+:host .btn-success:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+.text-danger {
+  font-size: 0.875rem;
+}

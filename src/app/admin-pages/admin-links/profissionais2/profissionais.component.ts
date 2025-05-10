@@ -39,27 +39,27 @@ import { Profissional, CreateProfissionalDTO } from '../../../models/profissiona
       >
         <div class="form-field">
           <label for="nome">Nome *</label>
-          <input #nomeInput pInputText id="nome" [(ngModel)]="profissional.nome" [ngClass]="{'invalid': formSubmitted && !profissional.nome}" />
+          <input #nomeInput pInputText id="nome" name="nome" [(ngModel)]="profissional.nome" [ngClass]="{'invalid': formSubmitted && !profissional.nome}" />
           <small *ngIf="formSubmitted && !profissional.nome" class="error-message">Nome é obrigatório.</small>
         </div>
         <div class="form-field">
           <label for="numeroLicenca">Nº Licença *</label>
-          <input pInputText id="numeroLicenca" [(ngModel)]="profissional.numeroLicenca" [ngClass]="{'invalid': formSubmitted && !profissional.numeroLicenca}" />
+          <input pInputText id="numeroLicenca" name="numeroLicenca" [(ngModel)]="profissional.numeroLicenca" [ngClass]="{'invalid': formSubmitted && !profissional.numeroLicenca}" />
           <small *ngIf="formSubmitted && !profissional.numeroLicenca" class="error-message">Nº Licença é obrigatório.</small>
         </div>
         <div class="form-field">
           <label for="especialidade">Especialidade *</label>
-          <input pInputText id="especialidade" [(ngModel)]="profissional.especialidade" [ngClass]="{'invalid': formSubmitted && !profissional.especialidade}" />
+          <input pInputText id="especialidade" name="especialidade" [(ngModel)]="profissional.especialidade" [ngClass]="{'invalid': formSubmitted && !profissional.especialidade}" />
           <small *ngIf="formSubmitted && !profissional.especialidade" class="error-message">Especialidade é obrigatória.</small>
         </div>
         <div class="form-field">
           <label for="telefone">Telemóvel *</label>
-          <input pInputText id="telefone" [(ngModel)]="profissional.telefone" [ngClass]="{'invalid': formSubmitted && !profissional.telefone}" />
+          <input pInputText id="telefone" name="telefone"  [(ngModel)]="profissional.telefone" [ngClass]="{'invalid': formSubmitted && !profissional.telefone}" />
           <small *ngIf="formSubmitted && !profissional.telefone" class="error-message">Telemóvel é obrigatório.</small>
         </div>
         <div class="form-field">
           <label for="email">E-mail *</label>
-          <input pInputText id="email" [(ngModel)]="profissional.email" [ngClass]="{'invalid': formSubmitted && !profissional.email}" />
+          <input pInputText id="email" name="email" [(ngModel)]="profissional.email" [ngClass]="{'invalid': formSubmitted && !profissional.email}" />
           <small *ngIf="formSubmitted && !profissional.email" class="error-message">E-mail é obrigatório.</small>
         </div>
         <ng-template pTemplate="footer">

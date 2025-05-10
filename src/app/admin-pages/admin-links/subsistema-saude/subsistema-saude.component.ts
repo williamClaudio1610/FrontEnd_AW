@@ -47,11 +47,11 @@ import { MessageService } from 'primeng/api';
         <div class="p-fluid">
           <div class="p-field">
             <label for="nome">Nome</label>
-            <input id="nome" type="text" pInputText [(ngModel)]="subsistemaSelecionado.nome" required />
+            <input id="nome" name="nome" type="text" pInputText [(ngModel)]="subsistemaSelecionado.nome" required />
           </div>
           <div class="p-field">
             <label for="descricao">Descrição</label>
-            <input id="descricao" type="text" pInputText [(ngModel)]="subsistemaSelecionado.descricao" />
+            <input id="descricao" name="descricao" type="text" pInputText [(ngModel)]="subsistemaSelecionado.descricao" />
           </div>
 
         </div>

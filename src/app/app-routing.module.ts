@@ -12,11 +12,11 @@ import { EquipaComponent } from './components/paginas-menu/equipa/equipa.compone
 import { SobreNosComponent } from './components/paginas-menu/sobre-nos/sobre-nos.component';
 //componentes do admin
 import { DashboardComponent } from './admin-pages/admin-links/dashboard/dashboard.component';
-import { ProdutosComponent } from './admin-pages/admin-links/produtos/produtos.component';
 import { ProfissionaisComponent } from './admin-pages/admin-links/profissionais2/profissionais.component';
 import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.component';
 import { SubsistemaSaudeComponent } from './admin-pages/admin-links/subsistema-saude/subsistema-saude.component';
 import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-consulta-exame/tipo-de-consulta-exame.component';
+import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 const routes: Routes = [
@@ -34,7 +34,7 @@ const routes: Routes = [
     component: AdminMainPageComponent,
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'produtos', component: ProdutosComponent },
+      { path: 'marcacao', component: MarcacaoComponent },
       { path: 'profissionais', component: ProfissionaisComponent }, // Adicionado
       {path: 'usuarios', component: UsuariosComponent},
       {path: 'subsistemaSaude', component: SubsistemaSaudeComponent},

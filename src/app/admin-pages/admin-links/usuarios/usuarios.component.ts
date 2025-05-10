@@ -39,42 +39,42 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
       >
         <div class="form-field">
           <label for="fotografia">Fotografia *</label>
-          <input pInputText id="fotografia" [(ngModel)]="usuario.fotografia" [ngClass]="{'invalid': formSubmitted && !usuario.fotografia}" />
+          <input pInputText id="fotografia" name="fotografia" [(ngModel)]="usuario.fotografia" [ngClass]="{'invalid': formSubmitted && !usuario.fotografia}" />
           <small *ngIf="formSubmitted && !usuario.fotografia" class="error-message">Fotografia é obrigatória.</small>
         </div>
         <div class="form-field">
           <label for="nome">Nome *</label>
-          <input #nomeInput pInputText id="nome" [(ngModel)]="usuario.nome" [ngClass]="{'invalid': formSubmitted && !usuario.nome}" />
+          <input #nomeInput pInputText id="nome" name="nome" [(ngModel)]="usuario.nome" [ngClass]="{'invalid': formSubmitted && !usuario.nome}" />
           <small *ngIf="formSubmitted && !usuario.nome" class="error-message">Nome é obrigatório.</small>
         </div>
         <div class="form-field">
           <label for="email">E-mail *</label>
-          <input pInputText id="email" [(ngModel)]="usuario.email" [ngClass]="{'invalid': formSubmitted && !usuario.email}" />
+          <input pInputText id="email" name="email" [(ngModel)]="usuario.email" [ngClass]="{'invalid': formSubmitted && !usuario.email}" />
           <small *ngIf="formSubmitted && !usuario.email" class="error-message">E-mail é obrigatório.</small>
         </div>
         <div class="form-field" *ngIf="editIndex === null">
           <label for="senha">Senha *</label>
-          <input pInputText type="password" id="senha" [(ngModel)]="senha" [ngClass]="{'invalid': formSubmitted && !senha && editIndex === null}" />
+          <input pInputText type="password" id="senha" name="senha" [(ngModel)]="senha" [ngClass]="{'invalid': formSubmitted && !senha && editIndex === null}" />
           <small *ngIf="formSubmitted && !senha && editIndex === null" class="error-message">Senha é obrigatória.</small>
         </div>
         <div class="form-field">
           <label for="telemovel">Telemóvel *</label>
-          <input pInputText id="telemovel" [(ngModel)]="usuario.telemovel" [ngClass]="{'invalid': formSubmitted && !usuario.telemovel}" />
+          <input pInputText id="telemovel" name="telemovel" [(ngModel)]="usuario.telemovel" [ngClass]="{'invalid': formSubmitted && !usuario.telemovel}" />
           <small *ngIf="formSubmitted && !usuario.telemovel" class="error-message">Telemóvel é obrigatório.</small>
         </div>
         <div class="form-field">
           <label for="morada">Morada *</label>
-          <input pInputText id="morada" [(ngModel)]="usuario.morada" [ngClass]="{'invalid': formSubmitted && !usuario.morada}" />
+          <input pInputText id="morada" name="morada" [(ngModel)]="usuario.morada" [ngClass]="{'invalid': formSubmitted && !usuario.morada}" />
           <small *ngIf="formSubmitted && !usuario.morada" class="error-message">Morada é obrigatória.</small>
         </div>
         <div class="form-field">
           <label for="dataNascimento">Data de Nascimento *</label>
-          <input pInputText id="dataNascimento" type="date" [(ngModel)]="usuario.dataNascimento" [ngClass]="{'invalid': formSubmitted && !usuario.dataNascimento}" />
+          <input pInputText id="dataNascimento" name="dataNascimento" type="date" [(ngModel)]="usuario.dataNascimento" [ngClass]="{'invalid': formSubmitted && !usuario.dataNascimento}" />
           <small *ngIf="formSubmitted && !usuario.dataNascimento" class="error-message">Data de nascimento é obrigatória.</small>
         </div>
         <div class="form-field">
           <label for="genero">Gênero *</label>
-          <select id="genero" [(ngModel)]="usuario.genero" [ngClass]="{'invalid': formSubmitted && !usuario.genero}">
+          <select id="genero" name="genero" [(ngModel)]="usuario.genero" [ngClass]="{'invalid': formSubmitted && !usuario.genero}">
             <option value="">Selecione o gênero</option>
             <option value="Masculino">Masculino</option>
             <option value="Feminino">Feminino</option>
@@ -84,7 +84,7 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
         </div>
         <div class="form-field">
           <label for="perfil">Perfil *</label>
-          <select id="perfil" [(ngModel)]="usuario.perfil" [ngClass]="{'invalid': formSubmitted && !usuario.perfil}">
+          <select id="perfil" name="perfil" [(ngModel)]="usuario.perfil" [ngClass]="{'invalid': formSubmitted && !usuario.perfil}">
             <option value="">Selecione um perfil</option>
             <option value="Administrador">Administrador</option>
             <option value="Utente Registado">Utente Registado</option>
