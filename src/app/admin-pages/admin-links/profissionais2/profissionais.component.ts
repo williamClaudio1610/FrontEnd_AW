@@ -6,14 +6,17 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DropdownModule } from 'primeng/dropdown';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ProfissionalService } from '../../../services/profissional.service';
-import { Profissional, CreateProfissionalDTO } from '../../../models/profissional';
+import { TipoDeConsultaExameService } from '../../../services/tipo-de-consulta-exame.service';
+import { TipoDeConsultaExameDTO } from '../../../models/tipo-de-consulta-exame';
+import { Profissional, CreateProfissionalDTO, UpdateProfissionalDTO } from '../../../models/profissional';
 
 @Component({
   selector: 'app-profissionais',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, DialogModule, InputTextModule, ToastModule, ConfirmDialogModule],
+  imports: [CommonModule, FormsModule, ButtonModule, DialogModule, InputTextModule, ToastModule, ConfirmDialogModule, DropdownModule],
   providers: [MessageService, ConfirmationService],
   template: `
     <div class="profissionais-page">
@@ -43,18 +46,27 @@ import { Profissional, CreateProfissionalDTO } from '../../../models/profissiona
           <small *ngIf="formSubmitted && !profissional.nome" class="error-message">Nome é obrigatório.</small>
         </div>
         <div class="form-field">
+          <label for="tipoDeConsultaExameId">Tipo de Consulta/Exame *</label>
+          <p-dropdown 
+            id="tipoDeConsultaExameId" 
+            name="tipoDeConsultaExameId" 
+            [options]="tiposDeConsultaExame" 
+            [(ngModel)]="profissional.tipoDeConsultaExameId" 
+            optionLabel="nome" 
+            optionValue="id" 
+            placeholder="Selecione um tipo" 
+            [ngClass]="{'invalid': formSubmitted && !profissional.tipoDeConsultaExameId}" 
+          />
+          <small *ngIf="formSubmitted && !profissional.tipoDeConsultaExameId" class="error-message">Tipo de Consulta/Exame é obrigatório.</small>
+        </div>
+        <div class="form-field">
           <label for="numeroLicenca">Nº Licença *</label>
           <input pInputText id="numeroLicenca" name="numeroLicenca" [(ngModel)]="profissional.numeroLicenca" [ngClass]="{'invalid': formSubmitted && !profissional.numeroLicenca}" />
           <small *ngIf="formSubmitted && !profissional.numeroLicenca" class="error-message">Nº Licença é obrigatório.</small>
         </div>
         <div class="form-field">
-          <label for="especialidade">Especialidade *</label>
-          <input pInputText id="especialidade" name="especialidade" [(ngModel)]="profissional.especialidade" [ngClass]="{'invalid': formSubmitted && !profissional.especialidade}" />
-          <small *ngIf="formSubmitted && !profissional.especialidade" class="error-message">Especialidade é obrigatória.</small>
-        </div>
-        <div class="form-field">
           <label for="telefone">Telemóvel *</label>
-          <input pInputText id="telefone" name="telefone"  [(ngModel)]="profissional.telefone" [ngClass]="{'invalid': formSubmitted && !profissional.telefone}" />
+          <input pInputText id="telefone" name="telefone" [(ngModel)]="profissional.telefone" [ngClass]="{'invalid': formSubmitted && !profissional.telefone}" />
           <small *ngIf="formSubmitted && !profissional.telefone" class="error-message">Telemóvel é obrigatório.</small>
         </div>
         <div class="form-field">
@@ -74,7 +86,7 @@ import { Profissional, CreateProfissionalDTO } from '../../../models/profissiona
             <th>ID</th>
             <th>Nome</th>
             <th>Nº Licença</th>
-            <th>Especialidade</th>
+            <th>Especialidade - Tipo de Consulta/Exame</th>
             <th>Telemóvel</th>
             <th>E-mail</th>
             <th>Ações</th>
@@ -85,7 +97,7 @@ import { Profissional, CreateProfissionalDTO } from '../../../models/profissiona
             <td>{{ p.id }}</td>
             <td>{{ p.nome }}</td>
             <td>{{ p.numeroLicenca }}</td>
-            <td>{{ p.especialidade }}</td>
+            <td>{{ p.tipoDeConsultaExameNome }}</td>
             <td>{{ p.telefone }}</td>
             <td>{{ p.email }}</td>
             <td>
@@ -198,7 +210,7 @@ import { Profissional, CreateProfissionalDTO } from '../../../models/profissiona
       color: #374151;
     }
 
-    .form-field input {
+    .form-field input, .form-field p-dropdown {
       width: 100%;
       padding: 8px;
       border-radius: 4px;
@@ -279,22 +291,25 @@ import { Profissional, CreateProfissionalDTO } from '../../../models/profissiona
 })
 export class ProfissionaisComponent implements OnInit {
   displayDialog: boolean = false;
-  profissional: Profissional = { id: 0, nome: '', numeroLicenca: '', especialidade: '', telefone: '', email: '' };
+  profissional: Profissional = { id: 0, nome: '', numeroLicenca: '', tipoDeConsultaExameId: 0, tipoDeConsultaExameNome: '', telefone: '', email: '' };
   profissionais: Profissional[] = [];
   editIndex: number | null = null;
   formSubmitted: boolean = false;
   erro: string | null = null;
+  tiposDeConsultaExame: TipoDeConsultaExameDTO[] = [];
 
   @ViewChild('nomeInput') nomeInput!: ElementRef;
 
   constructor(
     private profissionalService: ProfissionalService,
+    private tipoDeConsultaExameService: TipoDeConsultaExameService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
     this.loadProfissionais();
+    this.loadTiposDeConsultaExame();
   }
 
   loadProfissionais() {
@@ -310,8 +325,21 @@ export class ProfissionaisComponent implements OnInit {
     });
   }
 
+  loadTiposDeConsultaExame() {
+    this.tipoDeConsultaExameService.getAllTipos().subscribe({
+      next: (tipos) => {
+        this.tiposDeConsultaExame = tipos;
+      },
+      error: (err) => {
+        this.erro = 'Erro ao carregar tipos de consulta/exame: ' + err.message;
+        console.error('Erro ao carregar tipos de consulta/exame:', err.message);
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
+      }
+    });
+  }
+
   showDialog() {
-    this.profissional = { id: 0, nome: '', numeroLicenca: '', especialidade: '', telefone: '', email: '' };
+    this.profissional = { id: 0, nome: '', numeroLicenca: '', tipoDeConsultaExameId: 0, tipoDeConsultaExameNome: '', telefone: '', email: '' };
     this.editIndex = null;
     this.formSubmitted = false;
     this.displayDialog = true;
@@ -327,14 +355,22 @@ export class ProfissionaisComponent implements OnInit {
   saveProfissional() {
     this.formSubmitted = true;
 
-    if (!this.profissional.nome || !this.profissional.numeroLicenca || !this.profissional.especialidade || !this.profissional.telefone || !this.profissional.email) {
+    if (!this.profissional.nome || !this.profissional.numeroLicenca || !this.profissional.tipoDeConsultaExameId || !this.profissional.telefone || !this.profissional.email) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Preencha todos os campos obrigatórios.' });
       return;
     }
 
     if (this.editIndex !== null) {
       // Atualizar profissional existente
-      this.profissionalService.atualizarProfissional(this.profissional).subscribe({
+      const updateProfissionalDTO: UpdateProfissionalDTO = {
+        id: this.profissional.id,
+        nome: this.profissional.nome,
+        tipoDeConsultaExameId: this.profissional.tipoDeConsultaExameId,
+        numeroLicenca: this.profissional.numeroLicenca,
+        email: this.profissional.email,
+        telefone: this.profissional.telefone
+      };
+      this.profissionalService.atualizarProfissional(updateProfissionalDTO).subscribe({
         next: (updatedProfissional) => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Profissional atualizado com sucesso!' });
           this.loadProfissionais();
@@ -348,7 +384,13 @@ export class ProfissionaisComponent implements OnInit {
       });
     } else {
       // Criar novo profissional
-      const createProfissionalDTO: CreateProfissionalDTO = { ...this.profissional };
+      const createProfissionalDTO: CreateProfissionalDTO = {
+        nome: this.profissional.nome,
+        tipoDeConsultaExameId: this.profissional.tipoDeConsultaExameId,
+        numeroLicenca: this.profissional.numeroLicenca,
+        email: this.profissional.email,
+        telefone: this.profissional.telefone
+      };
       this.profissionalService.criarProfissional(createProfissionalDTO).subscribe({
         next: (newProfissional) => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Profissional adicionado com sucesso!' });
@@ -398,6 +440,6 @@ export class ProfissionaisComponent implements OnInit {
 
   onDialogHide() {
     this.formSubmitted = false;
-    this.profissional = { id: 0, nome: '', numeroLicenca: '', especialidade: '', telefone: '', email: '' };
+    this.profissional = { id: 0, nome: '', numeroLicenca: '', tipoDeConsultaExameId: 0, tipoDeConsultaExameNome: '', telefone: '', email: '' };
   }
 }

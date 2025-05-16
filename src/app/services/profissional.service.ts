@@ -56,7 +56,8 @@ export class ProfissionalService {
     return {
       id: dto.id,
       nome: dto.nome,
-      especialidade: dto.especialidade,
+      tipoDeConsultaExameId: dto.tipoDeConsultaExameId,
+      tipoDeConsultaExameNome: dto.tipoDeConsultaExameNome,
       numeroLicenca: dto.numeroLicenca,
       email: dto.email,
       telefone: dto.telefone,

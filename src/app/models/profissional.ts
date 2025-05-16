@@ -1,7 +1,8 @@
 export interface ProfissionalDTO {
   id: number;
   nome: string;
-  especialidade: string;
+  tipoDeConsultaExameId: number;
+  tipoDeConsultaExameNome: string;
   numeroLicenca: string;
   email: string;
   telefone: string;
@@ -9,7 +10,7 @@ export interface ProfissionalDTO {
 
 export interface CreateProfissionalDTO {
   nome: string;
-  especialidade: string;
+  tipoDeConsultaExameId: number;
   numeroLicenca: string;
   email: string;
   telefone: string;
@@ -18,7 +19,7 @@ export interface CreateProfissionalDTO {
 export interface UpdateProfissionalDTO {
   id: number;
   nome?: string;
-  especialidade?: string;
+  tipoDeConsultaExameId?: number;
   numeroLicenca?: string;
   email?: string;
   telefone?: string;
@@ -27,7 +28,8 @@ export interface UpdateProfissionalDTO {
 export interface Profissional {
   id: number;
   nome: string;
-  especialidade: string;
+  tipoDeConsultaExameId: number;
+  tipoDeConsultaExameNome: string;
   numeroLicenca: string;
   email: string;
   telefone: string;

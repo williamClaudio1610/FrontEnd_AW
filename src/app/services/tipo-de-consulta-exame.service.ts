@@ -8,69 +8,46 @@ import { TipoDeConsultaExameDTO, CreateTipoDeConsultaExameDTO, UpdateTipoDeConsu
   providedIn: 'root',
 })
 export class TipoDeConsultaExameService {
-  private apiUrl = 'https://localhost:7273/api/tiposdeconsultaexame';
+  private apiUrl = 'https://localhost:7273/api/TipoDeConsultaExame';
 
   constructor(private http: HttpClient) {}
 
-  // Listar todos os tipos de consulta/exame
-  getAllTiposDeConsultaExame(): Observable<TipoDeConsultaExame[]> {
-    return this.http.get<TipoDeConsultaExameDTO[]>(this.apiUrl).pipe(
-      map(tipos => tipos.map(dto => this.mapTipoDeConsultaExameDtoToTipoDeConsultaExame(dto))),
+  getAllTipos(): Observable<TipoDeConsultaExameDTO[]> {
+    return this.http.get<TipoDeConsultaExameDTO[]>(`${this.apiUrl}/ListarTipos`).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Obter um tipo de consulta/exame por ID
-  getTipoDeConsultaExameById(id: number): Observable<TipoDeConsultaExame> {
-    return this.http.get<TipoDeConsultaExameDTO>(`${this.apiUrl}/${id}`).pipe(
-      map(dto => this.mapTipoDeConsultaExameDtoToTipoDeConsultaExame(dto)),
+  getTipoById(id: number): Observable<TipoDeConsultaExameDTO> {
+    return this.http.get<TipoDeConsultaExameDTO>(`${this.apiUrl}/ObterTipoPorId/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Criar um novo tipo de consulta/exame
-  criarTipoDeConsultaExame(tipoDto: CreateTipoDeConsultaExameDTO): Observable<TipoDeConsultaExame> {
-    return this.http.post<TipoDeConsultaExameDTO>(this.apiUrl, tipoDto).pipe(
-      map(dto => this.mapTipoDeConsultaExameDtoToTipoDeConsultaExame(dto)),
+  createTipo(tipoDTO: CreateTipoDeConsultaExameDTO): Observable<TipoDeConsultaExameDTO> {
+    return this.http.post<TipoDeConsultaExameDTO>(`${this.apiUrl}/CriarTipo`, tipoDTO).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Atualizar um tipo de consulta/exame existente
-  atualizarTipoDeConsultaExame(tipoDto: UpdateTipoDeConsultaExameDTO): Observable<TipoDeConsultaExame> {
-    return this.http.put<TipoDeConsultaExameDTO>(`${this.apiUrl}/${tipoDto.id}`, tipoDto).pipe(
-      map(dto => this.mapTipoDeConsultaExameDtoToTipoDeConsultaExame(dto)),
+  updateTipo(id: number, tipoDTO: UpdateTipoDeConsultaExameDTO): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/AtualizarTipo/${id}`, tipoDTO).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Deletar um tipo de consulta/exame
-  deletarTipoDeConsultaExame(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+  deleteTipo(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/ExcluirTipo/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Mapear TipoDeConsultaExameDTO para TipoDeConsultaExame
-  private mapTipoDeConsultaExameDtoToTipoDeConsultaExame(dto: TipoDeConsultaExameDTO): TipoDeConsultaExame {
-    return {
-      id: dto.id,
-      nome: dto.nome,
-    };
-  }
-
-  // Tratamento de erros
   private handleError(error: HttpErrorResponse): Observable<never> {
-    console.error('Erro na requisição:', error);
-    let errorMessage = 'Ocorreu um erro ao processar a solicitação.';
-    if (error.status === 0) {
-      errorMessage = 'Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
-    } else if (error.status === 404) {
-      errorMessage = 'Tipo de consulta/exame não encontrado.';
-    } else if (error.status === 400) {
-      errorMessage = error.error || 'Dados inválidos. Verifique os campos e tente novamente.';
-    } else if (error.status === 409) {
-      errorMessage = 'Um tipo de consulta/exame com este nome já existe.';
+    let errorMessage = 'Ocorreu um erro desconhecido!';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Erro: ${error.error.message}`;
+    } else {
+      errorMessage = `Código do erro: ${error.status}\nMensagem: ${error.message}`;
     }
     return throwError(() => new Error(errorMessage));
   }

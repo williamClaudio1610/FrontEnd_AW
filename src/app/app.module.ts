@@ -91,7 +91,10 @@ import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.c
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, MessageService,
     providePrimeNG({
       theme:{
-        preset: Aura
+        preset: Aura,
+        options:{
+          darkModeSelector: false // aplicar o tema claro do Aura
+        }
       }
     }) 
   ],
