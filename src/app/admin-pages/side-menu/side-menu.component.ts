@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
 export class SideMenuComponent implements OnInit {
   menuItems = [
     { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/admin/dashboard'] },
-    { label: 'Produtos', icon: 'pi pi-box', routerLink: ['/admin/marcacao'] },
+    { label: 'Pedidos/Marcações', icon: 'pi pi-box', routerLink: ['/admin/pedidosMarcacao'] },
     { label: 'Profissionais', icon: 'pi pi-briefcase', routerLink: ['/admin/profissionais'] } ,
     { label: 'Tipode de Exame/Consulta', icon: 'pi pi-briefcase', routerLink: ['/admin/tipoDeExameConsulta'] } ,
     { label: 'Subsistema de Saúde', icon: 'pi pi-briefcase', routerLink: ['/admin/subsistemaSaude'] } ,

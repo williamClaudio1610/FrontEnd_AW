@@ -44,6 +44,7 @@ import { SobreNosComponent } from './components/paginas-menu/sobre-nos/sobre-nos
 import { ContacteNosComponent } from './components/paginas-menu/contacte-nos/contacte-nos.component';
 import { EquipaComponent } from './components/paginas-menu/equipa/equipa.component';
 import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.component';
+import { PedidoMarcacaoComponent } from './admin-pages/admin-links/pedido-marcacao/pedido-marcacao.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.c
     AdminMainPageComponent,
     DashboardComponent,
     ProfissionaisComponent,
+    PedidoMarcacaoComponent,
     SubsistemaSaudeComponent,
     TipoDeConsultaExameComponent,
     UsuariosComponent,

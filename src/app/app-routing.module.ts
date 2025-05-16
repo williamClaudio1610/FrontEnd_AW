@@ -39,6 +39,7 @@ const routes: Routes = [
       {path: 'usuarios', component: UsuariosComponent},
       {path: 'subsistemaSaude', component: SubsistemaSaudeComponent},
       {path: 'tipoDeExameConsulta', component: TipoDeConsultaExameComponent},
+      {path: 'pedidosMarcacao', component: MarcacaoComponent},
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
