@@ -29,7 +29,6 @@ export class LoginComponent {
   onSubmit(): void {
     this.mensagemErro = undefined;
 
-    // Validar se os campos estão preenchidos
     if (!this.loginDTO.email || !this.loginDTO.senha) {
       this.messageService.add({
         severity: 'error',
@@ -39,19 +38,26 @@ export class LoginComponent {
       return;
     }
 
-    // Chamar o método login do UsuarioService
     this.usuarioService.login(this.loginDTO).subscribe({
       next: (usuario: Usuario) => {
+        console.log('Usuário recebido no LoginComponent:', usuario); // Depuração
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
-          detail: `Bem-vindo, ${usuario.nome}!`,
+          detail: `Bem-vindo, ${usuario.nome || 'Usuário'}!`, // Fallback
+          life: 2000,
         });
 
-        // Redirecionar para a página inicial ou outra página após o login
         setTimeout(() => {
-          this.router.navigate(['/home']);
-        }, 1500);
+          console.log('Redirecionando com perfil:', usuario.perfil); // Depuração
+          if (usuario.perfil === 'UtenteRegistado') {
+            this.router.navigate(['/paginaInicial']);
+          } else if (usuario.perfil === 'Administrativo' || usuario.perfil === 'Administrador') {
+            this.router.navigate(['admin/dashboard']);
+          } else {
+            this.router.navigate(['/home']);
+          }
+        }, 2000);
       },
       error: (err) => {
         this.mensagemErro = err.message;

@@ -6,7 +6,6 @@ import { Profissional } from "./profissional";
 export class ActoClinico {
 }
 export interface CreateActoClinico {
-  horario: string;
   tipoDeConsultaExameId: number;
   subsistemaSaudeId: number;
   profissionalIds?: number[];
@@ -21,4 +20,26 @@ export interface ActoClinico {
   subsistemaSaudeId: number;
   subsistemaSaude: SubsistemaSaude;
   profissionais: Profissional[];
+}
+
+export interface ActoClinicoDTO {
+  id: number;
+  pedidoMarcacaoId: number;
+  tipoDeConsultaExameId: number;
+  tipoDeConsultaExame: TipoDeConsultaExame;
+  dataHora?: Date; // Opcional, nullable
+  anoMesDia?: Date; // Opcional, nullable (converte DateOnly para Date)
+  subsistemaSaudeId: number;
+  subsistemaSaude: SubsistemaSaude;
+  profissionais: Profissional[];
+}
+
+export interface UpdateActoClinicoDTO {
+  id: number;
+  pedidoMarcacaoId: number;
+  tipoDeConsultaExameId: number;
+  subsistemaSaudeId: number;
+  dataHora: Date;
+  anoMesDia: Date;
+  profissionalIds?: number[];
 }

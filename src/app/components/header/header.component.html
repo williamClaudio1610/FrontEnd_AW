@@ -2,7 +2,7 @@
   <div class="container-fluid px-5">
     <!-- Logo + Nome -->
     <a class="navbar-brand d-flex align-items-center" routerLink="/">
-      <img src="assets/logo.png" alt="Insove" height="50" />
+      <img src="neve.jpg" alt="Insove" height="50" />
       <span class="ms-3 text-primary fs-3 fw-bold">ClinicaXPTO</span>
     </a>
 
@@ -39,25 +39,28 @@
         </li>
       </ul>
 
+      
       <!-- Barra de Pesquisa + Contact + Botões -->
       <div class="d-flex align-items-center gap-3">
-        <!-- Barra de Pesquisa -->
-        <div class="d-flex align-items-center">
-          <p-inputText
-            name="search"
-            [(ngModel)]="searchQuery"
-            placeholder="Pesquisar..."
-            styleClass="p-inputtext-lg rounded-start border-end-0"
-            class="me-0"
-          ></p-inputText>
-          <button
-            pButton
-            type="button"
-            icon="pi pi-search"
-            class="p-button-primary rounded-end border-start-0"
-            (click)="onSearch()"
-          ></button>
-        </div>
+        <!-- Barra de Pesquisa 
+        <div class="d-flex align-items-center gap-3">
+            <input
+              type="text"
+              pInputText
+              name="search"
+              [(ngModel)]="searchQuery"
+              placeholder="Pesquisar..."
+              class="p-inputtext-lg rounded-start border-end-0 me-0"
+            />
+            <button
+              pButton
+              type="button"
+              icon="pi pi-search"
+              class="p-button-primary rounded-end border-start-0"
+              (click)="onSearch()"
+            ></button>
+          </div>
+          -->
 
         <!-- Localização e Telefone (visível apenas em telas grandes) -->
         <div class="d-none d-lg-flex align-items-center me-4">

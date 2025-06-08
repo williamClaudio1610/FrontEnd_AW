@@ -18,6 +18,7 @@ import { SubsistemaSaudeComponent } from './admin-pages/admin-links/subsistema-s
 import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-consulta-exame/tipo-de-consulta-exame.component';
 import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AdminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
   {path: 'login',component: LoginComponent},
@@ -32,6 +33,7 @@ const routes: Routes = [
   {
     path: 'admin',
     component: AdminMainPageComponent,
+    canActivate: [AdminGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'marcacao', component: MarcacaoComponent },
@@ -53,3 +55,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+

@@ -483,9 +483,7 @@ export class UsuariosComponent implements OnInit {
     }
   }
 
-  onDialogHide() {
-    this.formSubmitted = false;
-    this.usuario = { id: 0, numeroUtente: '', nome: '', email: '', perfil: '', token: undefined, telemovel: '', morada: '', dataNascimento: new Date().toISOString().split('T')[0], genero: '', fotografia: '' };
-    this.senha = '';
+    onDialogHide() {
+      this.formSubmitted = false;
+    }
   }
-}

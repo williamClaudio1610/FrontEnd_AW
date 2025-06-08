@@ -1,8 +1,9 @@
 <div class="sidebar">
   <!-- Perfil do Usuário -->
   <div class="user-profile text-center p-3">
-    <i class="pi pi-user user-icon"></i>
-    <h5 class="mt-2">Admin User</h5>
+    <img *ngIf="usuario?.fotografia" [src]="usuario?.fotografia" alt="Foto do Usuário" class="user-pic" />
+    <i *ngIf="!usuario?.fotografia" class="pi pi-user user-icon"></i>
+    <h5 class="mt-2">{{ usuario?.nome || 'Admin User' }}</h5>
     <a href="#" class="edit-profile">Edit Profile</a>
   </div>
 
@@ -18,7 +19,7 @@
 
   <!-- Botão de Logout -->
   <div class="logout-section p-3">
-    <a [routerLink]="['/login']" class="logout-link">
+    <a [routerLink]="['/login']" class="logout-link" (click)="logout()">
       <i class="pi pi-sign-out"></i>
       <span>Logout</span>
     </a>

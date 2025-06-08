@@ -1,13 +1,16 @@
 <app-header></app-header>
 
+
+
+
 <div class="container mt-4">
-  <h2>1º Passo: Escolher Actos Clínicos</h2>
+  <h2>1º Passo: Detalhes da Marcação</h2>
 
   <!-- Formulário de Registro -->
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mb-4">
     <div class="row g-3">
       
-      <!-- Horário -->
+      <!-- Horário  
       <div class="col-md-6">
         <label for="horarioSolicitado" class="form-label">Horário</label>
         <p-calendar
@@ -22,8 +25,25 @@
           Horário é obrigatório
         </div>
       </div>
+      -->
+           <!-- Observações  -->
+      <div class="col-md-6">
+        <label for="observacoesAdicionais" class="form-label">Observações adicionais</label>
+        <input
+          formControlName="observacoesAdicionais"
+          pInputText
+          type="text"
+          id="observacoesAdicionais"
+          class="form-control"
+          placeholder="Digite as observações adicionais caso tiver"
+          maxlength="100"
+        />
+        <div *ngIf="isSubmitted && registerForm.get('observacoesAdicionais')?.errors?.['maxlength']" class="text-danger mt-1">
+          Observações não podem exceder 100 caracteres
+        </div>
+      </div>
 
-      <!-- Intervalo de solicitação -->
+      <!-- Intervalo de solicitação  -->
       <div class="col-md-6">
         <label for="dataRange" class="form-label">Intervalo de solicitação</label>
         <p-calendar
@@ -37,7 +57,50 @@
           Intervalo de datas é obrigatório
         </div>
       </div>
+    </div>
+  </form>
+</div>
 
+
+<div class="container mt-4">
+  <h2>2º Passo: Escolher Actos Clínicos</h2>
+
+  <!-- Formulário de Registro -->
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mb-4">
+    <div class="row g-3">
+      
+      <!-- Horário 
+      <div class="col-md-6">
+        <label for="horarioSolicitado" class="form-label">Horário</label>
+        <p-calendar
+          formControlName="horarioSolicitado"
+          [timeOnly]="true"
+          hourFormat="24"
+          inputId="horarioSolicitado"
+          class="form-control"
+          placeholder="Selecione o horário"
+        ></p-calendar>
+        <div *ngIf="isSubmitted && registerForm.get('horarioSolicitado')?.invalid" class="text-danger mt-1">
+          Horário é obrigatório
+        </div>
+      </div>
+      -->
+
+      <!-- Intervalo de solicitação
+      <div class="col-md-6">
+        <label for="dataRange" class="form-label">Intervalo de solicitação</label>
+        <p-calendar
+          formControlName="dataRange"
+          selectionMode="range"
+          inputId="dataRange"
+          class="form-control"
+          placeholder="Selecione o intervalo de datas"
+        ></p-calendar>
+        <div *ngIf="isSubmitted && registerForm.get('dataRange')?.invalid" class="text-danger mt-1">
+          Intervalo de datas é obrigatório
+        </div>
+      </div>
+      -->
       <!-- Subsistema de saúde -->
       <div class="col-md-6">
         <label for="subsistema" class="form-label">Subsistema de saúde</label>
@@ -82,33 +145,16 @@
           class="form-control"
         ></p-dropdown>
       </div>
-
-      <!-- Observações adicionais -->
-      <div class="col-md-6">
-        <label for="observacoesAdicionais" class="form-label">Observações adicionais</label>
-        <input
-          formControlName="observacoesAdicionais"
-          pInputText
-          type="text"
-          id="observacoesAdicionais"
-          class="form-control"
-          placeholder="Digite as observações adicionais caso tiver"
-          maxlength="100"
-        />
-        <div *ngIf="isSubmitted && registerForm.get('observacoesAdicionais')?.errors?.['maxlength']" class="text-danger mt-1">
-          Observações não podem exceder 100 caracteres
-        </div>
-      </div>
     </div>
 
     <!-- Botão de Submissão -->
     <div class="mt-3">
-      <button pButton type="submit" label="Adicionar Acto" class="btn btn-success"></button>
+      <button pButton type="submit" label="Adicionar Acto" class="btn btn-success" style="background-color: #007bff;"></button>
     </div>
   </form>
 
   <!-- Tabela de Actos Clínicos -->
-  <h3>Serviços</h3>
+  <h3>Actos Clínicos Escolhidos</h3>
   <p-table
     [value]="formattedActosClinicos"
     [globalFilterFields]="['subsistemaSaude', 'tipoConsulta', 'profissional', 'horario', 'observacoesAdicionais']"
@@ -132,22 +178,19 @@
     <!-- Cabeçalho da tabela -->
     <ng-template pTemplate="header">
       <tr>
-        <th>Subsistema de Saúde</th>
         <th>Tipo de Consulta</th>
+        <th>Subsistema de Saúde</th>
         <th>Profissional</th>
-        <th>Horário</th>
-        <th>Observações</th>
       </tr>
     </ng-template>
 
     <!-- Corpo da tabela -->
     <ng-template pTemplate="body" let-acto>
       <tr>
-        <td>{{ acto.subsistemaSaude || 'Sem Subsistema' }}</td>
         <td>{{ acto.tipoConsulta || 'Sem Tipo' }}</td>
+        <td>{{ acto.subsistemaSaude || 'Sem Subsistema' }}</td>        
         <td>{{ acto.profissional || 'Sem Profissional' }}</td>
-        <td>{{ acto.horario || 'Sem Horário' }}</td>
-        <td>{{ acto.observacoesAdicionais || 'Sem Observações' }}</td>
+
       </tr>
     </ng-template>
 

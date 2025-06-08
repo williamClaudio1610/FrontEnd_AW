@@ -5,11 +5,11 @@ export interface UserDTO {
   email: string;
   perfil: string;
   token?: string;
-  dataNascimento?: Date;
+  dataNascimento?: string;
   genero?: string;
   telemovel?: string;
   morada?: string;
-  fotografia?: string; // adicionar se pretende que o back-end envie futuramente
+  fotografia?: string;
 }
 
 export interface CreateUserDTO {
@@ -55,14 +55,19 @@ export interface LoginDTO {
 
 export interface Usuario {
   id: number;
-  numeroUtente: string;
+  numeroUtente?: string;
   nome: string;
   email: string;
   perfil: string;
   token?: string;
-  telemovel: string;
-  morada: string;
-  dataNascimento: string; // Alterado para string
-  genero: string;
+  dataNascimento?: string;
+  genero?: string;
+  telemovel?: string;
+  morada?: string;
   fotografia?: string;
+}
+
+export interface LoginResponse {
+  message: string;
+  user: UserDTO;
 }
