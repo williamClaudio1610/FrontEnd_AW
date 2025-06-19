@@ -85,7 +85,6 @@
             id="dataNascimento"
             name="dataNascimento"
             [(ngModel)]="user.dataNascimento"
-            name="dataNascimento"
             #dataNascimento="ngModel"
             required
           />
@@ -138,6 +137,21 @@
         <div *ngIf="registerForm.submitted && morada.errors?.['required']" class="text-danger small">
           A morada é obrigatória.
         </div>
+      </div>
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa fa-map"></i></span>
+        <select
+          class="form-control"
+          id="provincia"
+          name="provincia"
+          required
+        >
+          <option value="" disabled selected>Selecione a provincia</option>
+          <option *ngFor="let provincia of provinces" [value]="provincia">{{ provincia }}</option>
+        </select>
+      </div>
+      <div *ngIf="registerForm.submitted" class="text-danger small">
+        A provincia é obrigatória.
       </div>
     </div>
 

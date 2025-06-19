@@ -19,6 +19,8 @@ import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-
 import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AdminGuard } from './guards/admin.guard';
+import { UtenteGuard } from './guards/utente.guard';  
+import {utenteAnonimoGuard} from './guards/utente-anonimo.guard';
 
 const routes: Routes = [
   {path: 'login',component: LoginComponent},

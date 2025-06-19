@@ -5,17 +5,17 @@ import { UsuarioService } from '../services/usuario.service';
 @Injectable({
   providedIn: 'root'
 })
-export class UtenteGuard implements CanActivate {
+export class utenteAnonimoGuard implements CanActivate {
   constructor(private usuarioService: UsuarioService, private router: Router) {}
 
   canActivate(): boolean {
     const usuario = this.usuarioService.getCurrentUser();
-    console.log('Verificando permissão para UtenteRegistado:', usuario); // Depuração
+    console.log('Verificando permissão para NaoRegistado:', usuario); // Depuração
 
-    if (usuario && usuario.perfil === 'UtenteRegistado') {
-      return true; // Permite acesso
+    if (!usuario) {
+      return true; // Permite acesso se não houver usuário logado
     } else {
-      this.router.navigate(['/login']); // Redireciona se não for UtenteRegistado
+      this.router.navigate(['/paginaInicial']); // Redireciona se já logado
       return false; // Bloqueia acesso
     }
   }

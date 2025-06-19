@@ -52,7 +52,10 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
           <input pInputText id="email" name="email" [(ngModel)]="usuario.email" [ngClass]="{'invalid': formSubmitted && !usuario.email}" />
           <small *ngIf="formSubmitted && !usuario.email" class="error-message">E-mail é obrigatório.</small>
         </div>
+        <!--
         <div class="form-field" *ngIf="editIndex === null">
+          -->
+        <div class="form-field">
           <label for="senha">Senha *</label>
           <input pInputText type="password" id="senha" name="senha" [(ngModel)]="senha" [ngClass]="{'invalid': formSubmitted && !senha && editIndex === null}" />
           <small *ngIf="formSubmitted && !senha && editIndex === null" class="error-message">Senha é obrigatória.</small>
@@ -87,7 +90,7 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
           <select id="perfil" name="perfil" [(ngModel)]="usuario.perfil" [ngClass]="{'invalid': formSubmitted && !usuario.perfil}">
             <option value="">Selecione um perfil</option>
             <option value="Administrador">Administrador</option>
-            <option value="Utente Registado">Utente Registado</option>
+            <option value="Utente Registado">UtenteRegistado</option>
             <option value="Administrativo">Administrativo</option>
             <option value="UtenteAnónimo">Utente Anónimo</option>
           </select>
@@ -318,7 +321,16 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
 })
 export class UsuariosComponent implements OnInit {
   displayDialog: boolean = false;
-  usuario: Usuario = { id: 0, numeroUtente: '', nome: '', email: '', perfil: '', token: undefined, telemovel: '', morada: '', dataNascimento: new Date().toISOString().split('T')[0], genero: '', fotografia: '' };
+  usuario: Usuario = { 
+    id: 0, numeroUtente: '', 
+    nome: '', email: '', 
+    perfil: '', 
+    token: undefined, 
+    telemovel: '',
+    morada: '', 
+    dataNascimento: new Date().toISOString().split('T')[0], 
+    genero: '', 
+    fotografia: '' };
   usuarios: Usuario[] = [];
   editIndex: number | null = null;
   formSubmitted: boolean = false;
@@ -331,7 +343,7 @@ export class UsuariosComponent implements OnInit {
     private usuarioService: UsuarioService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadUsuarios();
@@ -357,7 +369,19 @@ export class UsuariosComponent implements OnInit {
   }
 
   showDialog() {
-    this.usuario = { id: 0, numeroUtente: '', nome: '', email: '', perfil: '', token: undefined, telemovel: '', morada: '', dataNascimento: new Date().toISOString().split('T')[0], genero: '', fotografia: '' };
+    this.usuario = { 
+      id: 0, 
+      numeroUtente: '', 
+      nome: '', 
+      email: '', 
+      perfil: '', 
+      token: undefined, 
+      telemovel: '', 
+      morada: '', 
+      dataNascimento: new Date().toISOString().split('T')[0], 
+      genero: '', 
+      fotografia: '' 
+    };
     this.senha = '';
     this.editIndex = null;
     this.formSubmitted = false;
@@ -367,20 +391,51 @@ export class UsuariosComponent implements OnInit {
   editUsuario(index: number) {
     this.editIndex = index;
     this.usuario = { ...this.usuarios[index] };
+    // Ensure dataNascimento is in YYYY-MM-DD format
+    if (this.usuario.dataNascimento) {
+      this.usuario.dataNascimento = this.formatarDataParaEnvio(this.usuario.dataNascimento);
+    }
+    this.senha = ''; // Reset password field for updates
     this.formSubmitted = false;
     this.displayDialog = true;
   }
 
+  // Add this property to the component
+  selectedFile: File | null = null;
+
+  // Add this method to handle file selection
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+    }
+  }
+
+  formatarDataParaEnvio(dateString: string | Date): string {
+    let date: Date;
+
+    if (typeof dateString === 'string') {
+      // Converte string para objeto Date
+      date = new Date(dateString);
+    } else {
+      date = dateString;
+    }
+
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+
+
   saveUsuario() {
     this.formSubmitted = true;
 
-    if (!this.usuario.fotografia || !this.usuario.nome || !this.usuario.email || !this.usuario.telemovel || !this.usuario.morada || !this.usuario.dataNascimento || !this.usuario.genero || !this.usuario.perfil) {
+    // Validate required fields
+    if (!this.usuario.nome || !this.usuario.email || !this.usuario.telemovel ||
+      !this.usuario.morada || !this.usuario.dataNascimento || !this.usuario.genero ||
+      !this.usuario.perfil || (this.editIndex === null && !this.senha)) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Preencha todos os campos obrigatórios.' });
-      return;
-    }
-
-    if (this.editIndex === null && !this.senha) {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A senha é obrigatória para novos usuários.' });
       return;
     }
 
@@ -391,20 +446,20 @@ export class UsuariosComponent implements OnInit {
     }
 
     const parsedDataNascimento = this.parseDate(this.usuario.dataNascimento);
-
     if (!parsedDataNascimento) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Data de nascimento inválida.' });
       return;
     }
 
     if (this.editIndex !== null) {
+      // Existing update logic remains unchanged
       const updateDTO: UpdateUserDTO = {
         id: this.usuario.id,
         nome: this.usuario.nome,
         email: this.usuario.email,
         perfil: this.usuario.perfil,
         fotografia: this.usuario.fotografia,
-        dataNascimento: parsedDataNascimento,
+        dataNascimento: this.formatarDataParaEnvio(this.usuario.dataNascimento!),
         genero: this.usuario.genero,
         telemovel: this.usuario.telemovel,
         morada: this.usuario.morada,
@@ -424,33 +479,39 @@ export class UsuariosComponent implements OnInit {
         }
       });
     } else {
-      const createUserDTO: CreateUserDTO = {
-        fotografia: this.usuario.fotografia,
-        nome: this.usuario.nome,
-        email: this.usuario.email,
-        senhaHash: this.senha,
-        perfil: this.usuario.perfil,
-        telemovel: this.usuario.telemovel,
-        morada: this.usuario.morada,
-        dataNascimento: this.parseDate(this.usuario.dataNascimento) || undefined,
-        genero: this.usuario.genero,
-      };
-      this.usuarioService.cadastrarUsuario(createUserDTO).subscribe({
+      // Create new user
+
+      const dataNascimentoFormatada = this.formatarDataParaEnvio(new Date(this.usuario.dataNascimento!));
+
+      const formData = new FormData();
+      if (this.selectedFile) {
+        formData.append('fotografia', this.selectedFile);
+      }
+      formData.append('nome', this.usuario.nome);
+      formData.append('email', this.usuario.email);
+      formData.append('senhaHash', this.senha);
+      formData.append('perfil', this.usuario.perfil);
+      formData.append('telemovel', this.usuario.telemovel);
+      formData.append('morada', this.usuario.morada);
+      formData.append('genero', this.usuario.genero);
+      formData.append('dataNascimento', dataNascimentoFormatada);
+
+      this.usuarioService.cadastrarUsuario(formData).subscribe({
         next: (newUser: Usuario) => {
           this.usuarios.push(newUser);
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado com sucesso!' });
           this.loadUsuarios();
           this.displayDialog = false;
+          this.selectedFile = null; // Reset file input
         },
         error: (err) => {
-          this.erro = 'Erro ao adicionar usuário: ' + (err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message));
+          this.erro = `Erro ao adicionar usuário: ${err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message)}`;
           console.error('Erro ao adicionar usuário:', err);
           this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message) });
         }
       });
     }
   }
-
   confirmDelete(index: number) {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja excluir o usuário ${this.usuarios[index].nome}?`,
@@ -464,15 +525,20 @@ export class UsuariosComponent implements OnInit {
 
   deleteUsuario(index: number) {
     const usuarioId = this.usuarios[index].id;
+    if (!usuarioId || usuarioId <= 0) {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'ID do usuário inválido.' });
+      return;
+    }
     this.usuarioService.deleteUsuario(usuarioId).subscribe({
       next: () => {
+        this.usuarios.splice(index, 1);
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário excluído com sucesso!' });
-        this.loadUsuarios();
       },
       error: (err) => {
-        this.erro = 'Erro ao eliminar usuário: ' + err.message;
-        console.error('Erro ao eliminar usuário:', err.message);
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.message });
+        const errorMessage = err.message || 'Erro desconhecido ao eliminar usuário.';
+        this.erro = `Erro ao eliminar usuário: ${errorMessage}`;
+        console.error('Erro ao eliminar usuário (ID:', usuarioId, '):', err);
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: errorMessage });
       }
     });
   }
@@ -483,7 +549,7 @@ export class UsuariosComponent implements OnInit {
     }
   }
 
-    onDialogHide() {
-      this.formSubmitted = false;
-    }
+  onDialogHide() {
+    this.formSubmitted = false;
   }
+}

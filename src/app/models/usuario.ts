@@ -13,9 +13,9 @@ export interface UserDTO {
 }
 
 export interface CreateUserDTO {
-  fotografia?: string;
+  fotografia?: File;
   nome: string;
-  dataNascimento?: Date;
+  dataNascimento?: string;
   genero: string;
   telemovel: string;
   email: string;
@@ -28,7 +28,7 @@ export interface CreateUserNaoRegistadoDTO
 	Fotografia?: string;
 	nome: string;
 	numeroUtente: string;
-	dataNascimento: Date;
+	dataNascimento: string;
 	genero: string;
 	telemovel: string;  
 	email:string
@@ -39,7 +39,7 @@ export interface UpdateUserDTO {
   id: number;
   fotografia?: string;
   nome?: string;
-  dataNascimento?: Date;
+  dataNascimento?: string;
   genero?: string;
   telemovel?: string;
   email?: string;

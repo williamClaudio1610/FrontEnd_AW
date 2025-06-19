@@ -2,20 +2,13 @@
   <div class="container-fluid px-5">
     <!-- Logo + Nome -->
     <a class="navbar-brand d-flex align-items-center" routerLink="/">
-      <img src="neve.jpg" alt="Insove" height="50" />
+      <!--<img src="neve.jpg" alt="Insove" height="50" />-->
       <span class="ms-3 text-primary fs-3 fw-bold">ClinicaXPTO</span>
     </a>
 
     <!-- Botão de mobile -->
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -39,29 +32,8 @@
         </li>
       </ul>
 
-      
-      <!-- Barra de Pesquisa + Contact + Botões -->
+      <!-- Barra de Pesquisa + Contact + Perfil/Logins -->
       <div class="d-flex align-items-center gap-3">
-        <!-- Barra de Pesquisa 
-        <div class="d-flex align-items-center gap-3">
-            <input
-              type="text"
-              pInputText
-              name="search"
-              [(ngModel)]="searchQuery"
-              placeholder="Pesquisar..."
-              class="p-inputtext-lg rounded-start border-end-0 me-0"
-            />
-            <button
-              pButton
-              type="button"
-              icon="pi pi-search"
-              class="p-button-primary rounded-end border-start-0"
-              (click)="onSearch()"
-            ></button>
-          </div>
-          -->
-
         <!-- Localização e Telefone (visível apenas em telas grandes) -->
         <div class="d-none d-lg-flex align-items-center me-4">
           <i class="pi pi-map-marker text-secondary me-2"></i>
@@ -72,25 +44,27 @@
           <small class="text-secondary">(+244) 949-276-083</small>
         </div>
 
-        <!-- Botões de Login e Criar Conta -->
-        <div class="d-flex gap-2">
-          <button
-            pButton
-            type="button"
-            label="Entrar"
-            icon="pi pi-sign-in"
-            class="p-button-primary"
-            [routerLink]="['/login']"
-          ></button>
-          <button
-            pButton
-            type="button"
-            label="Criar Conta"
-            icon="pi pi-user-plus"
-            class="p-button-primary"
-            [routerLink]="['/register']"
-          ></button>
+        <!-- Perfil ou Botões de Login -->
+        <div class="profile-section" (mouseleave)="showDropdown = false" *ngIf="usuario; else loginButtons">
+          <div class="profile-trigger" (mouseenter)="toggleDropdown()">
+            <img *ngIf="usuario.fotografia" [src]="usuario.fotografia" alt="Foto de Perfil" class="profile-pic"
+              (error)="onImgError()" />
+            <i *ngIf="!usuario.fotografia" class="pi pi-user profile-icon"></i>
+            <span class="ms-2">{{ usuario.nome }}</span>
+          </div>
+          <div class="dropdown-menu" *ngIf="showDropdown">
+            <a [routerLink]="['/perfil']" class="dropdown-item" (click)="showDropdown = false">Ir para Perfil</a>
+            <a class="dropdown-item" (click)="logout(); showDropdown = false">Logout</a>
+          </div>
         </div>
+        <ng-template #loginButtons>
+          <div class="d-flex gap-2">
+            <button pButton type="button" label="Entrar" icon="pi pi-sign-in" class="p-button-primary"
+              [routerLink]="['/login']"></button>
+            <button pButton type="button" label="Criar Conta" icon="pi pi-user-plus" class="p-button-primary"
+              [routerLink]="['/register']"></button>
+          </div>
+        </ng-template>
       </div>
     </div>
   </div>

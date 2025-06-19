@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { UserDTO, CreateUserDTO, UpdateUserDTO, LoginDTO, Usuario } from '../models/usuario';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class UsuarioService {
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     const storedUser = localStorage.getItem(this.USER_KEY);
     if (storedUser) {
       this.currentUserSubject.next(JSON.parse(storedUser));
@@ -36,8 +37,8 @@ export class UsuarioService {
     );
   }
 
-  cadastrarUsuario(userDto: CreateUserDTO): Observable<Usuario> {
-    return this.http.post<UserDTO>(`${this.apiUrl}/criarUser`, userDto).pipe(
+  cadastrarUsuario(formData: FormData): Observable<Usuario> {
+    return this.http.post<UserDTO>(`${this.apiUrl}/criarUser`, formData).pipe(
       map(this.mapUserDtoToUsuario),
       catchError(this.handleError)
     );
@@ -56,13 +57,13 @@ export class UsuarioService {
     );
   }
 
-login(loginDTO: LoginDTO): Observable<Usuario> {
+  login(loginDTO: LoginDTO): Observable<Usuario> {
     return this.http.post<{ message: string; user: UserDTO }>(`${this.apiUrl}/login`, loginDTO).pipe(
       map(response => {
-        console.log('Resposta completa:', response); // Depuração
-        const userDto = response.user; // Acessa o objeto 'user' da resposta
+        console.log('Resposta completa:', response);
+        const userDto = response.user;
         const user: Usuario = this.mapUserDtoToUsuario(userDto);
-        console.log('Usuário mapeado:', user); // Depuração
+        console.log('Usuário mapeado:', user);
         if (user.token) {
           localStorage.setItem(this.TOKEN_KEY, user.token);
         }
@@ -74,62 +75,77 @@ login(loginDTO: LoginDTO): Observable<Usuario> {
     );
   }
 
-    logout(): void {
-      localStorage.removeItem(this.TOKEN_KEY);
-      localStorage.removeItem(this.USER_KEY);
-      this.currentUserSubject.next(null); // Resetar estado
-    }
+  logout(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
+  }
 
-    getToken(): string | null {
-      return localStorage.getItem(this.TOKEN_KEY);
-    }
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
 
-    getCurrentUser(): Usuario | null {
-      return this.currentUserSubject.value;
-    }
+  getCurrentUser(): Usuario | null {
+    return this.currentUserSubject.value;
+  }
 
-    isAuthenticated(): boolean {
-      return !!this.getCurrentUser() && !!this.getToken();
-    }
+  isAuthenticated(): boolean {
+    return !!this.getCurrentUser() && !!this.getToken();
+  }
 
-      // Método para obter a URL da fotografia
-    getUserPhotoUrl(): string | null {
-      const user = this.getCurrentUser();
-      if (user?.fotografia) {
-        return `https://localhost:7273${user.fotografia}`; // Ajuste a URL base
-      }
-      return '/assets/default-user.png'; // Ou um placeholder, ex.: '/assets/default-user.png'
+  getUserPhotoUrl(): string | null {
+    const user = this.getCurrentUser();
+    if (user?.fotografia) {
+      return `https://localhost:7273${user.fotografia}`; // Ajuste a URL base
     }
+    return '/assets/default-user.png';
+  }
 
- 
- private mapUserDtoToUsuario(userDto: UserDTO): Usuario {
-  console.log('Mapeando UserDTO:', userDto); // Depuração
-  return {
-    id: userDto.id,
-    numeroUtente: userDto.numeroUtente || '',
-    nome: userDto.nome || '', // Confirme que 'nome' é mapeado
-    email: userDto.email || '',
-    perfil: userDto.perfil || '',
-    token: userDto.token,
-    dataNascimento: userDto.dataNascimento ? new Date(userDto.dataNascimento).toISOString().split('T')[0] : '',
-    genero: userDto.genero || '',
-    telemovel: userDto.telemovel || '',
-    morada: userDto.morada || '',
-    fotografia: userDto.fotografia
-  };
-}
+  private mapUserDtoToUsuario(userDto: UserDTO): Usuario {
+    console.log('Mapeando UserDTO:', userDto);
+    return {
+      id: userDto.id,
+      numeroUtente: userDto.numeroUtente || '',
+      nome: userDto.nome || '',
+      email: userDto.email || '',
+      perfil: userDto.perfil || '',
+      token: userDto.token,
+      dataNascimento: userDto.dataNascimento ? new Date(userDto.dataNascimento).toISOString().split('T')[0] : '',
+      genero: userDto.genero || '',
+      telemovel: userDto.telemovel || '',
+      morada: userDto.morada || '',
+      fotografia: userDto.fotografia || ''
+    };
+  }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Ocorreu um erro ao processar a solicitação.';
-    if (error.status === 409) {
+
+    if (error.status === 400) {
+      // Se vier um objeto ModelState
+      if (error.error && error.error.errors && typeof error.error.errors === 'object') {
+        // Extrai todas as mensagens e as junta numa string única
+        const allErrors = Object
+          .values(error.error.errors)        // pega cada array de mensagens
+          .flat()                            // achata num único array
+          .filter(msg => !!msg);            // remove vazios
+        errorMessage = allErrors.join(' | ');
+      } else {
+        // Caso venha uma string simples ou outro formato
+        errorMessage = typeof error.error === 'string'
+          ? error.error
+          : JSON.stringify(error.error);
+      }
+
+    } else if (error.status === 409) {
       errorMessage = 'Um usuário com este email já existe.';
-    } else if (error.status === 400) {
-      errorMessage = error.error || 'Dados inválidos. Verifique os campos e tente novamente.';
     } else if (error.status === 401) {
       errorMessage = 'Email ou senha inválidos.';
     } else if (error.status === 404) {
       errorMessage = 'Usuário não encontrado.';
     }
+
     return throwError(() => new Error(errorMessage));
   }
 }
