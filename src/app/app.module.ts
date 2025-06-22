@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'; // Importe o FormsModule
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Importar o módulo de animações
@@ -51,6 +51,7 @@ import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.c
 import { PedidoMarcacaoComponent } from './admin-pages/admin-links/pedido-marcacao/pedido-marcacao.component';
 import { PerfilUserComponent } from './components/paginas-menu/perfil-user/perfil-user.component';
 import { MudarSenhaComponent } from './components/mudar-senha/mudar-senha.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,12 @@ import { MudarSenhaComponent } from './components/mudar-senha/mudar-senha.compon
     DropdownModule,
     TabViewModule,
     PasswordModule, // Adicionar PasswordModule aos imports
-    ReactiveFormsModule
+    ReactiveFormsModule, ServiceWorkerModule.register('ngsw-worker.js', {
+  enabled: !isDevMode(),
+  // Register the ServiceWorker as soon as the application is stable
+  // or after 30 seconds (whichever comes first).
+  registrationStrategy: 'registerWhenStable:30000'
+})
 ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, MessageService,
