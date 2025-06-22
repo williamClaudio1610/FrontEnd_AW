@@ -1,0 +1,154 @@
+:root {
+    --primary-color: #3b82f6;
+    --secondary-color: #6c757d;
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .password-change-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f7fb;
+    padding: 20px;
+  }
+  
+  .password-change-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    width: 100%;
+    max-width: 450px;
+    padding: 2.5rem;
+  }
+  
+  .password-change-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .password-change-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  
+  .password-change-icon i {
+    font-size: 2.5rem;
+    color: white;
+  }
+  
+  .password-change-header h2 {
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .password-change-header p {
+    color: var(--secondary-color);
+    margin: 0;
+  }
+  
+  .password-change-form .field {
+    margin-bottom: 1.5rem;
+  }
+  
+  .password-change-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+  }
+  
+  .password-strength {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+  
+  .strength-bar {
+    flex: 1;
+    height: 5px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    margin-right: 5px;
+  }
+  
+  .strength-bar:last-child {
+    margin-right: 0;
+  }
+  
+  .strength-bar.weak {
+    background-color: var(--error-color);
+  }
+  
+  .strength-bar.medium {
+    background-color: #f59e0b;
+  }
+  
+  .strength-bar.strong {
+    background-color: var(--success-color);
+  }
+  
+  .strength-label {
+    margin-left: 10px;
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+    min-width: 70px;
+  }
+  
+  .button-group {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+  
+  .button-group button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+  }
+  
+  .success-message {
+    background-color: #ecfdf5;
+    color: var(--success-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .error-message {
+    background-color: #fef2f2;
+    color: var(--error-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  small.p-error {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--error-color);
+  }
+  
+  @media (max-width: 576px) {
+    .password-change-card {
+      padding: 1.5rem;
+    }
+    
+    .password-change-icon {
+      width: 70px;
+      height: 70px;
+    }
+  }

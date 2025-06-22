@@ -1,0 +1,78 @@
+<div class="password-change-container">
+    <div class="password-change-card">
+      <div class="password-change-header">
+        <div class="password-change-icon">
+          <i class="pi pi-lock"></i>
+        </div>
+        <h2>Alterar Senha</h2>
+        <p>Por favor, defina uma nova senha para sua conta</p>
+      </div>
+  
+      <form (ngSubmit)="onSubmit()" #passwordForm="ngForm" class="password-change-form">
+        <div class="field">
+          <label for="currentPassword">Senha Atual</label>
+          <p-password 
+            id="currentPassword" 
+            [(ngModel)]="currentPassword" 
+            name="currentPassword" 
+            required 
+            [feedback]="false"
+            [toggleMask]="true"
+            placeholder="Digite sua senha atual"
+          ></p-password>
+          <small *ngIf="currentPasswordInvalid" class="p-error">Senha atual incorreta</small>
+        </div>
+        
+        <div class="field">
+          <label for="newPassword">Nova Senha</label>
+          <p-password 
+            id="newPassword" 
+            [(ngModel)]="newPassword" 
+            name="newPassword" 
+            required 
+            [feedback]="true"
+            [toggleMask]="true"
+            placeholder="Digite a nova senha"
+          ></p-password>
+          <div class="password-strength">
+            <div class="strength-bar" [class.weak]="passwordStrength === 'weak'"></div>
+            <div class="strength-bar" [class.medium]="passwordStrength === 'medium'"></div>
+            <div class="strength-bar" [class.strong]="passwordStrength === 'strong'"></div>
+            <div class="strength-label">{{ getPasswordStrengthText() }}</div>
+          </div>
+        </div>
+        
+        <div class="field">
+          <label for="confirmPassword">Confirmar Nova Senha</label>
+          <p-password 
+            id="confirmPassword" 
+            [(ngModel)]="confirmPassword" 
+            name="confirmPassword" 
+            required 
+            [feedback]="false"
+            [toggleMask]="true"
+            placeholder="Confirme a nova senha"
+          ></p-password>
+          <small *ngIf="passwordsMismatch" class="p-error">As senhas não coincidem</small>
+        </div>
+        
+        <div class="button-group">
+          <button 
+            pButton 
+            type="submit" 
+            label="Alterar Senha" 
+            class="p-button-primary" 
+            [disabled]="passwordForm.invalid || passwordsMismatch || loading"
+          ></button>
+        </div>
+        
+        <div *ngIf="successMessage" class="success-message">
+          <i class="pi pi-check-circle"></i> {{ successMessage }}
+        </div>
+        
+        <div *ngIf="errorMessage" class="error-message">
+          <i class="pi pi-exclamation-circle"></i> {{ errorMessage }}
+        </div>
+      </form>
+    </div>
+  </div>

@@ -71,3 +71,8 @@ export interface LoginResponse {
   message: string;
   user: UserDTO;
 }
+
+export interface ChangePasswordDTO {
+  currentPassword: string;
+  newPassword: string;
+}

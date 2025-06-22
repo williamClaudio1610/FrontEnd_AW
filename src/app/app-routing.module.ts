@@ -21,7 +21,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AdminGuard } from './guards/admin.guard';
 import { UtenteGuard } from './guards/utente.guard';  
 import {utenteAnonimoGuard} from './guards/utente-anonimo.guard';
-
+import { PerfilUserComponent } from './components/paginas-menu/perfil-user/perfil-user.component';
+import { MudarSenhaComponent } from './components/mudar-senha/mudar-senha.component';
 const routes: Routes = [
   {path: 'login',component: LoginComponent},
   {path: 'register',component: RegisterComponent},
@@ -32,6 +33,8 @@ const routes: Routes = [
   {path: 'contacteNos',component: ContacteNosComponent},
   {path: 'equipa',component: EquipaComponent},
   {path: 'sobreNos',component: SobreNosComponent},
+  {path: 'perfilUser',component: PerfilUserComponent},
+  {path: 'mudarSenha',component: MudarSenhaComponent},
   {
     path: 'admin',
     component: AdminMainPageComponent,

@@ -473,9 +473,11 @@ export class UsuariosComponent implements OnInit {
           this.displayDialog = false;
         },
         error: (err) => {
-          this.erro = `Erro ao atualizar usuário: ${err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message)}`;
+          this.erro = `Erro ao atualizar usuário: ${err.error?.message || 
+            (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message)}`;
           console.error('Erro ao atualizar usuário:', err);
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message) });
+          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || 
+            (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message) });
         }
       });
     } else {

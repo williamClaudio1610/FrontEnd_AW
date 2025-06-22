@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { UserDTO, CreateUserDTO, UpdateUserDTO, LoginDTO, Usuario } from '../models/usuario';
+import { UserDTO, CreateUserDTO, UpdateUserDTO, LoginDTO, Usuario, ChangePasswordDTO } from '../models/usuario';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -75,6 +75,7 @@ export class UsuarioService {
     );
   }
 
+
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
@@ -101,6 +102,43 @@ export class UsuarioService {
     }
     return '/assets/default-user.png';
   }
+
+  alterarSenha(novaSenha: string): Observable<Usuario> {
+    const currentUser = this.getCurrentUser();
+    
+    if (!currentUser) {
+      return throwError(() => new Error('Usuário não autenticado'));
+    }
+  
+    // Criar objeto de atualização com todos os campos obrigatórios
+    const updateDTO: UpdateUserDTO = {
+      id: currentUser.id,
+      nome: currentUser.nome,
+      email: currentUser.email,
+      morada: currentUser.morada || '',
+      telemovel: currentUser.telemovel || '',
+      genero: currentUser.genero || '',
+      senhaHash: novaSenha,
+      fotografia: currentUser.fotografia || '',
+      dataNascimento: currentUser.dataNascimento,
+      perfil: 'UtenteRegistado' // Atualizando para UtenteAnonimo
+    };
+  
+    return this.http.put<UserDTO>(`${this.apiUrl}/atualizarUser/${currentUser.id}`, updateDTO).pipe(
+      map(updatedUser => {
+        // Atualizar localmente o usuário com os dados retornados
+        const updated = this.mapUserDtoToUsuario(updatedUser);
+        
+        // Atualizar armazenamento local
+        localStorage.setItem(this.USER_KEY, JSON.stringify(updated));
+        this.currentUserSubject.next(updated);
+        
+        return updated;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
 
   private mapUserDtoToUsuario(userDto: UserDTO): Usuario {
     console.log('Mapeando UserDTO:', userDto);

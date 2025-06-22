@@ -54,6 +54,8 @@ export class LoginComponent {
             this.router.navigate(['/paginaInicial']);
           } else if (usuario.perfil === 'Administrativo' || usuario.perfil === 'Administrador') {
             this.router.navigate(['admin/dashboard']);
+          }else if (usuario.perfil === 'UtenteAnonimo') {
+            this.router.navigate(['/mudarSenha']);
           } else {
             this.router.navigate(['/home']);
           }

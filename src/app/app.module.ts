@@ -16,6 +16,9 @@ import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
+import { TabViewModule } from 'primeng/tabview';
+import { PasswordModule } from 'primeng/password'; // Adicionar importação do PasswordModule
+
 
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -46,6 +49,8 @@ import { ContacteNosComponent } from './components/paginas-menu/contacte-nos/con
 import { EquipaComponent } from './components/paginas-menu/equipa/equipa.component';
 import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.component';
 import { PedidoMarcacaoComponent } from './admin-pages/admin-links/pedido-marcacao/pedido-marcacao.component';
+import { PerfilUserComponent } from './components/paginas-menu/perfil-user/perfil-user.component';
+import { MudarSenhaComponent } from './components/mudar-senha/mudar-senha.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +66,8 @@ import { PedidoMarcacaoComponent } from './admin-pages/admin-links/pedido-marcac
     ContacteNosComponent,
     EquipaComponent,
     MarcacaoComponent,
+    PerfilUserComponent,
+    MudarSenhaComponent,
   ],
   imports: [
     BrowserModule,
@@ -88,6 +95,8 @@ import { PedidoMarcacaoComponent } from './admin-pages/admin-links/pedido-marcac
     TableModule,
     CalendarModule,
     DropdownModule,
+    TabViewModule,
+    PasswordModule, // Adicionar PasswordModule aos imports
     ReactiveFormsModule
 ],
   providers: [
