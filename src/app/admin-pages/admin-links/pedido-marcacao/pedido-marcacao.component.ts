@@ -1,105 +1,244 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Necessário para diretivas como *ngIf e *ngFor
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms'; // Para formulários reativos
-import { FormsModule } from '@angular/forms'; // Para formulários template-driven
-import { RouterModule } from '@angular/router'; // Para navegação, se necessário
-import { CalendarModule } from 'primeng/calendar'; // Exemplo: PrimeNG Calendar
-import { DropdownModule } from 'primeng/dropdown'; // Exemplo: PrimeNG Dropdown
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { PedidoMarcacaoDTO, UpdatePedidoMarcacaoDTO } from '../../../models/pedido-marcacao';
+import { ActoClinicoDTO } from '../../../models/acto-clinico';
+import { TipoDeConsultaExameDTO } from '../../../models/tipo-de-consulta-exame';
+import { SubsistemaSaudeDTO } from '../../../models/subsistema-saude';
+import { ProfissionalDTO } from '../../../models/profissional';
+import { PedidoMarcacaoServiceService } from '../../../services/pedido-marcacao-service.service';
+import { UsuarioService } from '../../../services/usuario.service';
+
+// PrimeNG imports
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { DialogModule } from 'primeng/dialog';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
+import { AccordionModule } from 'primeng/accordion';
+import { PanelModule } from 'primeng/panel';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
-  selector: 'app-pedido-marcacao',
+  selector: 'app-pedidos-marcacao',
   standalone: true,
- template: `
-    <div class="container">
-      <h2 class="title">Pedido de Marcação</h2>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="data">Data</label>
-          <p-calendar
-            formControlName="data"
-            [showIcon]="true"
-            placeholder="Selecione a data"
-          ></p-calendar>
-        </div>
-        <div class="form-group">
-          <label for="tipo">Tipo</label>
-          <p-dropdown
-            formControlName="tipo"
-            [options]="tipos"
-            placeholder="Selecione o tipo"
-          ></p-dropdown>
-        </div>
-        <button type="submit" class="btn btn-primary">Enviar</button>
-      </form>
-    </div>
-  `,
-  styles: [
-    `
-      .container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      .title {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 24px;
-        color: #333;
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #555;
-      }
-      .btn {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        color: #fff;
-        background-color: #007bff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .btn:hover {
-        background-color: #0056b3;
-      }
-    `,
-  ],
+  templateUrl: `pedido-marcacao.component.html`,
+  styleUrl: `pedido-marcacao.component.css`,
   imports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    RouterModule,
-    CalendarModule,
+    TableModule,
+    ButtonModule,
     DropdownModule,
+    DialogModule,
+    CardModule,
+    TagModule,
+    AccordionModule,
+    PanelModule,
+    ConfirmDialogModule,
+    ToastModule,
+    InputTextModule
   ],
+  providers: [ConfirmationService, MessageService]
 })
-export class PedidoMarcacaoComponent {
-  form;
+export class PedidoMarcacaoComponent implements OnInit {
+  @ViewChild('searchInput') searchInput!: ElementRef;
 
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      data: [''],
-      tipo: [''],
+  pedidos: PedidoMarcacaoDTO[] = [];
+  filteredPedidos: PedidoMarcacaoDTO[] = [];
+  expandedPedidos = new Set<number>();
+  searchTerm = '';
+
+  // Dialog de confirmação de estado
+  showEstadoDialog = false;
+  selectedPedido: PedidoMarcacaoDTO | null = null;
+  newEstado = '';
+  previousEstado = '';
+
+  estadoOptions = [
+    { label: 'Pendente', value: 'PENDENTE' },
+    { label: 'Aprovado', value: 'APROVADO' },
+    { label: 'Rejeitado', value: 'REJEITADO' },
+    { label: 'Cancelado', value: 'CANCELADO' }
+  ];
+
+  constructor(
+    private confirmationService: ConfirmationService,
+    private fb: FormBuilder,
+    private pedidoService: PedidoMarcacaoServiceService,
+    private usuarioService: UsuarioService,
+    private toastService: MessageService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadPedidos();
+  }
+
+  // Carregar pedidos do usuário autenticado
+  loadPedidos(): void {
+    const user = this.usuarioService.getCurrentUser();
+    if (user && user.id) {
+      this.pedidoService.getByUserId(user.id).subscribe({
+        next: (pedidos) => {
+          this.pedidos = pedidos;
+          this.filterPedidos();
+        },
+        error: (err) => {
+          this.toastService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao carregar pedidos: ' + (err.error?.message || err.message),
+            life: 3000
+          });
+        }
+      });
+    } else {
+      this.toastService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Usuário não autenticado.',
+        life: 3000
+      });
+    }
+  }
+
+  // Função para inicializar os dados
+  initializeData(): void {
+    // Não usado mais, mantido como fallback se necessário
+  }
+
+  // Formatação de datas
+  formatDate(date: Date | string): string {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj ? dateObj.toLocaleDateString() : '';
+  }
+
+  formatDateTime(date: Date | string): string {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj ? dateObj.toLocaleString() : '';
+  }
+
+  // Filtros
+  filterPedidos(): void {
+    this.filteredPedidos = this.pedidos.filter(pedido => {
+      const searchTermLower = this.searchTerm.toLowerCase();
+      return (
+        pedido.id.toString().includes(searchTermLower) ||
+        pedido.userId.toString().includes(searchTermLower) ||
+        pedido.actosClinicos.some(acto =>
+          acto.tipoDeConsultaExame?.nome.toLowerCase().includes(searchTermLower)
+        )
+      );
     });
   }
 
-  tipos = [
-    { label: 'Consulta', value: 'consulta' },
-    { label: 'Exame', value: 'exame' },
-  ];
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.filterPedidos();
+  }
 
+  // Gerenciamento de detalhes
+  toggleDetalhes(pedidoId: number): void {
+    if (this.expandedPedidos.has(pedidoId)) {
+      this.expandedPedidos.delete(pedidoId);
+    } else {
+      this.expandedPedidos.add(pedidoId);
+    }
+  }
 
-  onSubmit() {
-    console.log(this.form.value);
+  // Mudança de estado
+  onEstadoChange(pedido: PedidoMarcacaoDTO, event: any): void {
+    const novoEstado = event.value;
+    this.openEstadoDialog(pedido);
+  }
+
+  // Confirmação de ação
+  confirmAction(pedido: PedidoMarcacaoDTO, action: string): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja ${action.toLowerCase()} este pedido?`,
+      accept: () => {
+        // Simulação de ação (substituir por chamada à API)
+        console.log(`Ação ${action} confirmada para pedido ${pedido.id}`);
+        this.toastService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: `Ação ${action} realizada com sucesso.`,
+          life: 3000
+        });
+      }
+    });
+  }
+
+  // Converte código de estado para label
+  getEstadoLabel(estado: string): string {
+    const estadoOption = this.estadoOptions.find(option => option.value === estado);
+    return estadoOption ? estadoOption.label : 'Estado Desconhecido';
+  }
+
+  // Métodos do diálogo de mudança de estado
+  openEstadoDialog(pedido: PedidoMarcacaoDTO): void {
+    this.selectedPedido = { ...pedido }; // Clonar para evitar alterações diretas
+    this.previousEstado = pedido.estado;
+    this.newEstado = pedido.estado; // Inicializa com o estado atual
+    this.showEstadoDialog = true;
+  }
+
+  cancelEstadoChange(): void {
+    if (this.selectedPedido) {
+      this.selectedPedido.estado = this.previousEstado;
+    }
+    this.showEstadoDialog = false;
+  }
+
+  confirmEstadoChange(): void {
+    if (this.selectedPedido && this.newEstado && this.newEstado !== this.previousEstado) {
+      // Chamar serviço para atualizar o estado
+      const updateDTO: UpdatePedidoMarcacaoDTO = {
+        id: this.selectedPedido.id,
+        estado: this.newEstado,
+        dataInicio: this.selectedPedido.dataInicio,
+        dataFim: this.selectedPedido.dataFim,
+        observacoes: this.selectedPedido.observacoes,
+        actosClinicos: this.selectedPedido.actosClinicos.map(acto => ({
+          tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
+          subsistemaSaudeId: acto.subsistemaSaudeId,
+          profissionalIds: acto.profissionais?.map(p => p.id) || []
+        }))
+      };
+
+      this.pedidoService.atualizarPedido(updateDTO).subscribe({
+        next: (response) => {
+          this.selectedPedido!.estado = this.newEstado;
+          const index = this.pedidos.findIndex(p => p.id === this.selectedPedido!.id);
+          if (index !== -1) this.pedidos[index] = { ...this.selectedPedido! };
+          this.filterPedidos();
+          this.showEstadoDialog = false;
+          this.toastService.add({
+            severity: 'success',
+            summary: 'Estado Atualizado',
+            detail: `O estado do pedido foi atualizado para ${this.newEstado}`,
+            life: 3000
+          });
+        },
+        error: (err) => {
+          this.toastService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao atualizar estado: ' + (err.error?.message || err.message),
+            life: 3000
+          });
+          this.selectedPedido!.estado = this.previousEstado;
+          this.showEstadoDialog = false;
+        }
+      });
+    } else {
+      this.showEstadoDialog = false;
+    }
   }
 }

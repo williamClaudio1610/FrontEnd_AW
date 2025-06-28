@@ -1,0 +1,186 @@
+<div class="pedidos-page">
+  <p-toast></p-toast>
+  <p-confirmDialog header="Confirmação" icon="pi pi-exclamation-triangle" [style]="{width: '400px'}"></p-confirmDialog>
+
+  <h2>Pedidos de Marcação</h2>
+  <p>Gestão e acompanhamento de pedidos de marcação</p>
+
+  <!-- Barra de Pesquisa -->
+  <div class="search-container">
+    <div class="search-field">
+      <i class="pi pi-search search-icon"></i>
+      <input 
+        #searchInput
+        pInputText 
+        type="text" 
+        placeholder="Pesquisar por ID, nome do usuário ou tipo de consulta..." 
+        [(ngModel)]="searchTerm"
+        (input)="filterPedidos()"
+        class="search-input"
+      />
+      <button 
+        *ngIf="searchTerm" 
+        type="button" 
+        class="clear-search"
+        (click)="clearSearch()"
+        title="Limpar pesquisa"
+      >
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabela de Pedidos -->
+  <table class="pedidos-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Usuário ID</th>
+        <th>Data Solicitação</th>
+        <th>Período</th>
+        <th>Estado</th>
+        <th>Atos Clínicos</th>
+        <th>Actos</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let pedido of filteredPedidos; let i = index">
+        <tr>
+          <td>{{ pedido.id }}</td>
+          <td>{{ pedido.userId }}</td>
+          <td>{{ formatDate(pedido.dataSolicitacao) }}</td>
+          <td>{{ formatDate(pedido.dataInicio) }} - {{ formatDate(pedido.dataFim) }}</td>
+          <td>
+            <p-dropdown 
+              [options]="estadoOptions" 
+              [(ngModel)]="pedido.estado" 
+              (onChange)="onEstadoChange(pedido, $event)"
+              [style]="{width: '150px'}"
+              placeholder="Selecione o estado"
+            ></p-dropdown>
+          </td>
+          <td>{{ pedido.actosClinicos.length }}</td>
+          <td>
+            <button 
+              class="action-button" 
+              title="Ver Detalhes" 
+              (click)="toggleDetalhes(pedido.id)"
+            >
+              <i class="pi" [ngClass]="expandedPedidos.has(pedido.id) ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </td>
+        </tr>
+        
+        <!-- Linha de Detalhes Expandida -->
+        <tr *ngIf="expandedPedidos.has(pedido.id)" 
+            [ngClass]="{'detalhes-row': true, 'expanded': expandedPedidos.has(pedido.id)}">
+          <td colspan="7">
+            <div class="detalhes-container">
+            
+            <!-- Observações -->
+            <div *ngIf="pedido.observacoes" class="observacoes-section">
+              <h4><i class="pi pi-info-circle"></i> Observações</h4>
+              <p>{{ pedido.observacoes }}</p>
+            </div>
+
+            <!-- Atos Clínicos -->
+            <div class="actos-section">
+              <h4><i class="pi pi-calendar-plus"></i> Atos Clínicos ({{ pedido.actosClinicos.length }})</h4>
+              
+              <div class="actos-grid">
+                <div 
+                  *ngFor="let acto of pedido.actosClinicos; let j = index" 
+                  class="acto-card"
+                >
+                  <div class="acto-header">
+                    <h5>{{ acto.tipoDeConsultaExame?.nome || 'Sem Nome' }}</h5>
+                    <span class="acto-id">#{{ acto.id }}</span>
+                  </div>
+                  
+                  <div class="acto-details">
+                    <div class="detail-item">
+                      <i class="pi pi-building"></i>
+                      <span>{{ acto.subsistemaSaude?.nome || 'Sem Subsistema' }}</span>
+                    </div>
+                    
+                    <div *ngIf="acto.dataHora" class="detail-item">
+                      <i class="pi pi-calendar-clock"></i>
+                      <span>{{ formatDateTime(acto.dataHora) }}</span>
+                    </div>
+                    
+                    <div *ngIf="acto.anoMesDia && !acto.dataHora" class="detail-item">
+                      <i class="pi pi-calendar"></i>
+                      <span>{{ acto.anoMesDia }}</span>
+                    </div>
+                    
+                    <div *ngIf="acto.profissionais && acto.profissionais.length > 0" class="detail-item profissionais-item">
+                      <i class="pi pi-users"></i>
+                      <div class="profissionais-list">
+                        <span 
+                          *ngFor="let prof of acto.profissionais; let last = last"
+                          class="profissional-tag"
+                        >
+                          {{ prof.nome || 'Sem Nome' }}
+                          <small *ngIf="prof.tipoDeConsultaExameNome">({{ prof.tipoDeConsultaExameNome }})</small>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>
+
+<!-- Mensagem quando não há dados -->
+<div *ngIf="filteredPedidos.length === 0" class="no-data">
+  <i class="pi pi-info-circle"></i>
+  <p>{{ searchTerm ? 'Nenhum pedido encontrado para a pesquisa.' : 'Nenhum pedido de marcação encontrado.' }}</p>
+</div>
+</div>
+
+<!-- Dialog de Confirmação de Estado -->
+<p-dialog 
+  header="Confirmar Alteração de Estado" 
+  [(visible)]="showEstadoDialog" 
+  [modal]="true"
+  [style]="{width: '450px'}"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="confirm-estado-content">
+    <i class="pi pi-exclamation-triangle confirm-icon"></i>
+    <div class="confirm-text">
+      <p>Tem certeza que deseja alterar o estado do pedido <strong>#{{ selectedPedido?.id }}</strong>?</p>
+      <div class="estado-change">
+        <span class="estado-from">{{ getEstadoLabel(previousEstado) }}</span>
+        <i class="pi pi-arrow-right"></i>
+        <p-dropdown 
+          [options]="estadoOptions" 
+          [(ngModel)]="newEstado" 
+          [style]="{width: '150px'}"
+          placeholder="Selecione o estado"
+        ></p-dropdown>
+      </div>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button 
+      label="Cancelar" 
+      severity="secondary" 
+      (onClick)="cancelEstadoChange()" 
+      styleClass="p-button-text" 
+    />
+    <p-button 
+      label="Confirmar" 
+      severity="success" 
+      (onClick)="confirmEstadoChange()" 
+      [disabled]="!newEstado || newEstado === previousEstado"
+      styleClass="p-button-raised" 
+    />
+  </ng-template>
+</p-dialog>

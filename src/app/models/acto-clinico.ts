@@ -1,37 +1,23 @@
-import { TipoDeConsultaExame } from "./tipo-de-consulta-exame";
-import { SubsistemaSaude } from "./subsistema-saude";
-import { Profissional } from "./profissional";
-
-
-export class ActoClinico {
-}
-export interface CreateActoClinico {
-  tipoDeConsultaExameId: number;
-  subsistemaSaudeId: number;
-  profissionalIds?: number[];
-}
-
-export interface ActoClinico {
-  id: number;
-  horario: string;
-  pedidoMarcacaoId: number;
-  tipoDeConsultaExameId: number;
-  tipoDeConsultaExame: TipoDeConsultaExame;
-  subsistemaSaudeId: number;
-  subsistemaSaude: SubsistemaSaude;
-  profissionais: Profissional[];
-}
+import { TipoDeConsultaExameDTO } from "./tipo-de-consulta-exame";
+import { SubsistemaSaudeDTO } from "./subsistema-saude";
+import { ProfissionalDTO } from "./profissional";
 
 export interface ActoClinicoDTO {
   id: number;
   pedidoMarcacaoId: number;
   tipoDeConsultaExameId: number;
-  tipoDeConsultaExame: TipoDeConsultaExame;
-  dataHora?: Date; // Opcional, nullable
-  anoMesDia?: Date; // Opcional, nullable (converte DateOnly para Date)
+  tipoDeConsultaExame: TipoDeConsultaExameDTO;
+  dataHora?: string; // ISO string format
+  anoMesDia?: string; // YYYY-MM-DD format
   subsistemaSaudeId: number;
-  subsistemaSaude: SubsistemaSaude;
-  profissionais: Profissional[];
+  subsistemaSaude: SubsistemaSaudeDTO;
+  profissionais: ProfissionalDTO[];
+}
+
+export interface CreateActoClinicoDTO {
+  tipoDeConsultaExameId: number;
+  subsistemaSaudeId: number;
+  profissionalIds?: number[];
 }
 
 export interface UpdateActoClinicoDTO {
@@ -39,7 +25,7 @@ export interface UpdateActoClinicoDTO {
   pedidoMarcacaoId: number;
   tipoDeConsultaExameId: number;
   subsistemaSaudeId: number;
-  dataHora: Date;
-  anoMesDia: Date;
+  dataHora: string; // ISO string format
+  anoMesDia: string; // YYYY-MM-DD format
   profissionalIds?: number[];
 }

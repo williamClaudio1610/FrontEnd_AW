@@ -16,7 +16,7 @@ import { ProfissionaisComponent } from './admin-pages/admin-links/profissionais2
 import { UsuariosComponent } from './admin-pages/admin-links/usuarios/usuarios.component';
 import { SubsistemaSaudeComponent } from './admin-pages/admin-links/subsistema-saude/subsistema-saude.component';
 import { TipoDeConsultaExameComponent } from './admin-pages/admin-links/tipo-de-consulta-exame/tipo-de-consulta-exame.component';
-import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.component';
+import { PedidoMarcacaoComponent } from './admin-pages/admin-links/pedido-marcacao/pedido-marcacao.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AdminGuard } from './guards/admin.guard';
 import { UtenteGuard } from './guards/utente.guard';  
@@ -41,12 +41,12 @@ const routes: Routes = [
     canActivate: [AdminGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'marcacao', component: MarcacaoComponent },
+      { path: 'marcacao', component: PedidoMarcacaoComponent },
       { path: 'profissionais', component: ProfissionaisComponent }, // Adicionado
       {path: 'usuarios', component: UsuariosComponent},
       {path: 'subsistemaSaude', component: SubsistemaSaudeComponent},
       {path: 'tipoDeExameConsulta', component: TipoDeConsultaExameComponent},
-      {path: 'pedidosMarcacao', component: MarcacaoComponent},
+      {path: 'pedidosMarcacao', component: PedidoMarcacaoComponent},
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

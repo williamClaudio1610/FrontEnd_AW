@@ -9,13 +9,17 @@ import { ToastModule } from 'primeng/toast'; // Importar o ToastModule
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import Aura from '@primeng/themes/aura'
-
+import { TableModule } from 'primeng/table';
+import { DropdownModule } from 'primeng/dropdown';
+import { DialogModule } from 'primeng/dialog';
+import { TagModule } from 'primeng/tag';
+import { PanelModule } from 'primeng/panel';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 import { CarouselModule } from 'primeng/carousel';
 import { AccordionModule } from 'primeng/accordion';
-import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
-import { DropdownModule } from 'primeng/dropdown';
 import { TabViewModule } from 'primeng/tabview';
 import { PasswordModule } from 'primeng/password'; // Adicionar importação do PasswordModule
 
@@ -47,7 +51,6 @@ import { NewsletterFaqSectionComponent } from './components/pagina-inicial/newsl
 import { SobreNosComponent } from './components/paginas-menu/sobre-nos/sobre-nos.component';
 import { ContacteNosComponent } from './components/paginas-menu/contacte-nos/contacte-nos.component';
 import { EquipaComponent } from './components/paginas-menu/equipa/equipa.component';
-import { MarcacaoComponent } from './admin-pages/admin-links/marcacao/marcacao.component';
 import { PedidoMarcacaoComponent } from './admin-pages/admin-links/pedido-marcacao/pedido-marcacao.component';
 import { PerfilUserComponent } from './components/paginas-menu/perfil-user/perfil-user.component';
 import { MudarSenhaComponent } from './components/mudar-senha/mudar-senha.component';
@@ -66,7 +69,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     SobreNosComponent,
     ContacteNosComponent,
     EquipaComponent,
-    MarcacaoComponent,
     PerfilUserComponent,
     MudarSenhaComponent,
   ],

@@ -77,10 +77,25 @@ export class UsuarioService {
 
 
   logout(): void {
+    // Remove dados do localStorage
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
     this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+  
+    // Limpa cache do Service Worker, se registrado
+    if ('caches' in window) {
+      caches.keys().then(cacheNames => {
+        cacheNames.forEach(cacheName => {
+          caches.delete(cacheName); // Deleta todos os caches
+        });
+      });
+    }
+  
+    // Limpa dados de sessão (opcional)
+    sessionStorage.clear();
+  
+    // Força recarregamento da página para garantir que o cache do navegador seja limpo
+    window.location.href = '/paginaInicial'; // Substitui router.navigate para evitar cache
   }
 
   getToken(): string | null {
