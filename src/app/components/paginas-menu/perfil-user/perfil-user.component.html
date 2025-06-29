@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <app-header></app-header>
 
 <div class="profile-container">
@@ -17,11 +19,11 @@
           <div class="text-muted">Marcaçōes</div>
         </div>
         <div class="text-center">
-          <div class="fs-5 fw-bold">{{ getMarcacoesByEstado('Confirmada') }}</div>
+          <div class="fs-5 fw-bold">{{ getMarcacoesByEstado('APROVADO') + getMarcacoesByEstado('Confirmada') }}</div>
           <div class="text-muted">Confirmadas</div>
         </div>
         <div class="text-center">
-          <div class="fs-5 fw-bold">{{ getMarcacoesByEstado('Pendente') }}</div>
+          <div class="fs-5 fw-bold">{{ getMarcacoesByEstado('PENDENTE') + getMarcacoesByEstado('Pedido') }}</div>
           <div class="text-muted">Pendentes</div>
         </div>
       </div>
@@ -39,14 +41,16 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="nome">Nome</label>
-                    <input pInputText id="nome" [(ngModel)]="editUser.nome" name="nome" required class="form-control" placeholder="Seu nome completo">
+                    <label for="nome">Nome *</label>
+                    <input pInputText id="nome" [(ngModel)]="editUser.nome" name="nome" required class="form-control" placeholder="Seu nome completo" [class.invalid]="!editUser.nome?.trim() && editUser.nome !== ''">
+                    <small *ngIf="!editUser.nome?.trim() && editUser.nome !== ''" class="error-message">Nome é obrigatório</small>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="email">Email</label>
-                    <input pInputText id="email" [(ngModel)]="editUser.email" name="email" required class="form-control" placeholder="seu.email@exemplo.com">
+                    <label for="email">Email *</label>
+                    <input pInputText id="email" [(ngModel)]="editUser.email" name="email" required type="email" class="form-control" placeholder="seu.email@exemplo.com" [class.invalid]="!editUser.email?.trim() && editUser.email !== ''">
+                    <small *ngIf="!editUser.email?.trim() && editUser.email !== ''" class="error-message">Email é obrigatório</small>
                   </div>
                 </div>
               </div>
@@ -54,8 +58,9 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="telemovel">Telemóvel</label>
-                    <input pInputText id="telemovel" [(ngModel)]="editUser.telemovel" name="telemovel" required class="form-control" placeholder="(00) 00000-0000">
+                    <label for="telemovel">Telemóvel *</label>
+                    <input pInputText id="telemovel" [(ngModel)]="editUser.telemovel" name="telemovel" required class="form-control" placeholder="(00) 00000-0000" [class.invalid]="!editUser.telemovel?.trim() && editUser.telemovel !== ''">
+                    <small *ngIf="!editUser.telemovel?.trim() && editUser.telemovel !== ''" class="error-message">Telemóvel é obrigatório</small>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -70,20 +75,28 @@
                 <div class="col-md-6">
                   <div class="field">
                     <label for="dataNascimento">Data de Nascimento</label>
-                    <p-calendar id="dataNascimento" [(ngModel)]="editUser.dataNascimento" name="dataNascimento" dateFormat="dd/mm/yy" [showIcon]="true" required></p-calendar>
+                    <p-calendar id="dataNascimento" [(ngModel)]="editUser.dataNascimento" name="dataNascimento" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="morada">Morada</label>
-                    <input pInputText id="morada" [(ngModel)]="editUser.morada" name="morada" required class="form-control" placeholder="Sua morada completa">
+                    <label for="morada">Morada *</label>
+                    <input pInputText id="morada" [(ngModel)]="editUser.morada" name="morada" required class="form-control" placeholder="Sua morada completa" [class.invalid]="!editUser.morada?.trim() && editUser.morada !== ''">
+                    <small *ngIf="!editUser.morada?.trim() && editUser.morada !== ''" class="error-message">Morada é obrigatória</small>
                   </div>
                 </div>
               </div>
               
               <div class="button-group">
-                <button pButton pRipple type="button" label="Cancelar" (click)="toggleEdit()" class="p-button-outlined p-button-secondary"></button>
-                <button pButton pRipple type="submit" label="Salvar Alterações" class="p-button-primary"></button>
+                <button pButton pRipple type="button" label="Cancelar" (click)="cancelEdit()" class="p-button-outlined p-button-secondary" [disabled]="saving"></button>
+                <button pButton pRipple type="submit" label="Salvar Alterações" class="p-button-primary" [disabled]="saving">
+                  <i *ngIf="saving" class="pi pi-spin pi-spinner" style="margin-right: 8px;"></i>
+                  {{ saving ? 'Salvando...' : 'Salvar Alterações' }}
+                </button>
+                <div *ngIf="hasChanges() && !saving" class="changes-indicator">
+                  <i class="pi pi-exclamation-triangle"></i>
+                  <span>Alterações não salvas</span>
+                </div>
               </div>
             </form>
           </div>
@@ -117,9 +130,60 @@
               
               <div class="button-group">
                 <button pButton pRipple label="Editar Perfil" (click)="toggleEdit()" class="p-button-primary"></button>
+                <button pButton pRipple label="Alterar Senha" (click)="togglePasswordChange()" class="p-button-outlined p-button-warning"></button>
               </div>
             </div>
           </ng-template>
+        </div>
+
+        <!-- Seção de Alteração de Senha -->
+        <div *ngIf="isChangingPassword" class="password-change-section">
+          <h4><i class="pi pi-lock"></i> Alterar Senha</h4>
+          <form (ngSubmit)="onSubmitPassword()" #passwordForm="ngForm" class="password-form">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="field">
+                  <label for="currentPassword">Senha Atual *</label>
+                  <p-password id="currentPassword" [(ngModel)]="passwordData.currentPassword" name="currentPassword" 
+                    [feedback]="false" [toggleMask]="true" placeholder="Digite sua senha atual" 
+                    [class.invalid]="!passwordData.currentPassword.trim() && passwordData.currentPassword !== ''">
+                  </p-password>
+                  <small *ngIf="!passwordData.currentPassword?.trim() && passwordData.currentPassword !== ''" class="error-message">Senha atual é obrigatória</small>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="field">
+                  <label for="newPassword">Nova Senha *</label>
+                  <p-password id="newPassword" [(ngModel)]="passwordData.newPassword" name="newPassword" 
+                    [feedback]="true" [toggleMask]="true" placeholder="Digite a nova senha"
+                    [class.invalid]="passwordData.newPassword && passwordData.newPassword.length < 6">
+                  </p-password>
+                  <small *ngIf="passwordData.newPassword && passwordData.newPassword.length < 6" class="error-message">Senha deve ter pelo menos 6 caracteres</small>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="field">
+                  <label for="confirmPassword">Confirmar Nova Senha *</label>
+                  <p-password id="confirmPassword" [(ngModel)]="passwordData.confirmPassword" name="confirmPassword" 
+                    [feedback]="false" [toggleMask]="true" placeholder="Confirme a nova senha"
+                    [class.invalid]="passwordData.confirmPassword && passwordData.newPassword !== passwordData.confirmPassword">
+                  </p-password>
+                  <small *ngIf="passwordData.confirmPassword && passwordData.newPassword !== passwordData.confirmPassword" class="error-message">Senhas não conferem</small>
+                </div>
+              </div>
+            </div>
+            
+            <div class="button-group">
+              <button pButton pRipple type="button" label="Cancelar" (click)="cancelPasswordChange()" class="p-button-outlined p-button-secondary" [disabled]="changingPassword"></button>
+              <button pButton pRipple type="submit" label="Alterar Senha" class="p-button-warning" [disabled]="changingPassword">
+                <i *ngIf="changingPassword" class="pi pi-spin pi-spinner" style="margin-right: 8px;"></i>
+                {{ changingPassword ? 'Alterando...' : 'Alterar Senha' }}
+              </button>
+            </div>
+          </form>
         </div>
       </p-tabPanel>
 
@@ -131,47 +195,90 @@
             <button pButton pRipple label="Nova Marcação" class="p-button-outlined p-button-help" (click)="newAppointment()"></button>
           </div>
           
+          <!-- Loading State -->
+          <div *ngIf="loading" class="text-center py-5">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: #3b82f6;"></i>
+            <p class="mt-3">Carregando marcações...</p>
+          </div>
+          
           <!-- Appointment Cards -->
           <div *ngFor="let marcacao of marcacoes" class="appointment-card">
             <div class="appointment-card-header" (click)="toggleAppointmentDetails(marcacao)">
               <div>
-                <h4 class="mb-1">{{ marcacao.nome }}</h4>
+                <h4 class="mb-1">Pedido #{{ marcacao.id }}</h4>
                 <div class="d-flex align-items-center gap-3">
-                  <div><i class="pi pi-calendar"></i> {{ marcacao.data | date:'dd MMM yyyy' }}</div>
-                  <div><i class="pi pi-clock"></i> {{ marcacao.hora }}</div>
+                  <div><i class="pi pi-calendar"></i> {{ formatDate(marcacao.dataInicio) }} - {{ formatDate(marcacao.dataFim) }}</div>
+                  <div><i class="pi pi-clock"></i> {{ formatDateTime(marcacao.dataSolicitacao) }}</div>
                 </div>
               </div>
               <div>
-                <span class="status-badge" [ngClass]="{
-                  'status-confirmed': marcacao.estado === 'Confirmada',
-                  'status-pending': marcacao.estado === 'Pendente',
-                  'status-canceled': marcacao.estado === 'Cancelada'
-                }">
-                  {{ marcacao.estado }}
+                <span class="status-badge" [ngClass]="getEstadoClass(marcacao.estado)">
+                  {{ getEstadoLabel(marcacao.estado) }}
                 </span>
               </div>
             </div>
             
             <div class="appointment-card-body" *ngIf="isAppointmentExpanded(marcacao)">
-              <h5>Detalhes:</h5>
-              <p><strong>Médico:</strong> {{ marcacao.medico }}</p>
-              <p><strong>Local:</strong> {{ marcacao.local }}</p>
+              <!-- Observações -->
+              <div *ngIf="marcacao.observacoes" class="observacoes-section">
+                <h5><i class="pi pi-info-circle"></i> Observações</h5>
+                <p>{{ marcacao.observacoes }}</p>
+              </div>
               
-              <h5 class="mt-3">Actos Clínicos:</h5>
-              <div *ngFor="let acto of marcacao.actosClinicos" class="acto-item">
-                <i class="pi pi-check-circle"></i> {{ acto }}
+              <!-- Actos Clínicos -->
+              <div class="actos-section">
+                <h5><i class="pi pi-calendar-plus"></i> Actos Clínicos ({{ marcacao.actosClinicos.length || 0 }})</h5>
+                
+                <div class="actos-grid">
+                  <div *ngFor="let acto of marcacao.actosClinicos" class="acto-card">
+                    <div class="acto-header">
+                      <h6>{{ acto.tipoDeConsultaExame?.nome || 'Sem Nome' }}</h6>
+                      <span class="acto-id">#{{ acto.id }}</span>
+                    </div>
+                    
+                    <div class="acto-details">
+                      <div class="detail-item">
+                        <i class="pi pi-building"></i>
+                        <span>{{ acto.subsistemaSaude?.nome || 'Sem Subsistema' }}</span>
+                      </div>
+                      
+                      <div *ngIf="acto.dataHora" class="detail-item">
+                        <i class="pi pi-calendar-clock"></i>
+                        <span>{{ formatDateTime(acto.dataHora) }}</span>
+                      </div>
+                      
+                      <div *ngIf="acto.anoMesDia && !acto.dataHora" class="detail-item">
+                        <i class="pi pi-calendar"></i>
+                        <span>{{ acto.anoMesDia }}</span>
+                      </div>
+                      
+                      <div *ngIf="acto.profissionais && acto.profissionais.length > 0" class="detail-item profissionais-item">
+                        <i class="pi pi-users"></i>
+                        <div class="profissionais-list">
+                          <span 
+                            *ngFor="let prof of acto.profissionais; let last = last"
+                            class="profissional-tag"
+                            [class.last]="last">
+                            {{ prof.nome || 'Nome não disponível' }}
+                            <small *ngIf="prof?.tipoDeConsultaExameId">{{ prof?.tipoDeConsultaExameNome }}</small>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <div class="d-flex gap-2 mt-4">
-                <button pButton pRipple label="Cancelar" class="p-button-outlined p-button-danger" *ngIf="marcacao.estado !== 'Cancelada'"></button>
-                <button pButton pRipple label="Reagendar" class="p-button-outlined p-button-primary" *ngIf="marcacao.estado !== 'Cancelada'"></button>
+                <button pButton pRipple label="Cancelar" class="p-button-outlined p-button-danger" *ngIf="marcacao.estado !== 'CANCELADO' && marcacao.estado !== 'Cancelada'"></button>
+                <button pButton pRipple label="Reagendar" class="p-button-outlined p-button-primary" *ngIf="marcacao.estado !== 'CANCELADO' && marcacao.estado !== 'Cancelada'"></button>
                 <button pButton pRipple label="Detalhes" class="p-button-outlined p-button-secondary"></button>
               </div>
             </div>
           </div>
           
           <!-- Empty State -->
-          <div *ngIf="!marcacoes || marcacoes.length === 0" class="text-center py-5">
+          <div *ngIf="!loading && (!marcacoes || marcacoes.length === 0)" class="text-center py-5">
             <i class="pi pi-calendar" style="font-size: 3rem; color: #ced4da;"></i>
             <h4 class="mt-3">Nenhuma marcação encontrada</h4>
             <p class="text-muted">Você ainda não possui marcações agendadas</p>

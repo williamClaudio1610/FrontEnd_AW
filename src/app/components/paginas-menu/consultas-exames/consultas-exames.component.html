@@ -1,10 +1,13 @@
 <app-header></app-header>
 
+<!-- Toast para mensagens -->
+<p-toast position="top-right"></p-toast>
+
 <div class="container mt-4">
   <h2>1º Passo: Detalhes da Marcação</h2>
 
-  <!-- Div de Registro (sem ngSubmit) -->
-  <div [formGroup]="registerForm" class="mb-4">
+  <!-- Formulário principal para dados da marcação -->
+  <form [formGroup]="registerForm" class="mb-4">
     <div class="row g-3">
       <!-- Intervalo de solicitação -->
       <div class="col-md-6">
@@ -15,41 +18,40 @@
           inputId="dataRange"
           class="form-control"
           placeholder="Selecione o intervalo de datas"
-          
         ></p-calendar>
-        <div *ngIf="isSubmitted && registerForm.get('dataRange')?.invalid" class="text-danger mt-1">
+        <div *ngIf="registerForm.get('dataRange')?.invalid && registerForm.get('dataRange')?.touched" class="text-danger mt-1">
           Intervalo de datas é obrigatório
         </div>
       </div>
 
       <!-- Observações -->
       <div class="col-md-6">
-        <label for="observacoesAdicionais" class="form-label">Observações adicionais</label>
+        <label for="observacoes" class="form-label">Observações adicionais</label>
         <input
-          formControlName="observacoesAdicionais"
+          formControlName="observacoes"
           pInputText
           type="text"
-          id="observacoesAdicionais"
+          id="observacoes"
           class="form-control"
           placeholder="Digite observações adicionais"
           maxlength="100"
         />
-        <div *ngIf="isSubmitted && registerForm.get('observacoesAdicionais')?.errors?.['maxlength']" class="text-danger mt-1">
+        <div *ngIf="registerForm.get('observacoes')?.errors?.['maxlength']" class="text-danger mt-1">
           Máximo de 100 caracteres
         </div>
       </div>
     </div>
-  </div>
+  </form>
 </div>
 
 <div class="container mt-4">
   <h2>2º Passo: Escolher Actos Clínicos</h2>
 
-  <!-- Formulário de Actos -->
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mb-4">
+  <!-- Formulário para adicionar actos clínicos -->
+  <form [formGroup]="actoForm" (ngSubmit)="onAddActo()" class="mb-4">
     <div class="row g-3">
       <!-- Subsistema de saúde -->
-      <div class="col-md-6">
+      <div class="col-md-4">
         <label>Subsistema *</label>
         <p-dropdown
           formControlName="subsistema"
@@ -59,16 +61,16 @@
           placeholder="Selecione um subsistema"
           [showClear]="true"
         ></p-dropdown>
-        <div *ngIf="isSubmitted && registerForm.get('subsistema')?.invalid" class="text-danger mt-1">
+        <div *ngIf="actoForm.get('subsistema')?.invalid && actoForm.get('subsistema')?.touched" class="text-danger mt-1">
           Campo obrigatório
         </div>
       </div>
 
       <!-- Tipo de consulta -->
-      <div class="col-md-6">
+      <div class="col-md-4">
         <label>Tipo de Consulta/Exame *</label>
         <p-dropdown
-          formControlName="tipodeconsulta"
+          formControlName="tipoConsulta"
           [options]="tiposConsulta"
           optionLabel="label"
           optionValue="value"
@@ -76,13 +78,13 @@
           [showClear]="true"
           (onChange)="onTipoConsultaChange($event)"
         ></p-dropdown>
-        <div *ngIf="isSubmitted && registerForm.get('tipodeconsulta')?.invalid" class="text-danger mt-1">
+        <div *ngIf="actoForm.get('tipoConsulta')?.invalid && actoForm.get('tipoConsulta')?.touched" class="text-danger mt-1">
           Campo obrigatório
         </div>
       </div>
 
       <!-- Profissional -->
-      <div class="col-md-6">
+      <div class="col-md-4">
           <label>Profissional</label>
           <p-dropdown
             formControlName="profissional"
@@ -104,8 +106,8 @@
   <!-- Tabela de Actos Clínicos -->
   <h3>Actos Clínicos Escolhidos</h3>
   <p-table
-    [value]="formattedActosClinicos"
-    [globalFilterFields]="['displayData.tipoConsulta', 'displayData.subsistemaSaude', 'displayData.profissional']"
+    [value]="actosClinicos"
+    [globalFilterFields]="['tipoDeConsultaExameId', 'subsistemaSaudeId']"
     [rows]="5"
     [paginator]="true"
   >
@@ -136,9 +138,9 @@
     <!-- Corpo da tabela -->
     <ng-template pTemplate="body" let-acto let-i="rowIndex">
       <tr>
-        <td>{{ acto.displayData.tipoConsulta || 'Sem Tipo' }}</td>
-        <td>{{ acto.displayData.subsistemaSaude || 'Sem Subsistema' }}</td>        
-        <td>{{ acto.displayData.profissional || 'Sem Profissional' }}</td>
+        <td>{{ getTipoConsultaName(acto.tipoDeConsultaExameId) }}</td>
+        <td>{{ getSubsistemaName(acto.subsistemaSaudeId) }}</td>        
+        <td>{{ acto.profissionalIds && acto.profissionalIds.length > 0 ? getProfissionalName(acto.profissionalIds[0]) : 'Sem Profissional' }}</td>
         <td>
           <button pButton icon="pi pi-trash" class="p-button-danger" (click)="removeActo(i)"></button>
         </td>
@@ -159,7 +161,6 @@
   </div>
 </div>
 
-<!-- (O restante do diálogo anônimo permanece igual) -->
 <!-- Dialog para Usuário Anônimo -->
 <p-dialog header="Dados do Utente Anônimo" [(visible)]="showAnonDialog" [modal]="true" [style]="{width: '450px'}">
   <form [formGroup]="anonUserForm" (ngSubmit)="onAnonSubmit()">
@@ -213,9 +214,19 @@
           Morada é obrigatória
         </div>
       </div>
+      <div class="col-12">
+        <label for="fotografia" class="form-label">Fotografia</label>
+        <input
+          type="file"
+          id="fotografia"
+          class="form-control"
+          accept="image/*"
+          (change)="onFileSelect($event)"
+        />
+      </div>
     </div>
     <ng-template pTemplate="footer">
-      <button pButton type="button" label="Cancelar" class="p-button-secondary" (click)="showAnonDialog = false"></button>
+      <button pButton type="button" label="Cancelar" class="p-button-secondary" (click)="cancelAnonDialog()"></button>
       <button pButton type="submit" label="Solicitar" class="p-button-success"></button>
     </ng-template>
   </form>

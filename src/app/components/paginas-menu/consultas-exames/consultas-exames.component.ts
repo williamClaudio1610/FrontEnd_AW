@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 import { UsuarioService } from '../../../services/usuario.service';
 import { PedidoMarcacaoServiceService } from '../../../services/pedido-marcacao-service.service';
 import { CreatePedidoMarcacaoDTO, CreatePedidoMarcacaoUtenteNaoRegistadoDTO } from '../../../models/pedido-marcacao';
@@ -22,16 +23,25 @@ import { ChangeDetectorRef } from '@angular/core';
   providers: [MessageService]
 })
 export class ConsultasExamesComponent implements OnInit {
+  // Formulário principal para dados da marcação
   registerForm: FormGroup;
+  
+  // Formulário para adicionar actos clínicos
+  actoForm: FormGroup;
+  
   isSubmitted: boolean = false;
   today: Date = new Date();
-  formattedActosClinicos: any[] = [];
   
+  // Array para armazenar os actos clínicos selecionados
+  actosClinicos: CreateActoClinicoDTO[] = [];
+  
+  // Dados para os dropdowns
   subsistemas: any[] = [];
   tiposConsulta: any[] = [];
   profissionais: any[] = [];
   filteredProfissionais: any[] = [];
 
+  // Formulário para usuário anônimo
   anonUserForm: FormGroup;
   showAnonDialog: boolean = false;
   selectedFile: File | null = null;
@@ -44,16 +54,23 @@ export class ConsultasExamesComponent implements OnInit {
     private profissionalService: ProfissionalService,
     private usuarioService: UsuarioService,
     private pedidoService: PedidoMarcacaoServiceService,
-    private cd: ChangeDetectorRef    
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {
+    // Formulário principal para dados da marcação
     this.registerForm = this.fb.group({
-      subsistema: ['', Validators.required],
-      tipodeconsulta: ['', Validators.required],
-      profissional: [null],
-      observacoesAdicionais: ['', [Validators.maxLength(100)]],
-      dataRange: [null, Validators.required] // Tornado obrigatório
+      dataRange: [null, Validators.required],
+      observacoes: ['', [Validators.maxLength(100)]]
     });
     
+    // Formulário para adicionar actos clínicos
+    this.actoForm = this.fb.group({
+      subsistema: ['', Validators.required],
+      tipoConsulta: ['', Validators.required],
+      profissional: [null]
+    });
+    
+    // Formulário para usuário anônimo
     this.anonUserForm = this.fb.group({
       nome: ['', Validators.required],
       numeroUtente: ['', Validators.required],
@@ -82,8 +99,9 @@ export class ConsultasExamesComponent implements OnInit {
         console.error('Erro ao carregar subsistemas:', err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erro',
-          detail: 'Falha ao carregar subsistemas'
+          summary: 'Erro ao Carregar Dados',
+          detail: 'Falha ao carregar subsistemas de saúde. Tente recarregar a página.',
+          life: 5000
         });
       }
     });
@@ -99,8 +117,9 @@ export class ConsultasExamesComponent implements OnInit {
         console.error('Erro ao carregar tipos de consulta/exame:', err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erro',
-          detail: 'Falha ao carregar tipos de consulta/exame'
+          summary: 'Erro ao Carregar Dados',
+          detail: 'Falha ao carregar tipos de consulta/exame. Tente recarregar a página.',
+          life: 5000
         });
       }
     });
@@ -121,8 +140,9 @@ export class ConsultasExamesComponent implements OnInit {
         console.error('Erro ao carregar profissionais:', err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Erro',
-          detail: 'Falha ao carregar profissionais'
+          summary: 'Erro ao Carregar Dados',
+          detail: 'Falha ao carregar profissionais. Tente recarregar a página.',
+          life: 5000
         });
       }
     });
@@ -138,79 +158,90 @@ export class ConsultasExamesComponent implements OnInit {
     } else {
       this.filteredProfissionais = [];
     }
-    this.registerForm.get('profissional')?.setValue(null);
+    this.actoForm.get('profissional')?.setValue(null);
   }
 
   /** Manipula o upload de arquivo para usuário anônimo */
   onFileSelect(event: any): void {
-    const file = event.files[0];
+    const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
       this.anonUserForm.patchValue({ fotografia: file.name });
     }
   }
 
-  onSubmit(): void {
-    this.isSubmitted = true;
-    if (this.registerForm.valid) {
-      const formValue = this.registerForm.value;
-
-      // Criar o acto clínico corretamente estruturado
-      const newActo = {
-        tipoDeConsultaExameId: formValue.tipodeconsulta,
+  /** Adiciona um acto clínico à lista */
+  onAddActo(): void {
+    if (this.actoForm.valid) {
+      const formValue = this.actoForm.value;
+      
+      // Criar o acto clínico conforme o JSON do backend
+      const actoClinico: CreateActoClinicoDTO = {
+        tipoDeConsultaExameId: formValue.tipoConsulta,
         subsistemaSaudeId: formValue.subsistema,
-        profissionalIds: formValue.profissional ? [formValue.profissional] : [],
-        // Dados para exibição
-        displayData: {
-          subsistemaSaude: this.subsistemas.find(s => s.value === formValue.subsistema)?.label || 'Sem Subsistema',
-          tipoConsulta: this.tiposConsulta.find(t => t.value === formValue.tipodeconsulta)?.label || 'Sem Tipo',
-          profissional: formValue.profissional
-            ? this.profissionais.find(p => p.value === formValue.profissional)?.label || 'Sem Profissional'
-            : 'Sem Profissional'
-        }
+        profissionalIds: formValue.profissional ? [formValue.profissional] : []
       };
 
-      this.formattedActosClinicos.push(newActo);
+      this.actosClinicos.push(actoClinico);
+      
       this.messageService.add({
         severity: 'success',
-        summary: 'Sucesso',
-        detail: 'Acto clínico adicionado'
+        summary: 'Acto Adicionado',
+        detail: 'Acto clínico adicionado com sucesso à sua solicitação',
+        life: 3000
       });
 
-      // Reset apenas os campos do acto clínico, mantendo dataRange e observações
-      this.registerForm.patchValue({
-        subsistema: '',
-        tipodeconsulta: '',
-        profissional: null
-      });
+      // Reset do formulário de acto
+      this.actoForm.reset();
       this.filteredProfissionais = [];
-      this.isSubmitted = false;
     } else {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'Preencha todos os campos obrigatórios'
+        severity: 'warn',
+        summary: 'Campos Obrigatórios',
+        detail: 'Preencha todos os campos obrigatórios do acto clínico',
+        life: 4000
       });
     }
   }
 
+  /** Remove um acto clínico da lista */
+  removeActo(index: number): void {
+    this.actosClinicos.splice(index, 1);
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Acto Removido',
+      detail: 'Acto clínico removido da sua solicitação',
+      life: 3000
+    });
+  }
+
+  /** Solicita a marcação - usuário registado */
   onSolicitarMarcacao(): void {
-    if (this.formattedActosClinicos.length === 0) {
+    if (this.actosClinicos.length === 0) {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'Adicione pelo menos um acto clínico'
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Adicione pelo menos um acto clínico antes de solicitar a marcação'
+      });
+      return;
+    }
+
+    if (this.registerForm.invalid) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Preencha todos os campos obrigatórios do formulário'
       });
       return;
     }
 
     const [dataInicio, dataFim] = this.registerForm.get('dataRange')?.value || [];
-    const observacoes = this.registerForm.get('observacoesAdicionais')?.value || '';
+    const observacoes = this.registerForm.get('observacoes')?.value || '';
 
     if (!dataInicio || !dataFim) {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
+        severity: 'warn',
+        summary: 'Atenção',
         detail: 'Selecione o período de datas desejado'
       });
       return;
@@ -219,35 +250,41 @@ export class ConsultasExamesComponent implements OnInit {
     if (this.usuarioService.isAuthenticated()) {
       const userId = this.usuarioService.getCurrentUser()?.id || 0;
       
-      // Estrutura correta conforme o JSON do backend
+      // Estrutura exata conforme o JSON do backend
       const pedido: CreatePedidoMarcacaoDTO = {
-        userId,
+        userId: userId,
         dataInicio: new Date(dataInicio).toISOString().split('T')[0],
         dataFim: new Date(dataFim).toISOString().split('T')[0],
-        observacoes,
-        actosClinicos: this.formattedActosClinicos.map(acto => ({
-          tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
-          subsistemaSaudeId: acto.subsistemaSaudeId,
-          profissionalIds: acto.profissionalIds
-        }))
+        observacoes: observacoes,
+        actosClinicos: this.actosClinicos
       };
 
       this.pedidoService.criarPedidoMarcacao(pedido).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Marcação solicitada com sucesso'
+            summary: 'Marcação Solicitada!',
+            detail: 'Sua marcação foi enviada com sucesso. Será processada em breve.',
+            life: 5000
           });
-          this.formattedActosClinicos = [];
+          
+          // Limpar formulários
+          this.actosClinicos = [];
           this.registerForm.reset();
+          this.actoForm.reset();
+          
+          // Redirecionar após 3 segundos para dar tempo de ver a mensagem
+          setTimeout(() => {
+            this.router.navigate(['/home']);
+          }, 3000);
         },
         error: (err) => {
           console.error('Erro ao criar pedido:', err);
           this.messageService.add({
             severity: 'error',
-            summary: 'Erro',
-            detail: err.message || 'Falha ao solicitar marcação'
+            summary: 'Erro na Solicitação',
+            detail: err.message || 'Falha ao solicitar marcação. Tente novamente.',
+            life: 5000
           });
         }
       });
@@ -256,15 +293,16 @@ export class ConsultasExamesComponent implements OnInit {
     }
   }
 
+  /** Solicita a marcação - usuário anônimo */
   onAnonSubmit(): void {
     if (this.anonUserForm.valid) {
       const [dataInicio, dataFim] = this.registerForm.get('dataRange')?.value || [];
-      const observacoes = this.registerForm.get('observacoesAdicionais')?.value || '';
+      const observacoes = this.registerForm.get('observacoes')?.value || '';
 
       if (!dataInicio || !dataFim) {
         this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
+          severity: 'warn',
+          summary: 'Atenção',
           detail: 'Selecione o período de datas desejado'
         });
         return;
@@ -294,52 +332,47 @@ export class ConsultasExamesComponent implements OnInit {
       formData.append('observacoes', observacoes);
       
       // Adicionar actos clínicos como JSON string
-      const actosClinicos = this.formattedActosClinicos.map(acto => ({
-        tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
-        subsistemaSaudeId: acto.subsistemaSaudeId,
-        profissionalIds: acto.profissionalIds
-      }));
-      formData.append('actosClinicos', JSON.stringify(actosClinicos));
+      formData.append('actosClinicos', JSON.stringify(this.actosClinicos));
 
       this.pedidoService.criarPedidoUserNaoRegistado(formData).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Marcação solicitada e conta criada. Faça login para ativar sua conta.'
+            summary: 'Conta Criada e Marcação Solicitada!',
+            detail: 'Sua conta foi criada e a marcação foi enviada com sucesso. Faça login para ativar sua conta.',
+            life: 6000
           });
-          this.formattedActosClinicos = [];
+          
+          // Limpar formulários
+          this.actosClinicos = [];
           this.showAnonDialog = false;
           this.anonUserForm.reset();
           this.selectedFile = null;
           this.registerForm.reset();
+          this.actoForm.reset();
+          
+          // Redirecionar após 4 segundos para dar tempo de ver a mensagem
+          setTimeout(() => {
+            this.router.navigate(['/home']);
+          }, 4000);
         },
         error: (err) => {
           console.error('Erro ao criar pedido anônimo:', err);
           this.messageService.add({
             severity: 'error',
-            summary: 'Erro',
-            detail: err.message || 'Falha ao solicitar marcação como usuário anônimo'
+            summary: 'Erro na Solicitação',
+            detail: err.message || 'Falha ao solicitar marcação como usuário anônimo. Tente novamente.',
+            life: 5000
           });
         }
       });
     } else {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
+        severity: 'warn',
+        summary: 'Atenção',
         detail: 'Preencha todos os campos obrigatórios do formulário'
       });
     }
-  }
-
-  /** Remove um acto clínico da lista */
-  removeActo(index: number): void {
-    this.formattedActosClinicos.splice(index, 1);
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Removido',
-      detail: 'Acto clínico removido da lista'
-    });
   }
 
   /** Cancela o diálogo de usuário anônimo */
@@ -347,6 +380,24 @@ export class ConsultasExamesComponent implements OnInit {
     this.showAnonDialog = false;
     this.anonUserForm.reset();
     this.selectedFile = null;
+  }
+
+  /** Obtém o nome do subsistema para exibição */
+  getSubsistemaName(id: number): string {
+    const subsistema = this.subsistemas.find(s => s.value === id);
+    return subsistema ? subsistema.label : 'Sem Subsistema';
+  }
+
+  /** Obtém o nome do tipo de consulta para exibição */
+  getTipoConsultaName(id: number): string {
+    const tipo = this.tiposConsulta.find(t => t.value === id);
+    return tipo ? tipo.label : 'Sem Tipo';
+  }
+
+  /** Obtém o nome do profissional para exibição */
+  getProfissionalName(id: number): string {
+    const profissional = this.profissionais.find(p => p.value === id);
+    return profissional ? profissional.label : 'Sem Profissional';
   }
 
   onGlobalFilter(event: Event): void {

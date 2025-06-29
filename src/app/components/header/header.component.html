@@ -53,7 +53,7 @@
             <span class="ms-2">{{ usuario.nome }}</span>
           </div>
           <div class="dropdown-menu" *ngIf="showDropdown">
-            <a [routerLink]="['/perfil']" class="dropdown-item" (click)="showDropdown = false">Ir para Perfil</a>
+            <a [routerLink]="['/perfilUser']" class="dropdown-item" (click)="showDropdown = false">Ir para Perfil</a>
             <a class="dropdown-item" (click)="logout(); showDropdown = false">Logout</a>
           </div>
         </div>

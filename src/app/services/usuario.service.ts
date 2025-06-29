@@ -12,6 +12,7 @@ export class UsuarioService {
   private apiUrl = 'https://localhost:7273/api/Usuario';
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'current_user';
+  private readonly PASSWORD_KEY = 'current_password'; // Chave para armazenar senha atual
 
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -67,6 +68,8 @@ export class UsuarioService {
         if (user.token) {
           localStorage.setItem(this.TOKEN_KEY, user.token);
         }
+        // Armazenar a senha atual para uso em atualizações
+        localStorage.setItem(this.PASSWORD_KEY, loginDTO.senha);
         localStorage.setItem(this.USER_KEY, JSON.stringify(user));
         this.currentUserSubject.next(user);
         return user;
@@ -80,6 +83,7 @@ export class UsuarioService {
     // Remove dados do localStorage
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.PASSWORD_KEY); // Limpar senha armazenada
     this.currentUserSubject.next(null);
   
     // Limpa cache do Service Worker, se registrado
@@ -104,6 +108,10 @@ export class UsuarioService {
 
   getCurrentUser(): Usuario | null {
     return this.currentUserSubject.value;
+  }
+
+  getCurrentPassword(): string | null {
+    return localStorage.getItem(this.PASSWORD_KEY);
   }
 
   isAuthenticated(): boolean {
@@ -136,7 +144,7 @@ export class UsuarioService {
       senhaHash: novaSenha,
       fotografia: currentUser.fotografia || '',
       dataNascimento: currentUser.dataNascimento,
-      perfil: 'UtenteRegistado' // Atualizando para UtenteAnonimo
+      perfil: currentUser.perfil // Usar o perfil atual do usuário
     };
   
     return this.http.put<UserDTO>(`${this.apiUrl}/atualizarUser/${currentUser.id}`, updateDTO).pipe(
