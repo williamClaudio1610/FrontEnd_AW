@@ -6,12 +6,12 @@ export interface ActoClinicoDTO {
   id: number;
   pedidoMarcacaoId: number;
   tipoDeConsultaExameId: number;
-  tipoDeConsultaExame: TipoDeConsultaExameDTO;
-  dataHora?: string; // ISO string format
-  anoMesDia?: string; // YYYY-MM-DD format
+  tipoDeConsultaExame?: TipoDeConsultaExameDTO;
+  dataHora?: string | Date;
+  anoMesDia?: string | Date;
   subsistemaSaudeId: number;
-  subsistemaSaude: SubsistemaSaudeDTO;
-  profissionais: ProfissionalDTO[];
+  subsistemaSaude?: SubsistemaSaudeDTO;
+  profissionais?: ProfissionalDTO[];
 }
 
 export interface CreateActoClinicoDTO {

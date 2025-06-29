@@ -16,6 +16,7 @@ import { TagModule } from 'primeng/tag';
 import { PanelModule } from 'primeng/panel';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { ChangeDetectorRef } from '@angular/core';
 
 import { CarouselModule } from 'primeng/carousel';
 import { AccordionModule } from 'primeng/accordion';
@@ -70,7 +71,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     ContacteNosComponent,
     EquipaComponent,
     PerfilUserComponent,
-    MudarSenhaComponent,
+    MudarSenhaComponent
   ],
   imports: [
     BrowserModule,
@@ -84,7 +85,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     AdminMainPageComponent,
     DashboardComponent,
     ProfissionaisComponent,
-    PedidoMarcacaoComponent,
     SubsistemaSaudeComponent,
     TipoDeConsultaExameComponent,
     UsuariosComponent,
@@ -100,12 +100,14 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     DropdownModule,
     TabViewModule,
     PasswordModule, // Adicionar PasswordModule aos imports
+    DialogModule,
+    PedidoMarcacaoComponent,
     ReactiveFormsModule, ServiceWorkerModule.register('ngsw-worker.js', {
   enabled: !isDevMode(),
   // Register the ServiceWorker as soon as the application is stable
   // or after 30 seconds (whichever comes first).
   registrationStrategy: 'registerWhenStable:30000'
-})
+})  
 ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, MessageService,

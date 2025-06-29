@@ -38,7 +38,9 @@
         <th>Usuário ID</th>
         <th>Data Solicitação</th>
         <th>Período</th>
-        <th>Estado</th>
+        <th>Estado Atual</th>
+        <th>Observações</th>
+        <th>Alterar Estado</th>
         <th>Atos Clínicos</th>
         <th>Actos</th>
       </tr>
@@ -51,6 +53,12 @@
           <td>{{ formatDate(pedido.dataSolicitacao) }}</td>
           <td>{{ formatDate(pedido.dataInicio) }} - {{ formatDate(pedido.dataFim) }}</td>
           <td>
+            <span class="pedido-estado" [ngClass]="'estado-' + pedido.estado.toLowerCase()">
+              {{ getEstadoLabel(pedido.estado) }}
+            </span>
+          </td>
+          <td>{{ pedido.observacoes || 'Sem observações' }}</td>
+          <td>
             <p-dropdown 
               [options]="estadoOptions" 
               [(ngModel)]="pedido.estado" 
@@ -59,7 +67,7 @@
               placeholder="Selecione o estado"
             ></p-dropdown>
           </td>
-          <td>{{ pedido.actosClinicos.length }}</td>
+          <td>{{ pedido.actosClinicos.length || 0 }}</td> <!-- Safe navigation with default 0 -->
           <td>
             <button 
               class="action-button" 
@@ -74,7 +82,7 @@
         <!-- Linha de Detalhes Expandida -->
         <tr *ngIf="expandedPedidos.has(pedido.id)" 
             [ngClass]="{'detalhes-row': true, 'expanded': expandedPedidos.has(pedido.id)}">
-          <td colspan="7">
+          <td colspan="9">
             <div class="detalhes-container">
             
             <!-- Observações -->
@@ -85,46 +93,48 @@
 
             <!-- Atos Clínicos -->
             <div class="actos-section">
-              <h4><i class="pi pi-calendar-plus"></i> Atos Clínicos ({{ pedido.actosClinicos.length }})</h4>
+              <h4><i class="pi pi-calendar-plus"></i> Atos Clínicos ({{ pedido.actosClinicos.length || 0 }})</h4> <!-- Safe navigation -->
               
               <div class="actos-grid">
                 <div 
-                  *ngFor="let acto of pedido.actosClinicos; let j = index" 
+                  *ngFor="let acto of pedido.actosClinicos || []; let j = index" 
                   class="acto-card"
                 >
                   <div class="acto-header">
-                    <h5>{{ acto.tipoDeConsultaExame?.nome || 'Sem Nome' }}</h5>
-                    <span class="acto-id">#{{ acto.id }}</span>
+                    <h5>{{ acto?.tipoDeConsultaExame?.nome || 'Sem Nome' }}</h5>
+                    <span class="acto-id">#{{ acto?.id }}</span>
                   </div>
                   
                   <div class="acto-details">
                     <div class="detail-item">
                       <i class="pi pi-building"></i>
-                      <span>{{ acto.subsistemaSaude?.nome || 'Sem Subsistema' }}</span>
+                      <span>{{ acto?.subsistemaSaude?.nome || 'Sem Subsistema' }}</span>
                     </div>
                     
-                    <div *ngIf="acto.dataHora" class="detail-item">
-                      <i class="pi pi-calendar-clock"></i>
-                      <span>{{ formatDateTime(acto.dataHora) }}</span>
-                    </div>
-                    
-                    <div *ngIf="acto.anoMesDia && !acto.dataHora" class="detail-item">
-                      <i class="pi pi-calendar"></i>
-                      <span>{{ acto.anoMesDia }}</span>
-                    </div>
-                    
-                    <div *ngIf="acto.profissionais && acto.profissionais.length > 0" class="detail-item profissionais-item">
-                      <i class="pi pi-users"></i>
-                      <div class="profissionais-list">
-                        <span 
-                          *ngFor="let prof of acto.profissionais; let last = last"
-                          class="profissional-tag"
-                        >
-                          {{ prof.nome || 'Sem Nome' }}
-                          <small *ngIf="prof.tipoDeConsultaExameNome">({{ prof.tipoDeConsultaExameNome }})</small>
-                        </span>
+                    <ng-container *ngIf="acto">
+                      <div *ngIf="acto.dataHora" class="detail-item">
+                        <i class="pi pi-calendar-clock"></i>
+                        <span>{{ formatDateTime(acto.dataHora) }}</span>
                       </div>
-                    </div>
+                      
+                      <div *ngIf="acto.anoMesDia && !acto.dataHora" class="detail-item">
+                        <i class="pi pi-calendar"></i>
+                        <span>{{ acto.anoMesDia }}</span>
+                      </div>
+                      
+                      <div *ngIf="(acto?.profissionais?.length || 0) > 0"  class="detail-item profissionais-item">
+                        <i class="pi pi-users"></i>
+                        <div class="profissionais-list">
+                          <span 
+                            *ngFor="let prof of acto.profissionais || []; let last = last"
+                            class="profissional-tag"
+                            [class.last]="last">
+                            {{ prof?.nome ?? 'Nome não disponível' }}
+                            <small *ngIf="prof?.tipoDeConsultaExameId">{{ prof?.tipoDeConsultaExameNome }}</small>
+                          </span>
+                        </div>
+                      </div>
+                    </ng-container>
                   </div>
                 </div>
               </div>

@@ -1,32 +1,28 @@
 <app-header></app-header>
 
-
-
-
 <div class="container mt-4">
   <h2>1º Passo: Detalhes da Marcação</h2>
 
-  <!-- Formulário de Registro -->
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mb-4">
+  <!-- Div de Registro (sem ngSubmit) -->
+  <div [formGroup]="registerForm" class="mb-4">
     <div class="row g-3">
-      
-      <!-- Horário  
+      <!-- Intervalo de solicitação -->
       <div class="col-md-6">
-        <label for="horarioSolicitado" class="form-label">Horário</label>
+        <label for="dataRange" class="form-label">Intervalo de solicitação *</label>
         <p-calendar
-          formControlName="horarioSolicitado"
-          [timeOnly]="true"
-          hourFormat="24"
-          inputId="horarioSolicitado"
+          formControlName="dataRange"
+          selectionMode="range"
+          inputId="dataRange"
           class="form-control"
-          placeholder="Selecione o horário"
+          placeholder="Selecione o intervalo de datas"
+          
         ></p-calendar>
-        <div *ngIf="isSubmitted && registerForm.get('horarioSolicitado')?.invalid" class="text-danger mt-1">
-          Horário é obrigatório
+        <div *ngIf="isSubmitted && registerForm.get('dataRange')?.invalid" class="text-danger mt-1">
+          Intervalo de datas é obrigatório
         </div>
       </div>
-      -->
-           <!-- Observações  -->
+
+      <!-- Observações -->
       <div class="col-md-6">
         <label for="observacoesAdicionais" class="form-label">Observações adicionais</label>
         <input
@@ -35,115 +31,67 @@
           type="text"
           id="observacoesAdicionais"
           class="form-control"
-          placeholder="Digite as observações adicionais caso tiver"
+          placeholder="Digite observações adicionais"
           maxlength="100"
         />
         <div *ngIf="isSubmitted && registerForm.get('observacoesAdicionais')?.errors?.['maxlength']" class="text-danger mt-1">
-          Observações não podem exceder 100 caracteres
-        </div>
-      </div>
-
-      <!-- Intervalo de solicitação  -->
-      <div class="col-md-6">
-        <label for="dataRange" class="form-label">Intervalo de solicitação</label>
-        <p-calendar
-          formControlName="dataRange"
-          selectionMode="range"
-          inputId="dataRange"
-          class="form-control"
-          placeholder="Selecione o intervalo de datas"
-        ></p-calendar>
-        <div *ngIf="isSubmitted && registerForm.get('dataRange')?.invalid" class="text-danger mt-1">
-          Intervalo de datas é obrigatório
+          Máximo de 100 caracteres
         </div>
       </div>
     </div>
-  </form>
+  </div>
 </div>
-
 
 <div class="container mt-4">
   <h2>2º Passo: Escolher Actos Clínicos</h2>
 
-  <!-- Formulário de Registro -->
+  <!-- Formulário de Actos -->
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mb-4">
     <div class="row g-3">
-      
-      <!-- Horário 
-      <div class="col-md-6">
-        <label for="horarioSolicitado" class="form-label">Horário</label>
-        <p-calendar
-          formControlName="horarioSolicitado"
-          [timeOnly]="true"
-          hourFormat="24"
-          inputId="horarioSolicitado"
-          class="form-control"
-          placeholder="Selecione o horário"
-        ></p-calendar>
-        <div *ngIf="isSubmitted && registerForm.get('horarioSolicitado')?.invalid" class="text-danger mt-1">
-          Horário é obrigatório
-        </div>
-      </div>
-      -->
-
-      <!-- Intervalo de solicitação
-      <div class="col-md-6">
-        <label for="dataRange" class="form-label">Intervalo de solicitação</label>
-        <p-calendar
-          formControlName="dataRange"
-          selectionMode="range"
-          inputId="dataRange"
-          class="form-control"
-          placeholder="Selecione o intervalo de datas"
-        ></p-calendar>
-        <div *ngIf="isSubmitted && registerForm.get('dataRange')?.invalid" class="text-danger mt-1">
-          Intervalo de datas é obrigatório
-        </div>
-      </div>
-      -->
       <!-- Subsistema de saúde -->
       <div class="col-md-6">
-        <label for="subsistema" class="form-label">Subsistema de saúde</label>
+        <label>Subsistema *</label>
         <p-dropdown
           formControlName="subsistema"
-          inputId="subsistema"
           [options]="subsistemas"
-          optionLabel="name"
-          placeholder="Selecione o subsistema de saúde"
-          class="form-control"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecione um subsistema"
+          [showClear]="true"
         ></p-dropdown>
         <div *ngIf="isSubmitted && registerForm.get('subsistema')?.invalid" class="text-danger mt-1">
-          Subsistema de saúde é obrigatório
+          Campo obrigatório
         </div>
       </div>
 
       <!-- Tipo de consulta -->
       <div class="col-md-6">
-        <label for="tipodeconsulta" class="form-label">Tipo de consulta</label>
+        <label>Tipo de Consulta/Exame *</label>
         <p-dropdown
           formControlName="tipodeconsulta"
-          inputId="tipodeconsulta"
           [options]="tiposConsulta"
-          optionLabel="name"
-          placeholder="Selecione o tipo de consulta"
-          class="form-control"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecione um tipo"
+          [showClear]="true"
+          (onChange)="onTipoConsultaChange($event)"
         ></p-dropdown>
         <div *ngIf="isSubmitted && registerForm.get('tipodeconsulta')?.invalid" class="text-danger mt-1">
-          Tipo de consulta é obrigatório
+          Campo obrigatório
         </div>
       </div>
 
       <!-- Profissional -->
       <div class="col-md-6">
-        <label for="profissional" class="form-label">Profissional</label>
-        <p-dropdown
-          formControlName="profissional"
-          inputId="profissional"
-          [options]="profissionais"
-          optionLabel="name"
-          placeholder="Selecione o profissional"
-          class="form-control"
-        ></p-dropdown>
+          <label>Profissional</label>
+          <p-dropdown
+            formControlName="profissional"
+            [options]="filteredProfissionais"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Selecione um profissional"
+            [showClear]="true"
+          ></p-dropdown>
       </div>
     </div>
 
@@ -157,7 +105,7 @@
   <h3>Actos Clínicos Escolhidos</h3>
   <p-table
     [value]="formattedActosClinicos"
-    [globalFilterFields]="['subsistemaSaude', 'tipoConsulta', 'profissional', 'horario', 'observacoesAdicionais']"
+    [globalFilterFields]="['displayData.tipoConsulta', 'displayData.subsistemaSaude', 'displayData.profissional']"
     [rows]="5"
     [paginator]="true"
   >
@@ -181,31 +129,96 @@
         <th>Tipo de Consulta</th>
         <th>Subsistema de Saúde</th>
         <th>Profissional</th>
+        <th>Ações</th>
       </tr>
     </ng-template>
 
     <!-- Corpo da tabela -->
-    <ng-template pTemplate="body" let-acto>
+    <ng-template pTemplate="body" let-acto let-i="rowIndex">
       <tr>
-        <td>{{ acto.tipoConsulta || 'Sem Tipo' }}</td>
-        <td>{{ acto.subsistemaSaude || 'Sem Subsistema' }}</td>        
-        <td>{{ acto.profissional || 'Sem Profissional' }}</td>
-
+        <td>{{ acto.displayData.tipoConsulta || 'Sem Tipo' }}</td>
+        <td>{{ acto.displayData.subsistemaSaude || 'Sem Subsistema' }}</td>        
+        <td>{{ acto.displayData.profissional || 'Sem Profissional' }}</td>
+        <td>
+          <button pButton icon="pi pi-trash" class="p-button-danger" (click)="removeActo(i)"></button>
+        </td>
       </tr>
     </ng-template>
 
     <!-- Mensagem de vazio -->
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">Nenhum ato clínico encontrado.</td>
+        <td colspan="4">Nenhum ato clínico adicionado</td>
       </tr>
     </ng-template>
   </p-table>
-  <!-- Botão de Submissão -->
-    <div class="mt-3">
-      <button pButton type="submit" label="Solicitar Marcação" class="btn btn-success"></button>
-    </div>
+
+  <!-- Botão de Solicitação -->
+  <div class="mt-3">
+    <button pButton type="button" label="Solicitar Marcação" class="btn btn-success" (click)="onSolicitarMarcacao()"></button>
+  </div>
 </div>
 
+<!-- (O restante do diálogo anônimo permanece igual) -->
+<!-- Dialog para Usuário Anônimo -->
+<p-dialog header="Dados do Utente Anônimo" [(visible)]="showAnonDialog" [modal]="true" [style]="{width: '450px'}">
+  <form [formGroup]="anonUserForm" (ngSubmit)="onAnonSubmit()">
+    <div class="row g-3">
+      <div class="col-12">
+        <label for="nome" class="form-label">Nome</label>
+        <input pInputText formControlName="nome" id="nome" class="form-control" placeholder="Digite o nome" />
+        <div *ngIf="anonUserForm.get('nome')?.invalid && anonUserForm.get('nome')?.touched" class="text-danger mt-1">
+          Nome é obrigatório
+        </div>
+      </div>
+      <div class="col-12">
+        <label for="numeroUtente" class="form-label">Número de Utente</label>
+        <input pInputText formControlName="numeroUtente" id="numeroUtente" class="form-control" placeholder="Digite o número de utente" />
+        <div *ngIf="anonUserForm.get('numeroUtente')?.invalid && anonUserForm.get('numeroUtente')?.touched" class="text-danger mt-1">
+          Número de utente é obrigatório
+        </div>
+      </div>
+      <div class="col-12">
+        <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+        <p-calendar formControlName="dataNascimento" inputId="dataNascimento" class="form-control" placeholder="Selecione a data" />
+        <div *ngIf="anonUserForm.get('dataNascimento')?.invalid && anonUserForm.get('dataNascimento')?.touched" class="text-danger mt-1">
+          Data de nascimento é obrigatória
+        </div>
+      </div>
+      <div class="col-12">
+        <label for="genero" class="form-label">Gênero</label>
+        <p-dropdown formControlName="genero" inputId="genero" [options]="[{label: 'Masculino', value: 'M'}, {label: 'Feminino', value: 'F'}]" placeholder="Selecione o gênero" class="form-control" />
+        <div *ngIf="anonUserForm.get('genero')?.invalid && anonUserForm.get('genero')?.touched" class="text-danger mt-1">
+          Gênero é obrigatório
+        </div>
+      </div>
+      <div class="col-12">
+        <label for="telemovel" class="form-label">Telemóvel</label>
+        <input pInputText formControlName="telemovel" id="telemovel" class="form-control" placeholder="Digite o telemóvel" />
+        <div *ngIf="anonUserForm.get('telemovel')?.invalid && anonUserForm.get('telemovel')?.touched" class="text-danger mt-1">
+          Telemóvel é obrigatório
+        </div>
+      </div>
+      <div class="col-12">
+        <label for="email" class="form-label">Email</label>
+        <input pInputText formControlName="email" id="email" class="form-control" placeholder="Digite o email" />
+        <div *ngIf="anonUserForm.get('email')?.invalid && anonUserForm.get('email')?.touched" class="text-danger mt-1">
+          Email é obrigatório e deve ser válido
+        </div>
+      </div>
+      <div class="col-12">
+        <label for="morada" class="form-label">Morada</label>
+        <input pInputText formControlName="morada" id="morada" class="form-control" placeholder="Digite a morada" />
+        <div *ngIf="anonUserForm.get('morada')?.invalid && anonUserForm.get('morada')?.touched" class="text-danger mt-1">
+          Morada é obrigatória
+        </div>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <button pButton type="button" label="Cancelar" class="p-button-secondary" (click)="showAnonDialog = false"></button>
+      <button pButton type="submit" label="Solicitar" class="p-button-success"></button>
+    </ng-template>
+  </form>
+</p-dialog>
 
 <app-footer></app-footer>

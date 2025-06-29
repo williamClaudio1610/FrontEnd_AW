@@ -1,8 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, timeout, retry } from 'rxjs/operators';
 import { PedidoMarcacaoDTO, CreatePedidoMarcacaoDTO, UpdatePedidoMarcacaoDTO, CreatePedidoMarcacaoUtenteNaoRegistadoDTO } from '../models/pedido-marcacao';
+import { UsuarioService } from './usuario.service'; // Import UsuarioService
+
+// Novo DTO para atualização de estado
+interface UpdateEstadoDTO {
+  id: number;
+  estado: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +20,19 @@ export class PedidoMarcacaoServiceService {
   private readonly defaultTimeout = 30000; // 30 segundos
   private readonly maxRetries = 2;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private usuarioService: UsuarioService) {}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.usuarioService.getToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token || ''}`, // Fallback to empty if no token
+      'Content-Type': 'application/json'
+    });
+  }
 
   // Criar pedido de marcação para utente registado
   criarPedidoMarcacao(pedido: CreatePedidoMarcacaoDTO): Observable<{ message: string; pedido: PedidoMarcacaoDTO }> {
-    return this.http.post<{ message: string; pedido: PedidoMarcacaoDTO }>(`${this.apiUrl}/criarPedidoMarcacao`, pedido)
+    return this.http.post<{ message: string; pedido: PedidoMarcacaoDTO }>(`${this.apiUrl}/criarPedidoMarcacao`, pedido, { headers: this.getAuthHeaders() })
       .pipe(
         timeout(this.defaultTimeout),
         retry(this.maxRetries),
@@ -25,19 +40,30 @@ export class PedidoMarcacaoServiceService {
       );
   }
 
-  // Criar pedido de marcação para utente não registado
-  criarPedidoUserNaoRegistado(pedido: CreatePedidoMarcacaoUtenteNaoRegistadoDTO): Observable<{ message: string; pedido: PedidoMarcacaoDTO }> {
-    return this.http.post<{ message: string; pedido: PedidoMarcacaoDTO }>(`${this.apiUrl}/criarPedidoUserNaoRegistado`, pedido)
-      .pipe(
-        timeout(this.defaultTimeout),
-        retry(this.maxRetries),
-        catchError(this.handleError)
-      );
+  criarPedidoUserNaoRegistado(pedido: FormData): Observable<{ message: string; pedido: PedidoMarcacaoDTO }> {
+    return this.http.post<{ message: string; pedido: PedidoMarcacaoDTO }>(
+      `${this.apiUrl}/criarPedidoUserNaoRegistado`, 
+      pedido  // Agora aceita FormData
+    ).pipe(
+      timeout(this.defaultTimeout),
+      retry(this.maxRetries),
+      catchError(this.handleError)
+    );
   }
 
   // Atualizar pedido de marcação
   atualizarPedido(pedido: UpdatePedidoMarcacaoDTO): Observable<{ message: string; pedido: PedidoMarcacaoDTO }> {
-    return this.http.put<{ message: string; pedido: PedidoMarcacaoDTO }>(`${this.apiUrl}/atualizar`, pedido)
+    return this.http.put<{ message: string; pedido: PedidoMarcacaoDTO }>(`${this.apiUrl}/atualizar`, pedido, { headers: this.getAuthHeaders() })
+      .pipe(
+        timeout(this.defaultTimeout),
+        retry(this.maxRetries),
+        catchError(this.handleError)
+      );
+  }
+
+  // Atualizar apenas o estado do pedido
+  atualizarEstado(update: UpdateEstadoDTO): Observable<{ message: string; pedido: PedidoMarcacaoDTO }> {
+    return this.http.patch<{ message: string; pedido: PedidoMarcacaoDTO }>(`${this.apiUrl}/atualizarEstado/${update.id}`, { estado: update.estado }, { headers: this.getAuthHeaders() })
       .pipe(
         timeout(this.defaultTimeout),
         retry(this.maxRetries),
@@ -51,7 +77,7 @@ export class PedidoMarcacaoServiceService {
       return throwError(() => new Error('ID do pedido é obrigatório e deve ser válido'));
     }
 
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/delete/${pedidoId}`)
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/delete/${pedidoId}`, { headers: this.getAuthHeaders() })
       .pipe(
         timeout(this.defaultTimeout),
         catchError(this.handleError)
@@ -64,7 +90,7 @@ export class PedidoMarcacaoServiceService {
       return throwError(() => new Error('ID do pedido é obrigatório e deve ser válido'));
     }
 
-    return this.http.get<PedidoMarcacaoDTO>(`${this.apiUrl}/${pedidoId}`)
+    return this.http.get<PedidoMarcacaoDTO>(`${this.apiUrl}/${pedidoId}`, { headers: this.getAuthHeaders() })
       .pipe(
         timeout(this.defaultTimeout),
         catchError(this.handleError)
@@ -77,7 +103,7 @@ export class PedidoMarcacaoServiceService {
       return throwError(() => new Error('ID do usuário é obrigatório e deve ser válido'));
     }
 
-    return this.http.get<PedidoMarcacaoDTO[]>(`${this.apiUrl}/usuario/${userId}`)
+    return this.http.get<PedidoMarcacaoDTO[]>(`${this.apiUrl}/usuario/${userId}`, { headers: this.getAuthHeaders() })
       .pipe(
         timeout(this.defaultTimeout),
         catchError(this.handleError)
@@ -86,7 +112,7 @@ export class PedidoMarcacaoServiceService {
 
   // Obter todos os pedidos
   getTodosPedidos(): Observable<PedidoMarcacaoDTO[]> {
-    return this.http.get<PedidoMarcacaoDTO[]>(`${this.apiUrl}/todosOsPedidos`)
+    return this.http.get<PedidoMarcacaoDTO[]>(`${this.apiUrl}/todosOsPedidos`, { headers: this.getAuthHeaders() })
       .pipe(
         timeout(this.defaultTimeout),
         catchError(this.handleError)

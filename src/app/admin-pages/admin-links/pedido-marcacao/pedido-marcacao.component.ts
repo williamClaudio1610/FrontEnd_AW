@@ -23,6 +23,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { InputTextModule } from 'primeng/inputtext';
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
   selector: 'app-pedidos-marcacao',
@@ -43,7 +44,8 @@ import { InputTextModule } from 'primeng/inputtext';
     PanelModule,
     ConfirmDialogModule,
     ToastModule,
-    InputTextModule
+    InputTextModule,
+    CalendarModule
   ],
   providers: [ConfirmationService, MessageService]
 })
@@ -80,32 +82,27 @@ export class PedidoMarcacaoComponent implements OnInit {
     this.loadPedidos();
   }
 
-  // Carregar pedidos do usuário autenticado
+  // Carregar todos os pedidos
   loadPedidos(): void {
-    const user = this.usuarioService.getCurrentUser();
-    if (user && user.id) {
-      this.pedidoService.getByUserId(user.id).subscribe({
-        next: (pedidos) => {
-          this.pedidos = pedidos;
-          this.filterPedidos();
-        },
-        error: (err) => {
-          this.toastService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Falha ao carregar pedidos: ' + (err.error?.message || err.message),
-            life: 3000
-          });
-        }
-      });
-    } else {
-      this.toastService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'Usuário não autenticado.',
-        life: 3000
-      });
-    }
+    this.pedidoService.getTodosPedidos().subscribe({
+      next: (pedidos) => {
+        this.pedidos = pedidos.map(pedido => ({
+          ...pedido,
+          estado: pedido.estado || 'PENDENTE',
+          observacoes: pedido.observacoes || 'Sem observações',
+          actosClinicos: pedido.actosClinicos || [] // Default to empty array if undefined
+        })) as PedidoMarcacaoDTO[];
+        this.filterPedidos();
+      },
+      error: (err) => {
+        this.toastService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao carregar pedidos: ' + (err.error?.message || err.message),
+          life: 3000
+        });
+      }
+    });
   }
 
   // Função para inicializar os dados
@@ -126,13 +123,15 @@ export class PedidoMarcacaoComponent implements OnInit {
 
   // Filtros
   filterPedidos(): void {
+    const searchTermLower = (this.searchTerm || '').toLowerCase();
+    
     this.filteredPedidos = this.pedidos.filter(pedido => {
-      const searchTermLower = this.searchTerm.toLowerCase();
       return (
         pedido.id.toString().includes(searchTermLower) ||
         pedido.userId.toString().includes(searchTermLower) ||
-        pedido.actosClinicos.some(acto =>
-          acto.tipoDeConsultaExame?.nome.toLowerCase().includes(searchTermLower)
+        (pedido.observacoes?.toLowerCase() || '').includes(searchTermLower) || // Correção aqui
+        (pedido.actosClinicos || []).some(acto => 
+          (acto?.tipoDeConsultaExame?.nome?.toLowerCase() || '').includes(searchTermLower) // Correção aqui
         )
       );
     });
