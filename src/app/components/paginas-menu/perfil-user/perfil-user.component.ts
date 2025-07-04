@@ -6,6 +6,7 @@ import { PedidoMarcacaoServiceService } from '../../../services/pedido-marcacao-
 import { PedidoMarcacaoDTO } from '../../../models/pedido-marcacao';
 import { MessageService } from 'primeng/api';
 import { SelectItem } from 'primeng/api';
+import { PdfGeneratorService } from '../../../services/pdf-generator.service';
 
 @Component({
   selector: 'app-perfil-user',
@@ -50,7 +51,8 @@ export class PerfilUserComponent implements OnInit {
   constructor(
     private usuarioService: UsuarioService, 
     private pedidoMarcacaoService: PedidoMarcacaoServiceService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private pdfGenerator: PdfGeneratorService
   ) {}
 
   ngOnInit(): void {
@@ -400,5 +402,9 @@ export class PerfilUserComponent implements OnInit {
     if (estadoLower === 'aprovado' || estadoLower === 'confirmada') return 'status-confirmed';
     if (estadoLower === 'rejeitado' || estadoLower === 'cancelado') return 'status-canceled';
     return 'status-pending';
+  }
+
+  gerarPdfMarcacao(marcacao: PedidoMarcacaoDTO): void {
+    this.pdfGenerator.generatePedidoMarcacaoPdf(marcacao);
   }
 }

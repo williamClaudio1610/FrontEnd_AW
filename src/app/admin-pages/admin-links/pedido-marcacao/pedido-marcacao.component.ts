@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { PedidoMarcacaoDTO, UpdatePedidoMarcacaoDTO } from '../../../models/pedido-marcacao';
 import { ActoClinicoDTO } from '../../../models/acto-clinico';
@@ -9,6 +9,9 @@ import { SubsistemaSaudeDTO } from '../../../models/subsistema-saude';
 import { ProfissionalDTO } from '../../../models/profissional';
 import { PedidoMarcacaoServiceService } from '../../../services/pedido-marcacao-service.service';
 import { UsuarioService } from '../../../services/usuario.service';
+import { TipoDeConsultaExameService } from '../../../services/tipo-de-consulta-exame.service';
+import { SubsistemaSaudeService } from '../../../services/subsistema-saude.service';
+import { ProfissionalService } from '../../../services/profissional.service';
 
 // PrimeNG imports
 import { TableModule } from 'primeng/table';
@@ -24,6 +27,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { InputTextModule } from 'primeng/inputtext';
 import { CalendarModule } from 'primeng/calendar';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-pedidos-marcacao',
@@ -45,7 +49,8 @@ import { CalendarModule } from 'primeng/calendar';
     ConfirmDialogModule,
     ToastModule,
     InputTextModule,
-    CalendarModule
+    CalendarModule,
+    MultiSelectModule
   ],
   providers: [ConfirmationService, MessageService]
 })
@@ -70,13 +75,26 @@ export class PedidoMarcacaoComponent implements OnInit {
     { label: 'Cancelado', value: 'CANCELADO' }
   ];
 
+  // Novo: Formulário de edição
+  pedidoForm: FormGroup | null = null;
+  showEditDialog = false;
+
+  tiposConsultaOptions: TipoDeConsultaExameDTO[] = [];
+  subsistemasOptions: SubsistemaSaudeDTO[] = [];
+  profissionaisOptions: ProfissionalDTO[] = [];
+
   constructor(
     private confirmationService: ConfirmationService,
     private fb: FormBuilder,
     private pedidoService: PedidoMarcacaoServiceService,
     private usuarioService: UsuarioService,
-    private toastService: MessageService
-  ) {}
+    private toastService: MessageService,
+    private tipoDeConsultaExameService: TipoDeConsultaExameService,
+    private subsistemaSaudeService: SubsistemaSaudeService,
+    private profissionalService: ProfissionalService
+  ) {
+    this.carregarOpcoes();
+  }
 
   ngOnInit(): void {
     this.loadPedidos();
@@ -205,8 +223,12 @@ export class PedidoMarcacaoComponent implements OnInit {
         dataFim: this.selectedPedido.dataFim,
         observacoes: this.selectedPedido.observacoes,
         actosClinicos: this.selectedPedido.actosClinicos.map(acto => ({
+          id: acto.id,
+          pedidoMarcacaoId: acto.pedidoMarcacaoId,
           tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
           subsistemaSaudeId: acto.subsistemaSaudeId,
+          dataHora: acto.dataHora,
+          anoMesDia: acto.anoMesDia,
           profissionalIds: acto.profissionais?.map(p => p.id) || []
         }))
       };
@@ -239,5 +261,102 @@ export class PedidoMarcacaoComponent implements OnInit {
     } else {
       this.showEstadoDialog = false;
     }
+  }
+
+  // Novo: Abrir modal de edição
+  openEditDialog(pedido: PedidoMarcacaoDTO): void {
+    this.pedidoForm = this.fb.group({
+      id: [pedido.id],
+      estado: [pedido.estado, Validators.required],
+      dataInicio: [pedido.dataInicio, Validators.required],
+      dataFim: [pedido.dataFim, Validators.required],
+      observacoes: [pedido.observacoes],
+      actosClinicos: this.fb.array((pedido.actosClinicos || []).map((acto: any) => this.fb.group({
+        id: [acto.id],
+        pedidoMarcacaoId: [pedido.id],
+        tipoDeConsultaExameId: [acto.tipoDeConsultaExameId, Validators.required],
+        subsistemaSaudeId: [acto.subsistemaSaudeId, Validators.required],
+        dataHora: [acto.dataHora],
+        anoMesDia: [acto.anoMesDia],
+        profissionalIds: [acto.profissionais ? acto.profissionais.map((p: any) => p.id) : [], Validators.required]
+      })))
+    });
+    this.showEditDialog = true;
+  }
+
+  get actosClinicosFormArray(): FormArray {
+    return (this.pedidoForm?.get('actosClinicos') as FormArray);
+  }
+
+  addActoClinico(): void {
+    if (!this.pedidoForm) return;
+    this.actosClinicosFormArray.push(this.fb.group({
+      id: [0],
+      pedidoMarcacaoId: [this.pedidoForm.value.id],
+      tipoDeConsultaExameId: [null, Validators.required],
+      subsistemaSaudeId: [null, Validators.required],
+      dataHora: [null],
+      anoMesDia: [null],
+      profissionalIds: [[], Validators.required]
+    }));
+  }
+
+  removeActoClinico(index: number): void {
+    this.actosClinicosFormArray.removeAt(index);
+  }
+
+  // Novo: Submissão do formulário de edição
+  onSubmitEdit(): void {
+    if (!this.pedidoForm || this.pedidoForm.invalid) return;
+    const formValue = this.pedidoForm.value;
+    const updateDTO = {
+      id: formValue.id,
+      estado: formValue.estado,
+      dataInicio: formValue.dataInicio,
+      dataFim: formValue.dataFim,
+      observacoes: formValue.observacoes,
+      actosClinicos: (formValue.actosClinicos as any[]).map((acto: any) => ({
+        id: acto.id,
+        pedidoMarcacaoId: acto.pedidoMarcacaoId,
+        tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
+        subsistemaSaudeId: acto.subsistemaSaudeId,
+        dataHora: acto.dataHora,
+        anoMesDia: acto.anoMesDia,
+        profissionalIds: acto.profissionalIds
+      }))
+    };
+    this.pedidoService.atualizarPedido(updateDTO).subscribe({
+      next: (response) => {
+        this.showEditDialog = false;
+        this.loadPedidos();
+        this.toastService.add({
+          severity: 'success',
+          summary: 'Pedido atualizado',
+          detail: 'O pedido foi atualizado com sucesso!',
+          life: 3000
+        });
+      },
+      error: (err) => {
+        this.toastService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao atualizar pedido: ' + (err.error?.message || err.message),
+          life: 3000
+        });
+      }
+    });
+  }
+
+  // Atualiza o campo profissionalIds de um acto clínico no formulário de edição
+  onProfissionaisChange(event: string, index: number): void {
+    if (!this.pedidoForm) return;
+    const ids = event.split(',').map(x => +x.trim()).filter(x => !!x);
+    (this.actosClinicosFormArray.at(index) as FormGroup).get('profissionalIds')?.setValue(ids);
+  }
+
+  carregarOpcoes(): void {
+    this.tipoDeConsultaExameService.getAllTipos().subscribe((data: TipoDeConsultaExameDTO[]) => this.tiposConsultaOptions = data);
+    this.subsistemaSaudeService.getAllSubsistemasSaude().subscribe((data: SubsistemaSaudeDTO[]) => this.subsistemasOptions = data);
+    this.profissionalService.getAllProfissionais().subscribe((data: ProfissionalDTO[]) => this.profissionaisOptions = data);
   }
 }

@@ -25,7 +25,7 @@ export interface UpdateActoClinicoDTO {
   pedidoMarcacaoId: number;
   tipoDeConsultaExameId: number;
   subsistemaSaudeId: number;
-  dataHora: string; // ISO string format
-  anoMesDia: string; // YYYY-MM-DD format
+  dataHora?: string | Date;
+  anoMesDia?: string | Date;
   profissionalIds?: number[];
 }

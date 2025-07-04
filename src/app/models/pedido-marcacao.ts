@@ -1,4 +1,4 @@
-import { CreateActoClinicoDTO, ActoClinicoDTO } from './acto-clinico';
+import { CreateActoClinicoDTO, ActoClinicoDTO, UpdateActoClinicoDTO } from './acto-clinico';
 import { CreateUserNaoRegistadoDTO } from './usuario';
 
 export interface PedidoMarcacaoDTO {
@@ -26,7 +26,7 @@ export interface UpdatePedidoMarcacaoDTO {
   dataInicio: string; // YYYY-MM-DD format
   dataFim: string; // YYYY-MM-DD format
   observacoes?: string;
-  actosClinicos: CreateActoClinicoDTO[];
+  actosClinicos: UpdateActoClinicoDTO[];
 }
 
 export interface CreatePedidoMarcacaoUtenteNaoRegistadoDTO {

@@ -83,7 +83,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     BrowserAnimationsModule,
     SideMenuComponent,
     AdminMainPageComponent,
-    DashboardComponent,
     ProfissionaisComponent,
     SubsistemaSaudeComponent,
     TipoDeConsultaExameComponent,

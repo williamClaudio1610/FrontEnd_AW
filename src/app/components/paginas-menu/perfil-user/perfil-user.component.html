@@ -273,6 +273,7 @@
                 <button pButton pRipple label="Cancelar" class="p-button-outlined p-button-danger" *ngIf="marcacao.estado !== 'CANCELADO' && marcacao.estado !== 'Cancelada'"></button>
                 <button pButton pRipple label="Reagendar" class="p-button-outlined p-button-primary" *ngIf="marcacao.estado !== 'CANCELADO' && marcacao.estado !== 'Cancelada'"></button>
                 <button pButton pRipple label="Detalhes" class="p-button-outlined p-button-secondary"></button>
+                <button pButton pRipple label="Baixar PDF" class="p-button-success" (click)="gerarPdfMarcacao(marcacao)"></button>
               </div>
             </div>
           </div>

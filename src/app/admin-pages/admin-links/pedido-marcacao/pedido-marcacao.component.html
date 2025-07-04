@@ -194,3 +194,85 @@
     />
   </ng-template>
 </p-dialog>
+
+<!-- Modal de Edição de Pedido -->
+<p-dialog 
+  header="Editar Pedido de Marcação" 
+  [(visible)]="showEditDialog" 
+  [modal]="true"
+  [style]="{width: '800px'}"
+  [draggable]="false"
+  [resizable]="false"
+  *ngIf="pedidoForm"
+>
+  <form [formGroup]="pedidoForm" (ngSubmit)="onSubmitEdit()">
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12 p-md-4">
+        <label>Estado</label>
+        <p-dropdown [options]="estadoOptions" formControlName="estado" optionLabel="label" optionValue="value" placeholder="Selecione"></p-dropdown>
+      </div>
+      <div class="p-field p-col-12 p-md-4">
+        <label>Data Início</label>
+        <p-calendar formControlName="dataInicio" dateFormat="yy-mm-dd" showIcon="true"></p-calendar>
+      </div>
+      <div class="p-field p-col-12 p-md-4">
+        <label>Data Fim</label>
+        <p-calendar formControlName="dataFim" dateFormat="yy-mm-dd" showIcon="true"></p-calendar>
+      </div>
+      <div class="p-field p-col-12">
+        <label>Observações</label>
+        <textarea pInputTextarea formControlName="observacoes" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="p-mt-3">
+      <h4>Atos Clínicos</h4>
+      <div formArrayName="actosClinicos">
+        <div *ngFor="let acto of actosClinicosFormArray.controls; let i = index" [formGroupName]="i" class="p-grid p-align-center p-mb-2 acto-edit-card">
+          <div class="p-field p-col-12 p-md-3">
+            <label>Tipo de Consulta/Exame</label>
+            <p-dropdown 
+              [options]="tiposConsultaOptions" 
+              formControlName="tipoDeConsultaExameId" 
+              optionLabel="nome" 
+              optionValue="id"
+              placeholder="Selecione">
+            </p-dropdown>
+          </div>
+          <div class="p-field p-col-12 p-md-3">
+            <label>Subsistema Saúde</label>
+            <p-dropdown 
+              [options]="subsistemasOptions" 
+              formControlName="subsistemaSaudeId" 
+              optionLabel="nome" 
+              optionValue="id"
+              placeholder="Selecione">
+            </p-dropdown>
+          </div>
+          <div class="p-field p-col-12 p-md-3">
+            <label>Data/Hora</label>
+            <p-calendar formControlName="dataHora" [showTime]="true" [hourFormat]="'24'" dateFormat="yy-mm-dd"></p-calendar>
+          </div>
+          <div class="p-field p-col-12 p-md-3">
+            <label>Profissionais</label>
+            <p-multiSelect 
+              [options]="profissionaisOptions" 
+              formControlName="profissionalIds" 
+              optionLabel="nome" 
+              optionValue="id"
+              display="chip"
+              placeholder="Selecione">
+            </p-multiSelect>
+          </div>
+          <div class="p-col-12 p-md-1 p-d-flex p-jc-end">
+            <button type="button" pButton icon="pi pi-trash" class="p-button-danger p-button-rounded" (click)="removeActoClinico(i)" title="Remover"></button>
+          </div>
+        </div>
+        <button type="button" pButton icon="pi pi-plus" label="Adicionar Ato Clínico" class="p-button-success p-mt-2" (click)="addActoClinico()"></button>
+      </div>
+    </div>
+    <div class="p-d-flex p-jc-end p-mt-4">
+      <button type="button" pButton label="Cancelar" class="p-button-text" (click)="showEditDialog = false"></button>
+      <button type="submit" pButton label="Salvar" [disabled]="pedidoForm.invalid"></button>
+    </div>
+  </form>
+</p-dialog>
