@@ -7,8 +7,8 @@ export interface ActoClinicoDTO {
   pedidoMarcacaoId: number;
   tipoDeConsultaExameId: number;
   tipoDeConsultaExame?: TipoDeConsultaExameDTO;
-  dataHora?: string | Date;
-  anoMesDia?: string | Date;
+  dataHora?: string; // Formato hh:mm (TimeOnly)
+  anoMesDia?: string; // Formato YYYY-MM-DD (DateOnly)
   subsistemaSaudeId: number;
   subsistemaSaude?: SubsistemaSaudeDTO;
   profissionais?: ProfissionalDTO[];
@@ -25,7 +25,7 @@ export interface UpdateActoClinicoDTO {
   pedidoMarcacaoId: number;
   tipoDeConsultaExameId: number;
   subsistemaSaudeId: number;
-  dataHora?: string | Date;
-  anoMesDia?: string | Date;
-  profissionalIds?: number[];
+  dataHora: string; // Formato hh:mm (TimeOnly) - obrigatório
+  anoMesDia: string; // Formato YYYY-MM-DD (DateOnly) - obrigatório
+  profissionalIds: number[]; // Obrigatório
 }

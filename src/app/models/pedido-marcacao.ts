@@ -25,7 +25,7 @@ export interface UpdatePedidoMarcacaoDTO {
   estado: string;
   dataInicio: string; // YYYY-MM-DD format
   dataFim: string; // YYYY-MM-DD format
-  observacoes?: string;
+  observacoes: string; // Campo obrigatório conforme backend
   actosClinicos: UpdateActoClinicoDTO[];
 }
 

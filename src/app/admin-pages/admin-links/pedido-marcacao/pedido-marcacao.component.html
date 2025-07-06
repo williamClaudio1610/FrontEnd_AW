@@ -40,9 +40,9 @@
         <th>Período</th>
         <th>Estado Atual</th>
         <th>Observações</th>
-        <th>Alterar Estado</th>
         <th>Atos Clínicos</th>
-        <th>Actos</th>
+        <th>Detalhes</th>
+        <th>Editar</th>
       </tr>
     </thead>
     <tbody>
@@ -58,15 +58,6 @@
             </span>
           </td>
           <td>{{ pedido.observacoes || 'Sem observações' }}</td>
-          <td>
-            <p-dropdown 
-              [options]="estadoOptions" 
-              [(ngModel)]="pedido.estado" 
-              (onChange)="onEstadoChange(pedido, $event)"
-              [style]="{width: '150px'}"
-              placeholder="Selecione o estado"
-            ></p-dropdown>
-          </td>
           <td>{{ pedido.actosClinicos.length || 0 }}</td> <!-- Safe navigation with default 0 -->
           <td>
             <button 
@@ -75,6 +66,15 @@
               (click)="toggleDetalhes(pedido.id)"
             >
               <i class="pi" [ngClass]="expandedPedidos.has(pedido.id) ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </td>
+          <td>
+            <button 
+              class="action-button edit-button" 
+              title="Editar Pedido" 
+              (click)="openEditDialog(pedido)"
+            >
+              <i class="pi pi-pencil"></i>
             </button>
           </td>
         </tr>
@@ -113,13 +113,13 @@
                     
                     <ng-container *ngIf="acto">
                       <div *ngIf="acto.dataHora" class="detail-item">
-                        <i class="pi pi-calendar-clock"></i>
-                        <span>{{ formatDateTime(acto.dataHora) }}</span>
+                        <i class="pi pi-clock"></i>
+                        <span>{{ formatTime(acto.dataHora) }}</span>
                       </div>
                       
-                      <div *ngIf="acto.anoMesDia && !acto.dataHora" class="detail-item">
+                      <div *ngIf="acto.anoMesDia" class="detail-item">
                         <i class="pi pi-calendar"></i>
-                        <span>{{ acto.anoMesDia }}</span>
+                        <span>{{ formatDate(acto.anoMesDia) }}</span>
                       </div>
                       
                       <div *ngIf="(acto?.profissionais?.length || 0) > 0"  class="detail-item profissionais-item">
@@ -153,48 +153,6 @@
 </div>
 </div>
 
-<!-- Dialog de Confirmação de Estado -->
-<p-dialog 
-  header="Confirmar Alteração de Estado" 
-  [(visible)]="showEstadoDialog" 
-  [modal]="true"
-  [style]="{width: '450px'}"
-  [draggable]="false"
-  [resizable]="false"
->
-  <div class="confirm-estado-content">
-    <i class="pi pi-exclamation-triangle confirm-icon"></i>
-    <div class="confirm-text">
-      <p>Tem certeza que deseja alterar o estado do pedido <strong>#{{ selectedPedido?.id }}</strong>?</p>
-      <div class="estado-change">
-        <span class="estado-from">{{ getEstadoLabel(previousEstado) }}</span>
-        <i class="pi pi-arrow-right"></i>
-        <p-dropdown 
-          [options]="estadoOptions" 
-          [(ngModel)]="newEstado" 
-          [style]="{width: '150px'}"
-          placeholder="Selecione o estado"
-        ></p-dropdown>
-      </div>
-    </div>
-  </div>
-  <ng-template pTemplate="footer">
-    <p-button 
-      label="Cancelar" 
-      severity="secondary" 
-      (onClick)="cancelEstadoChange()" 
-      styleClass="p-button-text" 
-    />
-    <p-button 
-      label="Confirmar" 
-      severity="success" 
-      (onClick)="confirmEstadoChange()" 
-      [disabled]="!newEstado || newEstado === previousEstado"
-      styleClass="p-button-raised" 
-    />
-  </ng-template>
-</p-dialog>
-
 <!-- Modal de Edição de Pedido -->
 <p-dialog 
   header="Editar Pedido de Marcação" 
@@ -207,67 +165,48 @@
 >
   <form [formGroup]="pedidoForm" (ngSubmit)="onSubmitEdit()">
     <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12 p-md-4">
-        <label>Estado</label>
-        <p-dropdown [options]="estadoOptions" formControlName="estado" optionLabel="label" optionValue="value" placeholder="Selecione"></p-dropdown>
+      <div class="p-field p-col-12 p-md-6">
+        <label>Estado *</label>
+        <p-dropdown [options]="estadoOptions" formControlName="estado" optionLabel="label" optionValue="value" placeholder="Selecione" (onChange)="onEstadoChange()"></p-dropdown>
       </div>
-      <div class="p-field p-col-12 p-md-4">
-        <label>Data Início</label>
-        <p-calendar formControlName="dataInicio" dateFormat="yy-mm-dd" showIcon="true"></p-calendar>
-      </div>
-      <div class="p-field p-col-12 p-md-4">
-        <label>Data Fim</label>
-        <p-calendar formControlName="dataFim" dateFormat="yy-mm-dd" showIcon="true"></p-calendar>
-      </div>
-      <div class="p-field p-col-12">
-        <label>Observações</label>
-        <textarea pInputTextarea formControlName="observacoes" rows="2"></textarea>
+      <div class="p-field p-col-12 p-md-6">
+        <label>Observações *</label>
+        <textarea pInputTextarea formControlName="observacoes" rows="3" placeholder="Digite as observações do pedido..."></textarea>
       </div>
     </div>
     <div class="p-mt-3">
-      <h4>Atos Clínicos</h4>
+      <h4>Agendamento dos Atos Clínicos</h4>
+      <div *ngIf="pedidoForm.get('estado')?.value === 'Agendado'" class="warning-message p-mb-3">
+        <i class="pi pi-exclamation-triangle"></i>
+        <span>Para agendar um pedido, todos os atos clínicos devem ter data e hora definidas.</span>
+      </div>
       <div formArrayName="actosClinicos">
         <div *ngFor="let acto of actosClinicosFormArray.controls; let i = index" [formGroupName]="i" class="p-grid p-align-center p-mb-2 acto-edit-card">
-          <div class="p-field p-col-12 p-md-3">
+          <div class="p-field p-col-12 p-md-4">
             <label>Tipo de Consulta/Exame</label>
-            <p-dropdown 
-              [options]="tiposConsultaOptions" 
-              formControlName="tipoDeConsultaExameId" 
-              optionLabel="nome" 
-              optionValue="id"
-              placeholder="Selecione">
-            </p-dropdown>
+            <div class="acto-info">
+              <strong>{{ getTipoConsultaNome(acto.get('tipoDeConsultaExameId')?.value) }}</strong>
+              <br>
+              <small>{{ getSubsistemaNome(acto.get('subsistemaSaudeId')?.value) }}</small>
+            </div>
           </div>
           <div class="p-field p-col-12 p-md-3">
-            <label>Subsistema Saúde</label>
-            <p-dropdown 
-              [options]="subsistemasOptions" 
-              formControlName="subsistemaSaudeId" 
-              optionLabel="nome" 
-              optionValue="id"
-              placeholder="Selecione">
-            </p-dropdown>
+            <label>Data {{ pedidoForm.get('estado')?.value === 'Agendado' ? '*' : '' }}</label>
+            <p-calendar formControlName="anoMesDia" dateFormat="yy-mm-dd" showIcon="true" placeholder="Selecione a data"></p-calendar>
           </div>
           <div class="p-field p-col-12 p-md-3">
-            <label>Data/Hora</label>
-            <p-calendar formControlName="dataHora" [showTime]="true" [hourFormat]="'24'" dateFormat="yy-mm-dd"></p-calendar>
+            <label>Hora {{ pedidoForm.get('estado')?.value === 'Agendado' ? '*' : '' }}</label>
+            <input pInputText type="time" formControlName="dataHora" placeholder="HH:MM" step="900" />
           </div>
-          <div class="p-field p-col-12 p-md-3">
+          <div class="p-field p-col-12 p-md-2">
             <label>Profissionais</label>
-            <p-multiSelect 
-              [options]="profissionaisOptions" 
-              formControlName="profissionalIds" 
-              optionLabel="nome" 
-              optionValue="id"
-              display="chip"
-              placeholder="Selecione">
-            </p-multiSelect>
-          </div>
-          <div class="p-col-12 p-md-1 p-d-flex p-jc-end">
-            <button type="button" pButton icon="pi pi-trash" class="p-button-danger p-button-rounded" (click)="removeActoClinico(i)" title="Remover"></button>
+                         <div class="profissionais-display">
+               <span *ngFor="let profId of acto.get('profissionalIds')?.value || []" class="profissional-chip">
+                 {{ getProfissionalNome(profId) }}
+               </span>
+             </div>
           </div>
         </div>
-        <button type="button" pButton icon="pi pi-plus" label="Adicionar Ato Clínico" class="p-button-success p-mt-2" (click)="addActoClinico()"></button>
       </div>
     </div>
     <div class="p-d-flex p-jc-end p-mt-4">

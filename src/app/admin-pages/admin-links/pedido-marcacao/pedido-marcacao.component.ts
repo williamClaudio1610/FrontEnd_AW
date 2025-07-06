@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { PedidoMarcacaoDTO, UpdatePedidoMarcacaoDTO } from '../../../models/pedido-marcacao';
-import { ActoClinicoDTO } from '../../../models/acto-clinico';
+import { ActoClinicoDTO, UpdateActoClinicoDTO } from '../../../models/acto-clinico';
 import { TipoDeConsultaExameDTO } from '../../../models/tipo-de-consulta-exame';
 import { SubsistemaSaudeDTO } from '../../../models/subsistema-saude';
 import { ProfissionalDTO } from '../../../models/profissional';
@@ -62,20 +62,16 @@ export class PedidoMarcacaoComponent implements OnInit {
   expandedPedidos = new Set<number>();
   searchTerm = '';
 
-  // Dialog de confirmação de estado
-  showEstadoDialog = false;
-  selectedPedido: PedidoMarcacaoDTO | null = null;
-  newEstado = '';
-  previousEstado = '';
+
 
   estadoOptions = [
-    { label: 'Pendente', value: 'PENDENTE' },
-    { label: 'Aprovado', value: 'APROVADO' },
-    { label: 'Rejeitado', value: 'REJEITADO' },
-    { label: 'Cancelado', value: 'CANCELADO' }
+    { label: 'Pedido', value: 'Pedido' },
+    { label: 'Agendado', value: 'Agendado' },
+    { label: 'Realizado', value: 'Realizado' },
+    { label: 'Cancelado', value: 'Cancelado' }
   ];
 
-  // Novo: Formulário de edição
+  // Novo: Formulário de edição simplificado
   pedidoForm: FormGroup | null = null;
   showEditDialog = false;
 
@@ -106,7 +102,7 @@ export class PedidoMarcacaoComponent implements OnInit {
       next: (pedidos) => {
         this.pedidos = pedidos.map(pedido => ({
           ...pedido,
-          estado: pedido.estado || 'PENDENTE',
+          estado: pedido.estado,
           observacoes: pedido.observacoes || 'Sem observações',
           actosClinicos: pedido.actosClinicos || [] // Default to empty array if undefined
         })) as PedidoMarcacaoDTO[];
@@ -139,6 +135,21 @@ export class PedidoMarcacaoComponent implements OnInit {
     return dateObj ? dateObj.toLocaleString() : '';
   }
 
+  // Formatar hora para exibição
+  formatTime(time: string): string {
+    if (!time) return '';
+    // Se já está no formato hh:mm, retornar como está
+    if (time.includes(':')) {
+      return time;
+    }
+    // Se for um DateTime completo, extrair apenas a hora
+    if (time.includes('T')) {
+      const timePart = time.split('T')[1];
+      return timePart.substring(0, 5); // Pegar apenas hh:mm
+    }
+    return time;
+  }
+
   // Filtros
   filterPedidos(): void {
     const searchTermLower = (this.searchTerm || '').toLowerCase();
@@ -169,118 +180,36 @@ export class PedidoMarcacaoComponent implements OnInit {
     }
   }
 
-  // Mudança de estado
-  onEstadoChange(pedido: PedidoMarcacaoDTO, event: any): void {
-    const novoEstado = event.value;
-    this.openEstadoDialog(pedido);
-  }
-
-  // Confirmação de ação
-  confirmAction(pedido: PedidoMarcacaoDTO, action: string): void {
-    this.confirmationService.confirm({
-      message: `Tem certeza que deseja ${action.toLowerCase()} este pedido?`,
-      accept: () => {
-        // Simulação de ação (substituir por chamada à API)
-        console.log(`Ação ${action} confirmada para pedido ${pedido.id}`);
-        this.toastService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: `Ação ${action} realizada com sucesso.`,
-          life: 3000
-        });
-      }
-    });
-  }
-
   // Converte código de estado para label
   getEstadoLabel(estado: string): string {
     const estadoOption = this.estadoOptions.find(option => option.value === estado);
     return estadoOption ? estadoOption.label : 'Estado Desconhecido';
   }
 
-  // Métodos do diálogo de mudança de estado
-  openEstadoDialog(pedido: PedidoMarcacaoDTO): void {
-    this.selectedPedido = { ...pedido }; // Clonar para evitar alterações diretas
-    this.previousEstado = pedido.estado;
-    this.newEstado = pedido.estado; // Inicializa com o estado atual
-    this.showEstadoDialog = true;
-  }
-
-  cancelEstadoChange(): void {
-    if (this.selectedPedido) {
-      this.selectedPedido.estado = this.previousEstado;
-    }
-    this.showEstadoDialog = false;
-  }
-
-  confirmEstadoChange(): void {
-    if (this.selectedPedido && this.newEstado && this.newEstado !== this.previousEstado) {
-      // Chamar serviço para atualizar o estado
-      const updateDTO: UpdatePedidoMarcacaoDTO = {
-        id: this.selectedPedido.id,
-        estado: this.newEstado,
-        dataInicio: this.selectedPedido.dataInicio,
-        dataFim: this.selectedPedido.dataFim,
-        observacoes: this.selectedPedido.observacoes,
-        actosClinicos: this.selectedPedido.actosClinicos.map(acto => ({
-          id: acto.id,
-          pedidoMarcacaoId: acto.pedidoMarcacaoId,
-          tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
-          subsistemaSaudeId: acto.subsistemaSaudeId,
-          dataHora: acto.dataHora,
-          anoMesDia: acto.anoMesDia,
-          profissionalIds: acto.profissionais?.map(p => p.id) || []
-        }))
-      };
-
-      this.pedidoService.atualizarPedido(updateDTO).subscribe({
-        next: (response) => {
-          this.selectedPedido!.estado = this.newEstado;
-          const index = this.pedidos.findIndex(p => p.id === this.selectedPedido!.id);
-          if (index !== -1) this.pedidos[index] = { ...this.selectedPedido! };
-          this.filterPedidos();
-          this.showEstadoDialog = false;
-          this.toastService.add({
-            severity: 'success',
-            summary: 'Estado Atualizado',
-            detail: `O estado do pedido foi atualizado para ${this.newEstado}`,
-            life: 3000
-          });
-        },
-        error: (err) => {
-          this.toastService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Falha ao atualizar estado: ' + (err.error?.message || err.message),
-            life: 3000
-          });
-          this.selectedPedido!.estado = this.previousEstado;
-          this.showEstadoDialog = false;
-        }
-      });
-    } else {
-      this.showEstadoDialog = false;
-    }
-  }
-
-  // Novo: Abrir modal de edição
+  // Novo: Abrir modal de edição simplificado
   openEditDialog(pedido: PedidoMarcacaoDTO): void {
     this.pedidoForm = this.fb.group({
       id: [pedido.id],
       estado: [pedido.estado, Validators.required],
       dataInicio: [pedido.dataInicio, Validators.required],
       dataFim: [pedido.dataFim, Validators.required],
-      observacoes: [pedido.observacoes],
+      observacoes: [pedido.observacoes || '', Validators.required],
       actosClinicos: this.fb.array((pedido.actosClinicos || []).map((acto: any) => this.fb.group({
         id: [acto.id],
         pedidoMarcacaoId: [pedido.id],
         tipoDeConsultaExameId: [acto.tipoDeConsultaExameId, Validators.required],
         subsistemaSaudeId: [acto.subsistemaSaudeId, Validators.required],
-        dataHora: [acto.dataHora],
-        anoMesDia: [acto.anoMesDia],
+        dataHora: [acto.dataHora || ''],
+        anoMesDia: [acto.anoMesDia || ''],
         profissionalIds: [acto.profissionais ? acto.profissionais.map((p: any) => p.id) : [], Validators.required]
       })))
     });
+    
+    // Aplicar validações baseadas no estado atual
+    setTimeout(() => {
+      this.onEstadoChange();
+    }, 0);
+    
     this.showEditDialog = true;
   }
 
@@ -288,43 +217,96 @@ export class PedidoMarcacaoComponent implements OnInit {
     return (this.pedidoForm?.get('actosClinicos') as FormArray);
   }
 
-  addActoClinico(): void {
+  // Atualizar validações quando o estado mudar
+  onEstadoChange(): void {
     if (!this.pedidoForm) return;
-    this.actosClinicosFormArray.push(this.fb.group({
-      id: [0],
-      pedidoMarcacaoId: [this.pedidoForm.value.id],
-      tipoDeConsultaExameId: [null, Validators.required],
-      subsistemaSaudeId: [null, Validators.required],
-      dataHora: [null],
-      anoMesDia: [null],
-      profissionalIds: [[], Validators.required]
-    }));
-  }
-
-  removeActoClinico(index: number): void {
-    this.actosClinicosFormArray.removeAt(index);
+    
+    const estado = this.pedidoForm.get('estado')?.value;
+    const isAgendado = estado === 'Agendado';
+    
+    // Atualizar validações dos atos clínicos
+    this.actosClinicosFormArray.controls.forEach(control => {
+      const dataHoraControl = control.get('dataHora');
+      const anoMesDiaControl = control.get('anoMesDia');
+      
+      if (dataHoraControl) {
+        if (isAgendado) {
+          dataHoraControl.setValidators([Validators.required]);
+        } else {
+          dataHoraControl.clearValidators();
+        }
+        dataHoraControl.updateValueAndValidity();
+      }
+      
+      if (anoMesDiaControl) {
+        if (isAgendado) {
+          anoMesDiaControl.setValidators([Validators.required]);
+        } else {
+          anoMesDiaControl.clearValidators();
+        }
+        anoMesDiaControl.updateValueAndValidity();
+      }
+    });
   }
 
   // Novo: Submissão do formulário de edição
   onSubmitEdit(): void {
     if (!this.pedidoForm || this.pedidoForm.invalid) return;
+    
     const formValue = this.pedidoForm.value;
-    const updateDTO = {
+    
+    // Validar se o estado AGENDADO tem data/hora para todos os atos clínicos
+    if (formValue.estado === 'Agendado') {
+      const actosSemDataHora = formValue.actosClinicos.filter((acto: any) => !acto.dataHora || !acto.anoMesDia);
+      if (actosSemDataHora.length > 0) {
+        this.toastService.add({
+          severity: 'warn',
+          summary: 'Atenção',
+          detail: 'Para agendar um pedido, todos os atos clínicos devem ter data e hora definidas.',
+          life: 5000
+        });
+        return;
+      }
+    }
+
+    // Função para formatar data para YYYY-MM-DD
+    const formatDateToString = (date: any): string => {
+      if (!date) return '';
+      if (typeof date === 'string') return date;
+      if (date instanceof Date) {
+        return date.toISOString().split('T')[0]; // YYYY-MM-DD
+      }
+      return '';
+    };
+
+    // Função para formatar hora para hh:mm (TimeOnly)
+    const formatTimeToString = (time: string): string => {
+      if (!time) return '';
+      // Garantir que está no formato hh:mm
+      if (time.includes(':')) {
+        const [hours, minutes] = time.split(':');
+        return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+      }
+      return time;
+    };
+
+    const updateDTO: UpdatePedidoMarcacaoDTO = {
       id: formValue.id,
       estado: formValue.estado,
-      dataInicio: formValue.dataInicio,
-      dataFim: formValue.dataFim,
+      dataInicio: formatDateToString(formValue.dataInicio),
+      dataFim: formatDateToString(formValue.dataFim),
       observacoes: formValue.observacoes,
-      actosClinicos: (formValue.actosClinicos as any[]).map((acto: any) => ({
+      actosClinicos: (formValue.actosClinicos as any[]).map((acto: any): UpdateActoClinicoDTO => ({
         id: acto.id,
         pedidoMarcacaoId: acto.pedidoMarcacaoId,
         tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
         subsistemaSaudeId: acto.subsistemaSaudeId,
-        dataHora: acto.dataHora,
-        anoMesDia: acto.anoMesDia,
+        dataHora: formatTimeToString(acto.dataHora),
+        anoMesDia: formatDateToString(acto.anoMesDia),
         profissionalIds: acto.profissionalIds
       }))
     };
+    
     this.pedidoService.atualizarPedido(updateDTO).subscribe({
       next: (response) => {
         this.showEditDialog = false;
@@ -347,16 +329,25 @@ export class PedidoMarcacaoComponent implements OnInit {
     });
   }
 
-  // Atualiza o campo profissionalIds de um acto clínico no formulário de edição
-  onProfissionaisChange(event: string, index: number): void {
-    if (!this.pedidoForm) return;
-    const ids = event.split(',').map(x => +x.trim()).filter(x => !!x);
-    (this.actosClinicosFormArray.at(index) as FormGroup).get('profissionalIds')?.setValue(ids);
-  }
-
   carregarOpcoes(): void {
     this.tipoDeConsultaExameService.getAllTipos().subscribe((data: TipoDeConsultaExameDTO[]) => this.tiposConsultaOptions = data);
     this.subsistemaSaudeService.getAllSubsistemasSaude().subscribe((data: SubsistemaSaudeDTO[]) => this.subsistemasOptions = data);
     this.profissionalService.getAllProfissionais().subscribe((data: ProfissionalDTO[]) => this.profissionaisOptions = data);
+  }
+
+  // Métodos auxiliares para o template
+  getTipoConsultaNome(id: number): string {
+    const tipo = this.tiposConsultaOptions.find(t => t.id === id);
+    return tipo ? tipo.nome : 'Tipo não encontrado';
+  }
+
+  getSubsistemaNome(id: number): string {
+    const subsistema = this.subsistemasOptions.find(s => s.id === id);
+    return subsistema ? subsistema.nome : 'Subsistema não encontrado';
+  }
+
+  getProfissionalNome(id: number): string {
+    const profissional = this.profissionaisOptions.find(p => p.id === id);
+    return profissional ? profissional.nome : 'Profissional não encontrado';
   }
 }
