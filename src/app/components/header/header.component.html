@@ -47,9 +47,14 @@
         <!-- Perfil ou Botões de Login -->
         <div class="profile-section" (mouseleave)="showDropdown = false" *ngIf="usuario; else loginButtons">
           <div class="profile-trigger" (mouseenter)="toggleDropdown()">
-            <img *ngIf="usuario.fotografia" [src]="usuario.fotografia" alt="Foto de Perfil" class="profile-pic"
-              (error)="onImgError()" />
-            <i *ngIf="!usuario.fotografia" class="pi pi-user profile-icon"></i>
+            <img *ngIf="usuario.fotografia && !hasImageError" 
+                 [src]="getUserPhotoUrl()" 
+                 alt="Foto de Perfil" 
+                 class="profile-pic"
+                 (loadstart)="onImgLoadStart()"
+                 (load)="onImgLoad()"
+                 (error)="onImgError()" />
+            <i *ngIf="!usuario.fotografia || hasImageError" class="pi pi-user profile-icon"></i>
             <span class="ms-2">{{ usuario.nome }}</span>
           </div>
           <div class="dropdown-menu" *ngIf="showDropdown">

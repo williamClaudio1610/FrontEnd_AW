@@ -61,10 +61,10 @@ export class UsuarioService {
   login(loginDTO: LoginDTO): Observable<Usuario> {
     return this.http.post<{ message: string; user: UserDTO }>(`${this.apiUrl}/login`, loginDTO).pipe(
       map(response => {
-        console.log('Resposta completa:', response);
+        //console.log('Resposta completa:', response);
         const userDto = response.user;
         const user: Usuario = this.mapUserDtoToUsuario(userDto);
-        console.log('Usuário mapeado:', user);
+        //console.log('Usuário mapeado:', user);
         if (user.token) {
           localStorage.setItem(this.TOKEN_KEY, user.token);
         }
@@ -118,10 +118,16 @@ export class UsuarioService {
     return !!this.getCurrentUser() && !!this.getToken();
   }
 
-  getUserPhotoUrl(): string | null {
+  public getUserPhotoUrl(): string | null {
     const user = this.getCurrentUser();
+    const baseUrl = 'https://localhost:7273';
     if (user?.fotografia) {
-      return `https://localhost:7273${user.fotografia}`; // Ajuste a URL base
+      // Se já começa com '/', não adicione 'uploads' de novo
+      if (user.fotografia.startsWith('/')) {
+        return `${baseUrl}${user.fotografia}`;
+      }
+      // Se for só o nome do arquivo, adicione '/uploads/'
+      return `${baseUrl}/uploads/${user.fotografia}`;
     }
     return '/assets/default-user.png';
   }
@@ -164,7 +170,7 @@ export class UsuarioService {
 
 
   private mapUserDtoToUsuario(userDto: UserDTO): Usuario {
-    console.log('Mapeando UserDTO:', userDto);
+    //console.log('Mapeando UserDTO:', userDto);
     return {
       id: userDto.id,
       numeroUtente: userDto.numeroUtente || '',
