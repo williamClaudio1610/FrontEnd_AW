@@ -23,8 +23,8 @@ export interface CreateUserDTO {
   senhaHash: string;
   perfil: string;
 }
-export interface CreateUserNaoRegistadoDTO
-{
+
+export interface CreateUserNaoRegistadoDTO{
 	Fotografia?: string;
 	nome: string;
 	numeroUtente: string;

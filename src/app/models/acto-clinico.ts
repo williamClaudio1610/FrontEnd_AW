@@ -11,13 +11,13 @@ export interface ActoClinicoDTO {
   anoMesDia?: string; // Formato YYYY-MM-DD (DateOnly)
   subsistemaSaudeId: number;
   subsistemaSaude?: SubsistemaSaudeDTO;
-  profissionais?: ProfissionalDTO[];
+  profissional?: ProfissionalDTO;
 }
 
 export interface CreateActoClinicoDTO {
   tipoDeConsultaExameId: number;
   subsistemaSaudeId: number;
-  profissionalIds?: number[];
+  profissionalId: number;
 }
 
 export interface UpdateActoClinicoDTO {
@@ -27,5 +27,5 @@ export interface UpdateActoClinicoDTO {
   subsistemaSaudeId: number;
   dataHora: string; // Formato hh:mm (TimeOnly) - obrigatório
   anoMesDia: string; // Formato YYYY-MM-DD (DateOnly) - obrigatório
-  profissionalIds: number[]; // Obrigatório
+  profissionalId: number;
 }

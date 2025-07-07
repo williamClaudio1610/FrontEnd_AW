@@ -174,24 +174,18 @@ export class ConsultasExamesComponent implements OnInit {
   onAddActo(): void {
     if (this.actoForm.valid) {
       const formValue = this.actoForm.value;
-      
-      // Criar o acto clínico conforme o JSON do backend
       const actoClinico: CreateActoClinicoDTO = {
         tipoDeConsultaExameId: formValue.tipoConsulta,
         subsistemaSaudeId: formValue.subsistema,
-        profissionalIds: formValue.profissional ? [formValue.profissional] : []
+        profissionalId: formValue.profissional
       };
-
       this.actosClinicos.push(actoClinico);
-      
       this.messageService.add({
         severity: 'success',
         summary: 'Acto Adicionado',
         detail: 'Acto clínico adicionado com sucesso à sua solicitação',
         life: 3000
       });
-
-      // Reset do formulário de acto
       this.actoForm.reset();
       this.filteredProfissionais = [];
     } else {

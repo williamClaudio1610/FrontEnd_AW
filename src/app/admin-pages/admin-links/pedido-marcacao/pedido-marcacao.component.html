@@ -122,17 +122,12 @@
                         <span>{{ formatDate(acto.anoMesDia) }}</span>
                       </div>
                       
-                      <div *ngIf="(acto?.profissionais?.length || 0) > 0"  class="detail-item profissionais-item">
-                        <i class="pi pi-users"></i>
-                        <div class="profissionais-list">
-                          <span 
-                            *ngFor="let prof of acto.profissionais || []; let last = last"
-                            class="profissional-tag"
-                            [class.last]="last">
-                            {{ prof?.nome ?? 'Nome não disponível' }}
-                            <small *ngIf="prof?.tipoDeConsultaExameId">{{ prof?.tipoDeConsultaExameNome }}</small>
-                          </span>
-                        </div>
+                      <div *ngIf="acto?.profissional" class="detail-item profissionais-item">
+                        <i class="pi pi-user"></i>
+                        <span class="profissional-tag">
+                          {{ acto.profissional?.nome ?? 'Nome não disponível' }}
+                          <small *ngIf="acto.profissional?.tipoDeConsultaExameId">{{ acto.profissional?.tipoDeConsultaExameNome }}</small>
+                        </span>
                       </div>
                     </ng-container>
                   </div>
@@ -199,12 +194,14 @@
             <input pInputText type="time" formControlName="dataHora" placeholder="HH:MM" step="900" />
           </div>
           <div class="p-field p-col-12 p-md-2">
-            <label>Profissionais</label>
-                         <div class="profissionais-display">
-               <span *ngFor="let profId of acto.get('profissionalIds')?.value || []" class="profissional-chip">
-                 {{ getProfissionalNome(profId) }}
-               </span>
-             </div>
+            <label>Profissional *</label>
+            <p-dropdown 
+              [options]="profissionaisOptions" 
+              formControlName="profissionalId" 
+              optionLabel="nome" 
+              optionValue="id" 
+              placeholder="Selecione o profissional">
+            </p-dropdown>
           </div>
         </div>
       </div>

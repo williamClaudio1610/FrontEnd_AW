@@ -140,7 +140,7 @@
       <tr>
         <td>{{ getTipoConsultaName(acto.tipoDeConsultaExameId) }}</td>
         <td>{{ getSubsistemaName(acto.subsistemaSaudeId) }}</td>        
-        <td>{{ acto.profissionalIds && acto.profissionalIds.length > 0 ? getProfissionalName(acto.profissionalIds[0]) : 'Sem Profissional' }}</td>
+        <td>{{ acto.profissionalId ? getProfissionalName(acto.profissionalId) : 'Sem Profissional' }}</td>
         <td>
           <button pButton icon="pi pi-trash" class="p-button-danger" (click)="removeActo(i)"></button>
         </td>

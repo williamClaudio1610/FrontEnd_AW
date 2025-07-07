@@ -201,7 +201,7 @@ export class PedidoMarcacaoComponent implements OnInit {
         subsistemaSaudeId: [acto.subsistemaSaudeId, Validators.required],
         dataHora: [acto.dataHora || ''],
         anoMesDia: [acto.anoMesDia || ''],
-        profissionalIds: [acto.profissionais ? acto.profissionais.map((p: any) => p.id) : [], Validators.required]
+        profissionalId: [acto.profissional ? acto.profissional.id : null, Validators.required]
       })))
     });
     
@@ -303,7 +303,7 @@ export class PedidoMarcacaoComponent implements OnInit {
         subsistemaSaudeId: acto.subsistemaSaudeId,
         dataHora: formatTimeToString(acto.dataHora),
         anoMesDia: formatDateToString(acto.anoMesDia),
-        profissionalIds: acto.profissionalIds
+        profissionalId: acto.profissionalId
       }))
     };
     

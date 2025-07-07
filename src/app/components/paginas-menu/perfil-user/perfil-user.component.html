@@ -252,17 +252,12 @@
                         <span>{{ acto.anoMesDia }}</span>
                       </div>
                       
-                      <div *ngIf="acto.profissionais && acto.profissionais.length > 0" class="detail-item profissionais-item">
-                        <i class="pi pi-users"></i>
-                        <div class="profissionais-list">
-                          <span 
-                            *ngFor="let prof of acto.profissionais; let last = last"
-                            class="profissional-tag"
-                            [class.last]="last">
-                            {{ prof.nome || 'Nome não disponível' }}
-                            <small *ngIf="prof?.tipoDeConsultaExameId">{{ prof?.tipoDeConsultaExameNome }}</small>
-                          </span>
-                        </div>
+                      <div *ngIf="acto.profissional" class="detail-item profissionais-item">
+                        <i class="pi pi-user"></i>
+                        <span class="profissional-tag">
+                          {{ acto.profissional.nome || 'Nome não disponível' }}
+                          <small *ngIf="acto.profissional.tipoDeConsultaExameId">{{ acto.profissional.tipoDeConsultaExameNome }}</small>
+                        </span>
                       </div>
                     </div>
                   </div>

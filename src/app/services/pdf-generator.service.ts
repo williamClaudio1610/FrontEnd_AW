@@ -54,8 +54,8 @@ export class PdfGeneratorService {
           doc.text(`- Data/Hora: ${acto.dataHora}`, 20, y);
           y += 5;
         }
-        if (acto.profissionais && acto.profissionais.length > 0) {
-          doc.text(`- Profissional: ${acto.profissionais.map(p => p.nome).join(', ')}`, 20, y);
+        if (acto.profissional) {
+          doc.text(`- Profissional: ${acto.profissional.nome}`, 20, y);
           y += 5;
         }
         y += 2;
