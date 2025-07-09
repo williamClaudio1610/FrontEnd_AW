@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { UsuarioService } from '../../services/usuario.service';
+import { Usuario, UpdateUserDTO } from '../../models/usuario';
 
 
 
@@ -13,7 +14,7 @@ import { UsuarioService } from '../../services/usuario.service';
   styleUrls: ['./mudar-senha.component.css'],
   providers: [MessageService]
 })
-export class MudarSenhaComponent {
+export class MudarSenhaComponent implements OnInit {
   currentPassword: string = '';
   newPassword: string = '';
   confirmPassword: string = '';
@@ -23,12 +24,26 @@ export class MudarSenhaComponent {
   passwordStrength: string = '';
   passwordsMismatch: boolean = false;
   currentPasswordInvalid: boolean = false;
+  
+  // Propriedades para foto de perfil
+  user: Usuario | null = null;
+  selectedFile: File | undefined = undefined;
+  previewUrl: string | null = null;
+  isChangingPhoto: boolean = false;
 
   constructor(
     private messageService: MessageService,
     private router: Router,
     private usuarioService: UsuarioService
   ) {}
+
+  ngOnInit(): void {
+    this.loadUserData();
+  }
+
+  loadUserData(): void {
+    this.user = this.usuarioService.getCurrentUser();
+  }
 
   checkPasswordsMatch() {
     this.passwordsMismatch = this.newPassword !== this.confirmPassword && this.confirmPassword !== '';
@@ -86,12 +101,31 @@ export class MudarSenhaComponent {
       this.loading = false;
       return;
     }
-    
-    // Chamar o serviço para alterar a senha
-    this.usuarioService.alterarSenha(this.newPassword).subscribe({
+
+    if (!this.user) {
+      this.errorMessage = 'Usuário não identificado.';
+      this.loading = false;
+      return;
+    }
+
+    // Enviar todos os dados obrigatórios, senha e foto
+    const updateDTO: UpdateUserDTO = {
+      id: this.user.id,
+      nome: this.user.nome,
+      email: this.user.email,
+      morada: this.user.morada || '',
+      telemovel: this.user.telemovel || '',
+      genero: this.user.genero || '',
+      dataNascimento: this.user.dataNascimento,
+      perfil: 'UtenteRegistado', // Envia o valor atual do perfil
+      senhaHash: this.newPassword, // nova senha
+      fotografia: this.selectedFile // foto (File)
+    };
+
+    this.usuarioService.updateUsuario(updateDTO).subscribe({
       next: () => {
-        this.successMessage = 'Senha alterada com sucesso! Redirecionando! Pode fazer o Login normalmente.';
-        
+        this.successMessage = 'Senha e perfil atualizados com sucesso! Redirecionando! Pode fazer o Login normalmente.';
+        this.loading = false;
         // Redirecionar após 2 segundos
         setTimeout(() => {
           this.router.navigate(['/login']);
@@ -99,7 +133,136 @@ export class MudarSenhaComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.message || 'Ocorreu um erro ao alterar a senha.';
+        this.errorMessage = err.message || 'Ocorreu um erro ao atualizar o perfil.';
+      }
+    });
+  }
+
+  // Métodos para upload de foto de perfil
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Validar tipo de arquivo
+      if (!file.type.startsWith('image/')) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Por favor, selecione apenas arquivos de imagem'
+        });
+        return;
+      }
+
+      // Validar tamanho (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'A imagem deve ter no máximo 5MB'
+        });
+        return;
+      }
+
+      this.selectedFile = file;
+      
+      // Criar preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.previewUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = undefined;
+    this.previewUrl = null;
+  }
+
+  openFileSelector(): void {
+    const fileInput = document.getElementById('photoUpload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  getCurrentPhotoUrl(): string {
+    if (this.previewUrl) {
+      return this.previewUrl;
+    }
+    if (this.user?.fotografia) {
+      return 'https://localhost:7273' + this.user.fotografia;
+    }
+    return ''; // Retorna string vazia para mostrar o ícone padrão
+  }
+
+  updateProfilePhoto(): void {
+    if (!this.selectedFile) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Por favor, selecione uma imagem primeiro'
+      });
+      return;
+    }
+
+    if (!this.user) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Usuário não identificado'
+      });
+      return;
+    }
+
+    this.isChangingPhoto = true;
+
+    // Obter a senha atual do serviço
+    const currentPassword = this.usuarioService.getCurrentPassword();
+    
+    if (!currentPassword) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Senha atual não encontrada. Faça login novamente.'
+      });
+      this.isChangingPhoto = false;
+      return;
+    }
+
+    // Preparar dados para atualização
+    const updateData: UpdateUserDTO = {
+      id: this.user.id,
+      nome: this.user.nome,
+      email: this.user.email,
+      telemovel: this.user.telemovel || '',
+      morada: this.user.morada || '',
+      genero: this.user.genero || '',
+      dataNascimento: this.user.dataNascimento,
+      fotografia: this.selectedFile,
+      perfil: this.user.perfil,
+      senhaHash: currentPassword
+    };
+
+    this.usuarioService.updateUsuario(updateData).subscribe({
+      next: (updatedUser) => {
+        this.user = updatedUser;
+        this.isChangingPhoto = false;
+        this.selectedFile = undefined;
+        this.previewUrl = null;
+        
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Foto de perfil atualizada com sucesso!'
+        });
+      },
+      error: (error) => {
+        this.isChangingPhoto = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao atualizar foto de perfil: ' + (error.message || 'Erro desconhecido')
+        });
       }
     });
   }

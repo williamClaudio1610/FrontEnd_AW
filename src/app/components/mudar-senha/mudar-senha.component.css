@@ -20,7 +20,7 @@
     border-radius: 16px;
     box-shadow: var(--card-shadow);
     width: 100%;
-    max-width: 450px;
+    max-width: 550px;
     padding: 2.5rem;
   }
   
@@ -150,5 +150,98 @@
     .password-change-icon {
       width: 70px;
       height: 70px;
+    }
+  }
+
+  /* Estilos para seção de foto de perfil */
+  .photo-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .photo-section h3 {
+    margin: 0 0 1rem 0;
+    color: #1e293b;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .photo-section h3 i {
+    color: #667eea;
+  }
+
+  .photo-upload-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    border: 2px dashed #e2e8f0;
+    transition: all 0.3s ease;
+  }
+
+  .photo-upload-section:hover {
+    border-color: #667eea;
+    background: #f8fafc;
+  }
+
+  .current-photo {
+    flex-shrink: 0;
+  }
+
+  .profile-photo-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .profile-icon-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+  }
+
+  .upload-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .upload-controls button {
+    max-width: 200px;
+  }
+
+  .upload-controls small {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-top: 5px;
+  }
+
+  @media (max-width: 768px) {
+    .photo-upload-section {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .upload-controls {
+      width: 100%;
+    }
+
+    .upload-controls button {
+      max-width: none;
     }
   }

@@ -73,7 +73,6 @@ export class ConsultasExamesComponent implements OnInit {
     // Formulário para usuário anônimo
     this.anonUserForm = this.fb.group({
       nome: ['', Validators.required],
-      numeroUtente: ['', Validators.required],
       dataNascimento: ['', Validators.required],
       genero: ['', Validators.required],
       telemovel: ['', Validators.required],
@@ -302,33 +301,34 @@ export class ConsultasExamesComponent implements OnInit {
         return;
       }
 
-      // Criar FormData para envio multipart
-      const formData = new FormData();
-      
-      // Adicionar dados do usuário
+      // Criar objeto JSON para envio
       const anonUserData = this.anonUserForm.value;
-      formData.append('nome', anonUserData.nome);
-      formData.append('numeroUtente', anonUserData.numeroUtente);
-      formData.append('dataNascimento', new Date(anonUserData.dataNascimento).toISOString().split('T')[0]);
-      formData.append('genero', anonUserData.genero);
-      formData.append('telemovel', anonUserData.telemovel);
-      formData.append('email', anonUserData.email);
-      formData.append('morada', anonUserData.morada);
       
-      // Adicionar fotografia se selecionada
-      if (this.selectedFile) {
-        formData.append('fotografia', this.selectedFile);
-      }
+      // Preparar dados do usuário
+      const userData: CreateUserNaoRegistadoDTO = {
+        nome: anonUserData.nome,
+        dataNascimento: new Date(anonUserData.dataNascimento).toISOString().split('T')[0],
+        genero: anonUserData.genero === 'Masculino' ? 'Masculino' : anonUserData.genero === 'Feminino' ? 'Feminino' : anonUserData.genero,
+        telemovel: anonUserData.telemovel,
+        email: anonUserData.email,
+        morada: anonUserData.morada,
+        perfil: 'UtenteAnónimo',
+        fotografia: this.selectedFile ? this.selectedFile.name : 'nenhuma'
+      };
       
-      // Adicionar dados do pedido
-      formData.append('dataInicio', new Date(dataInicio).toISOString().split('T')[0]);
-      formData.append('dataFim', new Date(dataFim).toISOString().split('T')[0]);
-      formData.append('observacoes', observacoes);
-      
-      // Adicionar actos clínicos como JSON string
-      formData.append('actosClinicos', JSON.stringify(this.actosClinicos));
+      // Preparar dados do pedido
+      const pedidoData: CreatePedidoMarcacaoUtenteNaoRegistadoDTO = {
+        user: userData,
+        dataInicio: new Date(dataInicio).toISOString().split('T')[0],
+        dataFim: new Date(dataFim).toISOString().split('T')[0],
+        observacoes: observacoes,
+        actosClinicos: this.actosClinicos
+      };
 
-      this.pedidoService.criarPedidoUserNaoRegistado(formData).subscribe({
+      // Debug: Log do JSON que está sendo enviado
+      console.log('JSON sendo enviado para criarPedidoUserNaoRegistado:', JSON.stringify(pedidoData, null, 2));
+
+      this.pedidoService.criarPedidoUserNaoRegistado(pedidoData).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
@@ -352,10 +352,28 @@ export class ConsultasExamesComponent implements OnInit {
         },
         error: (err) => {
           console.error('Erro ao criar pedido anônimo:', err);
+          console.error('Detalhes do erro:', {
+            status: err.status,
+            statusText: err.statusText,
+            error: err.error,
+            message: err.message
+          });
+          
+          let errorMessage = 'Falha ao solicitar marcação como usuário anônimo. Tente novamente.';
+          
+          if (err.error?.errors) {
+            const validationErrors = Object.values(err.error.errors).flat().join(', ');
+            errorMessage = `Erro de validação: ${validationErrors}`;
+          } else if (err.error?.message) {
+            errorMessage = err.error.message;
+          } else if (err.message) {
+            errorMessage = err.message;
+          }
+          
           this.messageService.add({
             severity: 'error',
             summary: 'Erro na Solicitação',
-            detail: err.message || 'Falha ao solicitar marcação como usuário anônimo. Tente novamente.',
+            detail: errorMessage,
             life: 5000
           });
         }

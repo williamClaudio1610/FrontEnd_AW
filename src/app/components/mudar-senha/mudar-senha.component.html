@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <div class="password-change-container">
     <div class="password-change-card">
       <div class="password-change-header">
@@ -6,6 +8,29 @@
         </div>
         <h2>Alterar Senha</h2>
         <p>Por favor, defina uma nova senha para sua conta</p>
+      </div>
+
+      <!-- Seção de Foto de Perfil -->
+      <div class="photo-section">
+        <h3><i class="pi pi-image"></i> Foto de Perfil</h3>
+        <div class="photo-upload-section">
+          <div class="current-photo">
+            <img *ngIf="getCurrentPhotoUrl()" [src]="getCurrentPhotoUrl()" alt="Foto de Perfil" class="profile-photo-preview">
+            <div *ngIf="!getCurrentPhotoUrl()" class="profile-photo-preview profile-icon-placeholder">
+              <i class="pi pi-user"></i>
+            </div>
+          </div>
+          <div class="upload-controls">
+            <input type="file" id="photoUpload" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+            <button type="button" pButton pRipple label="Selecionar Foto" icon="pi pi-upload" class="p-button-outlined" (click)="openFileSelector()"></button>
+            <button *ngIf="selectedFile" type="button" pButton pRipple label="Remover" icon="pi pi-trash" class="p-button-outlined p-button-danger" (click)="removeSelectedFile()"></button>
+            <button *ngIf="selectedFile" type="button" pButton pRipple label="Atualizar Foto" icon="pi pi-check" class="p-button-success" (click)="updateProfilePhoto()" [disabled]="isChangingPhoto">
+              <i *ngIf="isChangingPhoto" class="pi pi-spin pi-spinner" style="margin-right: 8px;"></i>
+              {{ isChangingPhoto ? 'Atualizando...' : 'Atualizar Foto' }}
+            </button>
+          </div>
+          <small class="text-muted">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB</small>
+        </div>
       </div>
   
       <form (ngSubmit)="onSubmit()" #passwordForm="ngForm" class="password-change-form">

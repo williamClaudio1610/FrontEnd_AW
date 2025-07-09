@@ -172,13 +172,7 @@
           Nome é obrigatório
         </div>
       </div>
-      <div class="col-12">
-        <label for="numeroUtente" class="form-label">Número de Utente</label>
-        <input pInputText formControlName="numeroUtente" id="numeroUtente" class="form-control" placeholder="Digite o número de utente" />
-        <div *ngIf="anonUserForm.get('numeroUtente')?.invalid && anonUserForm.get('numeroUtente')?.touched" class="text-danger mt-1">
-          Número de utente é obrigatório
-        </div>
-      </div>
+      <!-- Removido campo numeroUtente -->
       <div class="col-12">
         <label for="dataNascimento" class="form-label">Data de Nascimento</label>
         <p-calendar formControlName="dataNascimento" inputId="dataNascimento" class="form-control" placeholder="Selecione a data" />
@@ -188,7 +182,7 @@
       </div>
       <div class="col-12">
         <label for="genero" class="form-label">Gênero</label>
-        <p-dropdown formControlName="genero" inputId="genero" [options]="[{label: 'Masculino', value: 'M'}, {label: 'Feminino', value: 'F'}]" placeholder="Selecione o gênero" class="form-control" />
+        <p-dropdown formControlName="genero" inputId="genero" [options]="[{label: 'Masculino', value: 'Masculino'}, {label: 'Feminino', value: 'Feminino'}]" placeholder="Selecione o gênero" class="form-control" />
         <div *ngIf="anonUserForm.get('genero')?.invalid && anonUserForm.get('genero')?.touched" class="text-danger mt-1">
           Gênero é obrigatório
         </div>
@@ -225,10 +219,10 @@
         />
       </div>
     </div>
-    <ng-template pTemplate="footer">
-      <button pButton type="button" label="Cancelar" class="p-button-secondary" (click)="cancelAnonDialog()"></button>
-      <button pButton type="submit" label="Solicitar" class="p-button-success"></button>
-    </ng-template>
+    <div class="mt-3 d-flex justify-content-end">
+      <button pButton type="submit" class="btn btn-primary">Finalizar</button>
+      <button pButton type="button" class="btn btn-secondary ms-2" (click)="cancelAnonDialog()">Cancelar</button>
+    </div>
   </form>
 </p-dialog>
 

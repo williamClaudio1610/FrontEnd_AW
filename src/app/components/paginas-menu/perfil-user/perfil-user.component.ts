@@ -26,6 +26,8 @@ export class PerfilUserComponent implements OnInit {
     dataNascimento: '',
     genero: ''
   };
+  selectedFile: File | undefined = undefined;
+  previewUrl: string | null = null;
   originalUserData: UpdateUserDTO | null = null;
   isEditing = false;
   isChangingPassword = false;
@@ -72,7 +74,6 @@ export class PerfilUserComponent implements OnInit {
         morada: this.user.morada || '',
         dataNascimento: this.user.dataNascimento || '',
         genero: this.user.genero || '',
-        fotografia: this.user.fotografia || '',
         perfil: this.user.perfil
       };
       // Salvar dados originais para comparação
@@ -137,6 +138,8 @@ export class PerfilUserComponent implements OnInit {
   cancelEdit(): void {
     this.loadUserData();
     this.isEditing = false;
+    this.selectedFile = undefined;
+    this.previewUrl = null;
   }
 
   cancelPasswordChange(): void {
@@ -157,7 +160,8 @@ export class PerfilUserComponent implements OnInit {
       this.editUser.telemovel !== this.originalUserData.telemovel ||
       this.editUser.morada !== this.originalUserData.morada ||
       this.editUser.dataNascimento !== this.originalUserData.dataNascimento ||
-      this.editUser.genero !== this.originalUserData.genero
+      this.editUser.genero !== this.originalUserData.genero ||
+      this.selectedFile !== undefined
     );
   }
 
@@ -224,7 +228,7 @@ export class PerfilUserComponent implements OnInit {
         morada: this.editUser.morada.trim(),
         genero: this.editUser.genero,
         dataNascimento: this.editUser.dataNascimento,
-        fotografia: this.user!.fotografia,
+        fotografia: this.selectedFile,
         perfil: this.user!.perfil,
         senhaHash: currentPassword // Usar a senha atual armazenada
       };
@@ -239,6 +243,8 @@ export class PerfilUserComponent implements OnInit {
           });
           this.isEditing = false;
           this.saving = false;
+          this.selectedFile = undefined;
+          this.previewUrl = null;
           // Atualizar dados originais após sucesso
           this.loadUserData();
         },
@@ -406,5 +412,61 @@ export class PerfilUserComponent implements OnInit {
 
   gerarPdfMarcacao(marcacao: PedidoMarcacaoDTO): void {
     this.pdfGenerator.generatePedidoMarcacaoPdf(marcacao);
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Validar tipo de arquivo
+      if (!file.type.startsWith('image/')) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Por favor, selecione apenas arquivos de imagem'
+        });
+        return;
+      }
+
+      // Validar tamanho (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'A imagem deve ter no máximo 5MB'
+        });
+        return;
+      }
+
+      this.selectedFile = file;
+      
+      // Criar preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.previewUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = undefined;
+    this.previewUrl = null;
+  }
+
+  getCurrentPhotoUrl(): string {
+    if (this.previewUrl) {
+      return this.previewUrl;
+    }
+    if (this.user?.fotografia) {
+      return 'https://localhost:7273' + this.user.fotografia;
+    }
+    return ''; // Retorna string vazia para mostrar o ícone padrão
+  }
+
+  openFileSelector(): void {
+    const fileInput = document.getElementById('photoUpload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
   }
 }

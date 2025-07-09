@@ -46,7 +46,27 @@ export class UsuarioService {
   }
 
   updateUsuario(updateDTO: UpdateUserDTO): Observable<Usuario> {
-    return this.http.put<UserDTO>(`${this.apiUrl}/atualizarUser/${updateDTO.id}`, updateDTO).pipe(
+    const formData = new FormData();
+    
+    // Adicionar campos ao FormData
+    formData.append('Id', updateDTO.id.toString());
+    formData.append('Nome', updateDTO.nome || '');
+    formData.append('Email', updateDTO.email || '');
+    formData.append('Telemovel', updateDTO.telemovel || '');
+    formData.append('Morada', updateDTO.morada || '');
+    formData.append('Genero', updateDTO.genero || '');
+    formData.append('SenhaHash', updateDTO.senhaHash || '');
+    formData.append('Perfil', updateDTO.perfil || '');
+    
+    if (updateDTO.dataNascimento) {
+      formData.append('DataNascimento', updateDTO.dataNascimento);
+    }
+    
+    if (updateDTO.fotografia) {
+      formData.append('Fotografia', updateDTO.fotografia);
+    }
+    
+    return this.http.put<UserDTO>(`${this.apiUrl}/atualizarUser/${updateDTO.id}`, formData).pipe(
       map(this.mapUserDtoToUsuario),
       catchError(this.handleError)
     );
@@ -148,12 +168,11 @@ export class UsuarioService {
       telemovel: currentUser.telemovel || '',
       genero: currentUser.genero || '',
       senhaHash: novaSenha,
-      fotografia: currentUser.fotografia || '',
       dataNascimento: currentUser.dataNascimento,
       perfil: currentUser.perfil // Usar o perfil atual do usuário
     };
   
-    return this.http.put<UserDTO>(`${this.apiUrl}/atualizarUser/${currentUser.id}`, updateDTO).pipe(
+    return this.updateUsuario(updateDTO).pipe(
       map(updatedUser => {
         // Atualizar localmente o usuário com os dados retornados
         const updated = this.mapUserDtoToUsuario(updatedUser);

@@ -38,9 +38,21 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
         (onShow)="onDialogShow()"
       >
         <div class="form-field">
-          <label for="fotografia">Fotografia *</label>
-          <input pInputText id="fotografia" name="fotografia" [(ngModel)]="usuario.fotografia" [ngClass]="{'invalid': formSubmitted && !usuario.fotografia}" />
-          <small *ngIf="formSubmitted && !usuario.fotografia" class="error-message">Fotografia é obrigatória.</small>
+          <label for="fotografia">Fotografia</label>
+          <div class="photo-upload-section">
+            <div class="current-photo" *ngIf="usuario.fotografia || selectedFile">
+              <img *ngIf="getCurrentPhotoUrl()" [src]="getCurrentPhotoUrl()" alt="Foto de Perfil" class="profile-photo-preview">
+              <div *ngIf="!getCurrentPhotoUrl()" class="profile-photo-preview profile-icon-placeholder">
+                <i class="pi pi-user"></i>
+              </div>
+            </div>
+            <div class="upload-controls">
+              <input type="file" id="photoUpload" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+              <button type="button" pButton pRipple label="Selecionar Foto" icon="pi pi-upload" class="p-button-outlined" (click)="openFileSelector()"></button>
+              <button *ngIf="selectedFile" type="button" pButton pRipple label="Remover" icon="pi pi-trash" class="p-button-outlined p-button-danger" (click)="removeSelectedFile()"></button>
+            </div>
+            <small class="text-muted">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB</small>
+          </div>
         </div>
         <div class="form-field">
           <label for="nome">Nome *</label>
@@ -198,6 +210,77 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
       font-weight: 600;
       text-transform: uppercase;
       font-size: 0.875rem;
+    }
+
+    /* Estilos para upload de foto */
+    .photo-upload-section {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      border: 2px dashed #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .photo-upload-section:hover {
+      border-color: #667eea;
+      background: #f8fafc;
+    }
+
+    .current-photo {
+      flex-shrink: 0;
+    }
+
+    .profile-photo-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-icon-placeholder {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+
+    .upload-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .upload-controls button {
+      max-width: 200px;
+    }
+
+    .upload-controls small {
+      color: #6c757d;
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .photo-upload-section {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .upload-controls {
+        width: 100%;
+      }
+
+      .upload-controls button {
+        max-width: none;
+      }
     }
 
     .employee-table td {
@@ -383,6 +466,7 @@ export class UsuariosComponent implements OnInit {
       fotografia: '' 
     };
     this.senha = '';
+    this.selectedFile = undefined;
     this.editIndex = null;
     this.formSubmitted = false;
     this.displayDialog = true;
@@ -396,19 +480,63 @@ export class UsuariosComponent implements OnInit {
       this.usuario.dataNascimento = this.formatarDataParaEnvio(this.usuario.dataNascimento);
     }
     this.senha = ''; // Reset password field for updates
+    this.selectedFile = undefined; // Reset file selection
     this.formSubmitted = false;
     this.displayDialog = true;
   }
 
   // Add this property to the component
-  selectedFile: File | null = null;
+  selectedFile: File | undefined = undefined;
 
   // Add this method to handle file selection
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
+      const file = input.files[0];
+      
+      // Validar tipo de arquivo
+      if (!file.type.startsWith('image/')) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Por favor, selecione apenas arquivos de imagem'
+        });
+        return;
+      }
+
+      // Validar tamanho (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'A imagem deve ter no máximo 5MB'
+        });
+        return;
+      }
+
+      this.selectedFile = file;
     }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = undefined;
+  }
+
+  openFileSelector(): void {
+    const fileInput = document.getElementById('photoUpload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  getCurrentPhotoUrl(): string {
+    if (this.selectedFile) {
+      return URL.createObjectURL(this.selectedFile);
+    }
+    if (this.usuario?.fotografia) {
+      return 'https://localhost:7273' + this.usuario.fotografia;
+    }
+    return ''; // Retorna string vazia para mostrar o ícone padrão
   }
 
   formatarDataParaEnvio(dateString: string | Date): string {
@@ -458,7 +586,7 @@ export class UsuariosComponent implements OnInit {
         nome: this.usuario.nome,
         email: this.usuario.email,
         perfil: this.usuario.perfil,
-        fotografia: this.usuario.fotografia,
+        fotografia: this.selectedFile,
         dataNascimento: this.formatarDataParaEnvio(this.usuario.dataNascimento!),
         genero: this.usuario.genero,
         telemovel: this.usuario.telemovel,
@@ -471,6 +599,7 @@ export class UsuariosComponent implements OnInit {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado com sucesso!' });
           this.loadUsuarios();
           this.displayDialog = false;
+          this.selectedFile = undefined;
         },
         error: (err) => {
           this.erro = `Erro ao atualizar usuário: ${err.error?.message || 
@@ -504,7 +633,7 @@ export class UsuariosComponent implements OnInit {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado com sucesso!' });
           this.loadUsuarios();
           this.displayDialog = false;
-          this.selectedFile = null; // Reset file input
+          this.selectedFile = undefined; // Reset file input
         },
         error: (err) => {
           this.erro = `Erro ao adicionar usuário: ${err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message)}`;
@@ -553,5 +682,6 @@ export class UsuariosComponent implements OnInit {
 
   onDialogHide() {
     this.formSubmitted = false;
+    this.selectedFile = undefined;
   }
 }

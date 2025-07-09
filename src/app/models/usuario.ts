@@ -24,20 +24,20 @@ export interface CreateUserDTO {
   perfil: string;
 }
 
-export interface CreateUserNaoRegistadoDTO{
-	Fotografia?: string;
-	nome: string;
-	numeroUtente: string;
-	dataNascimento: string;
-	genero: string;
-	telemovel: string;  
-	email:string
-	morada: string;
+export interface CreateUserNaoRegistadoDTO {
+  fotografia?: string; // "nenhuma" quando não há foto
+  nome: string;
+  dataNascimento: string;
+  genero: string;
+  telemovel: string;
+  email: string;
+  morada: string;
+  perfil?: string; // UtenteAnónimo, UtenteRegistado, etc.
 }
 
 export interface UpdateUserDTO {
   id: number;
-  fotografia?: string;
+  fotografia?: File;
   nome?: string;
   dataNascimento?: string;
   genero?: string;

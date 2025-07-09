@@ -40,10 +40,10 @@ export class PedidoMarcacaoServiceService {
       );
   }
 
-  criarPedidoUserNaoRegistado(pedido: FormData): Observable<{ message: string; pedido: PedidoMarcacaoDTO }> {
+  criarPedidoUserNaoRegistado(pedido: CreatePedidoMarcacaoUtenteNaoRegistadoDTO): Observable<{ message: string; pedido: PedidoMarcacaoDTO }> {
     return this.http.post<{ message: string; pedido: PedidoMarcacaoDTO }>(
       `${this.apiUrl}/criarPedidoUserNaoRegistado`, 
-      pedido  // Agora aceita FormData
+      pedido  // Agora aceita JSON
     ).pipe(
       timeout(this.defaultTimeout),
       retry(this.maxRetries),
