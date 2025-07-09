@@ -8,6 +8,7 @@ export interface PedidoMarcacaoDTO {
   estado: string;
   dataInicio: string; // YYYY-MM-DD format
   dataFim: string; // YYYY-MM-DD format
+  horario: string; // HH:mm
   observacoes?: string;
   actosClinicos: ActoClinicoDTO[];
 }
@@ -16,6 +17,7 @@ export interface CreatePedidoMarcacaoDTO {
   userId: number;
   dataInicio: string; // YYYY-MM-DD format
   dataFim: string; // YYYY-MM-DD format
+  horario: string; // HH:mm
   observacoes?: string;
   actosClinicos: CreateActoClinicoDTO[];
 }
@@ -25,6 +27,7 @@ export interface UpdatePedidoMarcacaoDTO {
   estado: string;
   dataInicio: string; // YYYY-MM-DD format
   dataFim: string; // YYYY-MM-DD format
+  horario: string; // HH:mm
   observacoes: string; // Campo obrigatório conforme backend
   actosClinicos: UpdateActoClinicoDTO[];
 }
@@ -33,6 +36,7 @@ export interface CreatePedidoMarcacaoUtenteNaoRegistadoDTO {
   user: CreateUserNaoRegistadoDTO;
   dataInicio: string; // YYYY-MM-DD format
   dataFim: string; // YYYY-MM-DD format
+  horario: string; // HH:mm
   observacoes?: string;
   actosClinicos: CreateActoClinicoDTO[];
 }

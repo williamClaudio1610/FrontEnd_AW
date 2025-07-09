@@ -60,6 +60,7 @@ export class ConsultasExamesComponent implements OnInit {
     // Formulário principal para dados da marcação
     this.registerForm = this.fb.group({
       dataRange: [null, Validators.required],
+      horario: ['', Validators.required],
       observacoes: ['', [Validators.maxLength(100)]]
     });
     
@@ -229,6 +230,7 @@ export class ConsultasExamesComponent implements OnInit {
     }
 
     const [dataInicio, dataFim] = this.registerForm.get('dataRange')?.value || [];
+    const horario = this.registerForm.get('horario')?.value || '';
     const observacoes = this.registerForm.get('observacoes')?.value || '';
 
     if (!dataInicio || !dataFim) {
@@ -248,6 +250,7 @@ export class ConsultasExamesComponent implements OnInit {
         userId: userId,
         dataInicio: new Date(dataInicio).toISOString().split('T')[0],
         dataFim: new Date(dataFim).toISOString().split('T')[0],
+        horario: horario,
         observacoes: observacoes,
         actosClinicos: this.actosClinicos
       };
@@ -290,6 +293,7 @@ export class ConsultasExamesComponent implements OnInit {
   onAnonSubmit(): void {
     if (this.anonUserForm.valid) {
       const [dataInicio, dataFim] = this.registerForm.get('dataRange')?.value || [];
+      const horario = this.registerForm.get('horario')?.value || '';
       const observacoes = this.registerForm.get('observacoes')?.value || '';
 
       if (!dataInicio || !dataFim) {
@@ -321,6 +325,7 @@ export class ConsultasExamesComponent implements OnInit {
         user: userData,
         dataInicio: new Date(dataInicio).toISOString().split('T')[0],
         dataFim: new Date(dataFim).toISOString().split('T')[0],
+        horario: horario,
         observacoes: observacoes,
         actosClinicos: this.actosClinicos
       };

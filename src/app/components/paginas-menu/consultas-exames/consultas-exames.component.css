@@ -1,10 +1,9 @@
 ::ng-deep body {
-  padding-top: 90px;
+  padding-top: 200px;
 }
 
 /* Apply light theme styles to this component only */
 :host {
-  /* Override PrimeNG dark theme variables with light theme values */
   --surface-a: #ffffff;
   --surface-b: #f8f9fa;
   --surface-c: #e9ecef;
@@ -19,7 +18,278 @@
   --focus-ring: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-/* Ensure all PrimeNG components within this host use light styles */
+/* Enhanced styling for better visual appeal */
+.main-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+}
+
+.step-card {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.step-title {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-number {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.required::after {
+  content: " *";
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* Enhanced form controls */
+.form-control, 
+.p-inputtext,
+.p-dropdown,
+.p-calendar {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px 15px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-control:focus,
+.p-inputtext:focus,
+.p-dropdown:focus,
+.p-calendar:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+/* Enhanced buttons */
+.btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #1e7e34);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  transform: scale(1.05);
+}
+
+/* Enhanced table styling */
+.table-container {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+}
+
+.table-title {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  padding: 20px;
+  border-bottom: 2px solid #e9ecef;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.search-container {
+  padding: 15px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.search-input {
+  border: 2px solid #e9ecef;
+  border-radius: 25px;
+  padding: 10px 20px 10px 45px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 16px;
+}
+
+/* Error message styling */
+.text-danger {
+  font-size: 0.875rem;
+  color: #e74c3c;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+/* Dialog styling */
+.dialog-form {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.dialog-title {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .main-container {
+      padding: 15px;
+  }
+
+  .step-card {
+      padding: 20px;
+      margin-bottom: 20px;
+  }
+
+  .step-title {
+      font-size: 1.3rem;
+  }
+
+  .step-number {
+      width: 30px;
+      height: 30px;
+      font-size: 1rem;
+  }
+
+  .form-control,
+  .p-inputtext,
+  .p-dropdown,
+  .p-calendar {
+      padding: 10px 12px;
+      font-size: 14px;
+  }
+
+  .btn-primary,
+  .btn-success {
+      padding: 10px 20px;
+      font-size: 14px;
+  }
+
+  .table-container {
+      font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .step-title {
+      font-size: 1.2rem;
+      flex-direction: column;
+      text-align: center;
+      gap: 15px;
+  }
+
+  .btn-primary,
+  .btn-success {
+      width: 100%;
+      margin-bottom: 10px;
+  }
+}
+
+/* Animation for form transitions */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* PrimeNG component overrides */
 :host .p-component {
   background-color: var(--surface-a);
   color: var(--text-color);
@@ -31,15 +301,16 @@
 :host .p-calendar {
   background-color: var(--surface-e);
   color: var(--text-color);
-  border: 1px solid var(--border-color);
-  border-radius: 0.25rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
 }
 
-/* Specific styles for p-table to enforce light theme */
 :host .p-datatable {
   background-color: var(--surface-e);
   color: var(--text-color);
   border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 :host .p-datatable .p-datatable-header {
@@ -48,66 +319,64 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-:host .p-datatable .p-datatable-table {
-  background-color: var(--surface-e);
-}
-
 :host .p-datatable .p-datatable-thead > tr > th {
   background-color: var(--surface-c);
   color: var(--text-color);
   border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+  padding: 15px;
 }
 
 :host .p-datatable .p-datatable-tbody > tr > td {
   background-color: var(--surface-e);
   color: var(--text-color);
   border-bottom: 1px solid var(--border-color);
+  padding: 15px;
+}
+
+:host .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: var(--surface-b);
 }
 
 :host .p-datatable .p-paginator {
   background-color: var(--surface-b);
   border-top: 1px solid var(--border-color);
   color: var(--text-color);
+  padding: 15px;
 }
 
-:host .p-datatable .p-paginator .p-paginator-page,
-:host .p-datatable .p-paginator .p-paginator-first,
-:host .p-datatable .p-paginator .p-paginator-prev,
-:host .p-datatable .p-paginator .p-paginator-next,
-:host .p-datatable .p-paginator .p-paginator-last {
-  background-color: var(--surface-e);
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
+/* File input styling */
+.file-input-container {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
 }
 
-:host .p-datatable .p-paginator .p-paginator-page:hover,
-:host .p-datatable .p-paginator .p-paginator-first:hover,
-:host .p-datatable .p-paginator .p-paginator-prev:hover,
-:host .p-datatable .p-paginator .p-paginator-next:hover,
-:host .p-datatable .p-paginator .p-paginator-last:hover {
-  background-color: var(--surface-d);
+.file-input-container input[type=file] {
+  position: absolute;
+  left: -9999px;
 }
 
-:host .btn-success {
-  background-color: #28a745;
-  border-color: #28a745;
-}
-
-:host .btn-success:hover {
-  background-color: #218838;
-  border-color: #1e7e34;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
+.file-input-label {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
   padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  width: 100%;
 }
 
-.form-label {
-  font-weight: 500;
+.file-input-label:hover {
+  border-color: #007bff;
+  background: #f0f8ff;
 }
 
-.text-danger {
-  font-size: 0.875rem;
+.file-input-label i {
+  font-size: 2rem;
+  color: #6c757d;
+  margin-bottom: 10px;
 }

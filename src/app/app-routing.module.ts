@@ -33,7 +33,7 @@ const routes: Routes = [
   {path: 'contacteNos',component: ContacteNosComponent},
   {path: 'equipa',component: EquipaComponent},
   {path: 'sobreNos',component: SobreNosComponent},
-  {path: 'perfilUser',component: PerfilUserComponent},
+  {path: 'perfilUser',component: PerfilUserComponent, canActivate: [UtenteGuard]},
   {path: 'mudarSenha',component: MudarSenhaComponent},
   {
     path: 'admin',

@@ -38,6 +38,7 @@
         <th>Usuário ID</th>
         <th>Data Solicitação</th>
         <th>Período</th>
+        <th>Horário</th>
         <th>Estado Atual</th>
         <th>Observações</th>
         <th>Atos Clínicos</th>
@@ -52,6 +53,7 @@
           <td>{{ pedido.userId }}</td>
           <td>{{ formatDate(pedido.dataSolicitacao) }}</td>
           <td>{{ formatDate(pedido.dataInicio) }} - {{ formatDate(pedido.dataFim) }}</td>
+          <td>{{ pedido.horario }}</td>
           <td>
             <span class="pedido-estado" [ngClass]="'estado-' + pedido.estado.toLowerCase()">
               {{ getEstadoLabel(pedido.estado) }}
@@ -89,6 +91,12 @@
             <div *ngIf="pedido.observacoes" class="observacoes-section">
               <h4><i class="pi pi-info-circle"></i> Observações</h4>
               <p>{{ pedido.observacoes }}</p>
+            </div>
+
+            <!-- Horário -->
+            <div class="observacoes-section">
+              <h4><i class="pi pi-clock"></i> Horário</h4>
+              <p>{{ pedido.horario }}</p>
             </div>
 
             <!-- Atos Clínicos -->
@@ -165,6 +173,13 @@
         <p-dropdown [options]="estadoOptions" formControlName="estado" optionLabel="label" optionValue="value" placeholder="Selecione" (onChange)="onEstadoChange()"></p-dropdown>
       </div>
       <div class="p-field p-col-12 p-md-6">
+        <label>Horário *</label>
+        <input pInputText type="time" formControlName="horario" placeholder="HH:MM" min="07:00" max="22:00" />
+        <div *ngIf="pedidoForm.get('horario')?.touched && !isHorarioValido(pedidoForm.get('horario')?.value)" class="text-danger">
+          <i class="pi pi-exclamation-triangle"></i> O horário deve estar entre 07:00 e 22:00.
+        </div>
+      </div>
+      <div class="p-field p-col-12 p-md-6">
         <label>Observações *</label>
         <textarea pInputTextarea formControlName="observacoes" rows="3" placeholder="Digite as observações do pedido..."></textarea>
       </div>
@@ -187,11 +202,19 @@
           </div>
           <div class="p-field p-col-12 p-md-3">
             <label>Data {{ pedidoForm.get('estado')?.value === 'Agendado' ? '*' : '' }}</label>
+            <small class="text-muted d-block mb-1">
+              Intervalo permitido:
+              {{ pedidoForm?.get('dataInicio')?.value | date:'dd/MM/yyyy' }} até
+              {{ pedidoForm?.get('dataFim')?.value | date:'dd/MM/yyyy' }}
+            </small>
             <p-calendar formControlName="anoMesDia" dateFormat="yy-mm-dd" showIcon="true" placeholder="Selecione a data"></p-calendar>
           </div>
           <div class="p-field p-col-12 p-md-3">
             <label>Hora {{ pedidoForm.get('estado')?.value === 'Agendado' ? '*' : '' }}</label>
-            <input pInputText type="time" formControlName="dataHora" placeholder="HH:MM" step="900" />
+            <input pInputText type="time" formControlName="dataHora" placeholder="HH:MM" min="07:00" max="22:00" />
+            <div *ngIf="acto.get('dataHora')?.touched && !isHorarioValido(acto.get('dataHora')?.value)" class="text-danger">
+              <i class="pi pi-exclamation-triangle"></i> O horário deve estar entre 07:00 e 22:00.
+            </div>
           </div>
           <div class="p-field p-col-12 p-md-2">
             <label>Profissional *</label>

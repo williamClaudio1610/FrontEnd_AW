@@ -264,17 +264,14 @@
                         <i class="pi pi-building"></i>
                         <span>{{ acto.subsistemaSaude?.nome || 'Sem Subsistema' }}</span>
                       </div>
-                      
-                      <div *ngIf="acto.dataHora" class="detail-item">
-                        <i class="pi pi-calendar-clock"></i>
-                        <span>{{ formatDateTime(acto.dataHora) }}</span>
-                      </div>
-                      
-                      <div *ngIf="acto.anoMesDia && !acto.dataHora" class="detail-item">
+                      <div class="detail-item">
                         <i class="pi pi-calendar"></i>
-                        <span>{{ acto.anoMesDia }}</span>
+                        <span>{{ acto.anoMesDia ? acto.anoMesDia : 'Por Definir' }}</span>
                       </div>
-                      
+                      <div class="detail-item">
+                        <i class="pi pi-clock"></i>
+                        <span>{{ acto.dataHora ? formatTimeOrDateTime(acto.dataHora) : 'Por Definir' }}</span>
+                      </div>
                       <div *ngIf="acto.profissional" class="detail-item profissionais-item">
                         <i class="pi pi-user"></i>
                         <span class="profissional-tag">

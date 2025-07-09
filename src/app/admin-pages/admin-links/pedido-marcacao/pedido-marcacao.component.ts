@@ -193,6 +193,7 @@ export class PedidoMarcacaoComponent implements OnInit {
       estado: [pedido.estado, Validators.required],
       dataInicio: [pedido.dataInicio, Validators.required],
       dataFim: [pedido.dataFim, Validators.required],
+      horario: [pedido.horario, Validators.required],
       observacoes: [pedido.observacoes || '', Validators.required],
       actosClinicos: this.fb.array((pedido.actosClinicos || []).map((acto: any) => this.fb.group({
         id: [acto.id],
@@ -200,7 +201,7 @@ export class PedidoMarcacaoComponent implements OnInit {
         tipoDeConsultaExameId: [acto.tipoDeConsultaExameId, Validators.required],
         subsistemaSaudeId: [acto.subsistemaSaudeId, Validators.required],
         dataHora: [acto.dataHora || ''],
-        anoMesDia: [acto.anoMesDia || ''],
+        anoMesDia: [acto.anoMesDia ? this.parseDateString(acto.anoMesDia) : null],
         profissionalId: [acto.profissional ? acto.profissional.id : null, Validators.required]
       })))
     });
@@ -267,6 +268,23 @@ export class PedidoMarcacaoComponent implements OnInit {
         });
         return;
       }
+      // Nova validação: anoMesDia deve estar entre dataInicio e dataFim do pedido
+      const dataInicio = new Date(formValue.dataInicio);
+      const dataFim = new Date(formValue.dataFim);
+      const actosForaIntervalo = formValue.actosClinicos.filter((acto: any) => {
+        if (!acto.anoMesDia) return false;
+        const dataActo = new Date(acto.anoMesDia);
+        return dataActo < dataInicio || dataActo > dataFim;
+      });
+      if (actosForaIntervalo.length > 0) {
+        this.toastService.add({
+          severity: 'error',
+          summary: 'Data fora do intervalo',
+          detail: 'A data de cada ato clínico deve estar entre a data inicial e final do pedido de marcação.',
+          life: 6000
+        });
+        return;
+      }
     }
 
     // Função para formatar data para YYYY-MM-DD
@@ -290,20 +308,20 @@ export class PedidoMarcacaoComponent implements OnInit {
       return time;
     };
 
-    const updateDTO: UpdatePedidoMarcacaoDTO = {
+    const updateDTO: any = {
       id: formValue.id,
       estado: formValue.estado,
       dataInicio: formatDateToString(formValue.dataInicio),
       dataFim: formatDateToString(formValue.dataFim),
+      horario: formValue.horario,
       observacoes: formValue.observacoes,
-      actosClinicos: (formValue.actosClinicos as any[]).map((acto: any): UpdateActoClinicoDTO => ({
+      actosClinicos: (formValue.actosClinicos as any[]).map((acto: any) => ({
         id: acto.id,
-        pedidoMarcacaoId: acto.pedidoMarcacaoId,
         tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
         subsistemaSaudeId: acto.subsistemaSaudeId,
+        profissionalId: acto.profissionalId,
         dataHora: formatTimeToString(acto.dataHora),
-        anoMesDia: formatDateToString(acto.anoMesDia),
-        profissionalId: acto.profissionalId
+        anoMesDia: formatDateToString(acto.anoMesDia)
       }))
     };
     
@@ -349,5 +367,28 @@ export class PedidoMarcacaoComponent implements OnInit {
   getProfissionalNome(id: number): string {
     const profissional = this.profissionaisOptions.find(p => p.id === id);
     return profissional ? profissional.nome : 'Profissional não encontrado';
+  }
+
+  // Utilitário para converter 'HH:mm' em Date (para p-calendar timeOnly)
+  parseTimeToDate(time: string): Date | null {
+    if (!time) return null;
+    const [hours, minutes] = time.split(':').map(Number);
+    return new Date(0, 0, 0, hours, minutes);
+  }
+
+  // Utilitário para converter 'YYYY-MM-DD' em Date
+  parseDateString(dateStr: string): Date | null {
+    if (!dateStr) return null;
+    return new Date(dateStr);
+  }
+
+  // Valida se o horário está entre 07:00 e 22:00
+  isHorarioValido(valor: string): boolean {
+    if (!valor) return false;
+    const [h, m] = valor.split(':').map(Number);
+    if (isNaN(h) || isNaN(m)) return false;
+    if (h < 7 || h > 22) return false;
+    if (h === 22 && m > 30) return false;
+    return true;
   }
 }

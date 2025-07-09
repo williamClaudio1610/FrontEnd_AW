@@ -122,6 +122,26 @@ export class UsuarioService {
     window.location.href = '/paginaInicial'; // Substitui router.navigate para evitar cache
   }
 
+  logoutSemRedirect(): void {
+    // Remove dados do localStorage
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.PASSWORD_KEY); // Limpar senha armazenada
+    this.currentUserSubject.next(null);
+
+    // Limpa cache do Service Worker, se registrado
+    if ('caches' in window) {
+      caches.keys().then(cacheNames => {
+        cacheNames.forEach(cacheName => {
+          caches.delete(cacheName); // Deleta todos os caches
+        });
+      });
+    }
+
+    // Limpa dados de sessão (opcional)
+    sessionStorage.clear();
+  }
+
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }

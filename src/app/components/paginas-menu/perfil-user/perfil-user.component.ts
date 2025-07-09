@@ -227,7 +227,7 @@ export class PerfilUserComponent implements OnInit {
         telemovel: this.editUser.telemovel.trim(),
         morada: this.editUser.morada.trim(),
         genero: this.editUser.genero,
-        dataNascimento: this.editUser.dataNascimento,
+        dataNascimento: this.formatDateForBackend(this.editUser.dataNascimento ?? ''),
         fotografia: this.selectedFile,
         perfil: this.user!.perfil,
         senhaHash: currentPassword // Usar a senha atual armazenada
@@ -388,6 +388,17 @@ export class PerfilUserComponent implements OnInit {
     if (!date) return '';
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     return dateObj.toLocaleString('pt-BR');
+  }
+
+  // Exibe hora (HH:mm) se for só hora, ou data/hora se for datetime
+  formatTimeOrDateTime(value: string): string {
+    if (!value) return '';
+    // Se for só hora (HH:mm ou HH:mm:ss)
+    if (/^\d{2}:\d{2}(:\d{2})?$/.test(value)) {
+      return value.substring(0,5); // HH:mm
+    }
+    // Se for data/hora completa
+    return this.formatDateTime(value);
   }
 
   getEstadoLabel(estado: string): string {
