@@ -27,6 +27,16 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+.user-pic {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #00bcd4;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  margin-bottom: 10px;
+}
+
 .user-profile h5 {
   color: #fff;
   font-size: 1.2rem;
@@ -108,4 +118,14 @@
 .logout-link i {
   margin-right: 12px;
   font-size: 1.2rem;
+}
+
+.user-pic {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #00bcd4;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  margin-bottom: 10px;
 }

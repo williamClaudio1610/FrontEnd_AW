@@ -204,8 +204,8 @@
             <label>Data {{ pedidoForm.get('estado')?.value === 'Agendado' ? '*' : '' }}</label>
             <small class="text-muted d-block mb-1">
               Intervalo permitido:
-              {{ pedidoForm?.get('dataInicio')?.value | date:'dd/MM/yyyy' }} até
-              {{ pedidoForm?.get('dataFim')?.value | date:'dd/MM/yyyy' }}
+              {{ pedidoForm.get('dataInicio')?.value | date:'dd/MM/yyyy' }} até
+              {{ pedidoForm.get('dataInicio')?.value | date:'dd/MM/yyyy' }}
             </small>
             <p-calendar formControlName="anoMesDia" dateFormat="yy-mm-dd" showIcon="true" placeholder="Selecione a data"></p-calendar>
           </div>

@@ -1,8 +1,14 @@
 <div class="sidebar">
   <!-- Perfil do Usuário -->
   <div class="user-profile text-center p-3">
-    <img *ngIf="usuario?.fotografia" [src]="usuario?.fotografia" alt="Foto do Usuário" class="user-pic" />
-    <i *ngIf="!usuario?.fotografia" class="pi pi-user user-icon"></i>
+    <img *ngIf="usuario?.fotografia && !hasImageError" 
+                 [src]="getUserPhotoUrl()" 
+                 alt="Foto do Usuário" 
+                 class="user-pic"
+                 (loadstart)="onImgLoadStart()"
+                 (load)="onImgLoad()"
+                 (error)="onImgError()" />
+            <i *ngIf="!usuario?.fotografia || hasImageError" class="pi pi-user user-icon"></i>
     <h5 class="mt-2">{{ usuario?.nome || 'Admin User' }}</h5>
     <a href="#" class="edit-profile">Edit Profile</a>
   </div>

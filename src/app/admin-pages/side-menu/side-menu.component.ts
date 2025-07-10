@@ -16,6 +16,8 @@ import { UsuarioService } from '../../services/usuario.service';
   styleUrls: ['./side-menu.component.css']
 })
 export class SideMenuComponent implements OnInit {
+  hasImageError: boolean = false;
+  imageLoading: boolean = false;
   usuario: Usuario | null = null; // Inicializa como nulo
   menuItems = [
     { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/admin/dashboard'] },
@@ -26,15 +28,46 @@ export class SideMenuComponent implements OnInit {
     { label: 'Usuários', icon: 'pi pi-briefcase', routerLink: ['/admin/usuarios'] } 
   ];
 
+  
+
   constructor(private usuarioService: UsuarioService) {}
+
 
   ngOnInit() {
     console.log('Menu Items:', this.menuItems); // Para depuração
     this.usuario = this.usuarioService.getCurrentUser();
+    this.hasImageError = false;
+    this.imageLoading = false;
+
+    // Ajusta os itens do menu conforme o perfil
+    if (this.usuario && this.usuario.perfil === 'Administrativo') {
+      this.menuItems = [
+        { label: 'Pedidos/Marcações', icon: 'pi pi-box', routerLink: ['/admin/pedidosMarcacao'] }
+      ];
+    }
   }
 
   logout() {
     this.usuarioService.logout(); // Limpa o token e o usuário
     this.usuario = null;
+  }
+
+  
+  onImgLoad() {
+    this.hasImageError = false; // Reset do erro quando a imagem carrega com sucesso
+    this.imageLoading = false;
+  }
+
+  onImgLoadStart() {
+    this.imageLoading = true;
+    this.hasImageError = false;
+  }
+
+  onImgError() {
+    this.hasImageError = true; // Marca o erro para forçar o fallback
+  }
+  getUserPhotoUrl(): string {
+    // Usa o método do service para obter a URL da foto
+    return this.usuarioService.getUserPhotoUrl() || 'assets/default-user.png';
   }
 }

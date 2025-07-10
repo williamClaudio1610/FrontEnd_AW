@@ -139,6 +139,7 @@ export class RegisterComponent implements OnInit {
       });
       return;
     }
+    
 
     this.user.morada = `${this.user.morada}, ${this.provincia}`;
 
