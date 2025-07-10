@@ -117,6 +117,7 @@ export class MudarSenhaComponent implements OnInit {
       telemovel: this.user.telemovel || '',
       genero: this.user.genero || '',
       dataNascimento: this.user.dataNascimento,
+      numeroUtente: this.user.numeroUtente,
       perfil: 'UtenteRegistado', // Envia o valor atual do perfil
       senhaHash: this.newPassword, // nova senha
       fotografia: this.selectedFile // foto (File)
@@ -240,6 +241,7 @@ export class MudarSenhaComponent implements OnInit {
       dataNascimento: this.user.dataNascimento,
       fotografia: this.selectedFile,
       perfil: this.user.perfil,
+      numeroUtente: this.user.numeroUtente,
       senhaHash: currentPassword
     };
 

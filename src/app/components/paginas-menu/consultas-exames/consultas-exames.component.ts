@@ -79,7 +79,8 @@ export class ConsultasExamesComponent implements OnInit {
       telemovel: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       morada: ['', Validators.required],
-      fotografia: [''] // Campo para o arquivo
+      fotografia: [''], // Campo para o arquivo
+      numeroUtente: ['']
     });
   }
 
@@ -317,6 +318,7 @@ export class ConsultasExamesComponent implements OnInit {
         email: anonUserData.email,
         morada: anonUserData.morada,
         perfil: 'UtenteAnónimo',
+        numeroUtente: anonUserData.numeroUtente,
         fotografia: this.selectedFile ? this.selectedFile.name : 'nenhuma'
       };
       

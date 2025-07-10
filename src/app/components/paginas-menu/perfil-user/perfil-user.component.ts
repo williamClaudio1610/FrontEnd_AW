@@ -21,6 +21,7 @@ export class PerfilUserComponent implements OnInit {
     id: 0,
     nome: '',
     email: '',
+    numeroUtente: '',
     telemovel: '',
     morada: '',
     dataNascimento: '',
@@ -69,6 +70,7 @@ export class PerfilUserComponent implements OnInit {
       this.editUser = {
         id: this.user.id,
         nome: this.user.nome,
+        numeroUtente: this.user.numeroUtente,
         email: this.user.email,
         telemovel: this.user.telemovel || '',
         morada: this.user.morada || '',
@@ -158,6 +160,7 @@ export class PerfilUserComponent implements OnInit {
       this.editUser.nome !== this.originalUserData.nome ||
       this.editUser.email !== this.originalUserData.email ||
       this.editUser.telemovel !== this.originalUserData.telemovel ||
+      this.editUser.numeroUtente !== this.originalUserData.numeroUtente ||
       this.editUser.morada !== this.originalUserData.morada ||
       this.editUser.dataNascimento !== this.originalUserData.dataNascimento ||
       this.editUser.genero !== this.originalUserData.genero ||
@@ -223,7 +226,8 @@ export class PerfilUserComponent implements OnInit {
       const updateData: UpdateUserDTO = {
         id: this.user!.id,
         nome: this.editUser.nome.trim(),
-        email: this.editUser.email.trim(),
+        email: this.editUser.email.trim().toLowerCase(),
+        numeroUtente: this.editUser.numeroUtente.trim().toLowerCase(),
         telemovel: this.editUser.telemovel.trim(),
         morada: this.editUser.morada.trim(),
         genero: this.editUser.genero,
@@ -403,20 +407,19 @@ export class PerfilUserComponent implements OnInit {
 
   getEstadoLabel(estado: string): string {
     const estadoMap: { [key: string]: string } = {
-      'PENDENTE': 'Pendente',
-      'APROVADO': 'Aprovado',
-      'REJEITADO': 'Rejeitado',
-      'CANCELADO': 'Cancelado',
-      'Pedido': 'Pedido',
-      'Confirmada': 'Confirmada'
+      'PEDIDO': 'Pedido',
+      'AGENDADO': 'Agendado',
+      'Realizado': 'Realizado',
+      'CANCELADO': 'Cancelado'
     };
     return estadoMap[estado] || estado;
   }
 
   getEstadoClass(estado: string): string {
     const estadoLower = estado.toLowerCase();
-    if (estadoLower === 'pendente' || estadoLower === 'pedido') return 'status-pending';
-    if (estadoLower === 'aprovado' || estadoLower === 'confirmada') return 'status-confirmed';
+    if (estadoLower === 'pedido') return 'status-pending';
+    if (estadoLower === 'agendado' ) return 'status-pending';
+    if (estadoLower === 'realizado') return 'status-confirmed';
     if (estadoLower === 'rejeitado' || estadoLower === 'cancelado') return 'status-canceled';
     return 'status-pending';
   }

@@ -60,6 +60,11 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
           <small *ngIf="formSubmitted && !usuario.nome" class="error-message">Nome é obrigatório.</small>
         </div>
         <div class="form-field">
+          <label for="numeroUtente">Número de Utente *</label>
+          <input pInputText id="numeroUtente" name="numeroUtente" [(ngModel)]="usuario.numeroUtente" [ngClass]="{'invalid': formSubmitted && !usuario.numeroUtente}" />
+          <small *ngIf="formSubmitted && !usuario.numeroUtente" class="error-message">Número de utente é obrigatório.</small>
+        </div>
+        <div class="form-field">
           <label for="email">E-mail *</label>
           <input pInputText id="email" name="email" [(ngModel)]="usuario.email" [ngClass]="{'invalid': formSubmitted && !usuario.email}" />
           <small *ngIf="formSubmitted && !usuario.email" class="error-message">E-mail é obrigatório.</small>
@@ -404,16 +409,19 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
 })
 export class UsuariosComponent implements OnInit {
   displayDialog: boolean = false;
-  usuario: Usuario = { 
-    id: 0, numeroUtente: '', 
-    nome: '', email: '', 
-    perfil: '', 
-    token: undefined, 
+  usuario: Usuario = {
+    id: 0,
+    numeroUtente: '',
+    nome: '',
+    email: '',
+    perfil: '',
     telemovel: '',
-    morada: '', 
-    dataNascimento: new Date().toISOString().split('T')[0], 
-    genero: '', 
-    fotografia: '' };
+    morada: '',
+    dataNascimento: '',
+    genero: '',
+    fotografia: '',
+    token: ''
+  };
   usuarios: Usuario[] = [];
   editIndex: number | null = null;
   formSubmitted: boolean = false;
@@ -562,7 +570,7 @@ export class UsuariosComponent implements OnInit {
     // Validate required fields
     if (!this.usuario.nome || !this.usuario.email || !this.usuario.telemovel ||
       !this.usuario.morada || !this.usuario.dataNascimento || !this.usuario.genero ||
-      !this.usuario.perfil || (this.editIndex === null && !this.senha)) {
+      !this.usuario.perfil || !this.usuario.numeroUtente || (this.editIndex === null && !this.senha)) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Preencha todos os campos obrigatórios.' });
       return;
     }
@@ -591,6 +599,7 @@ export class UsuariosComponent implements OnInit {
         genero: this.usuario.genero,
         telemovel: this.usuario.telemovel,
         morada: this.usuario.morada,
+        numeroUtente: this.usuario.numeroUtente,
         senhaHash: this.senha || undefined,
       };
       this.usuarioService.updateUsuario(updateDTO).subscribe({
@@ -616,16 +625,17 @@ export class UsuariosComponent implements OnInit {
 
       const formData = new FormData();
       if (this.selectedFile) {
-        formData.append('fotografia', this.selectedFile);
+        formData.append('Fotografia', this.selectedFile);
       }
-      formData.append('nome', this.usuario.nome);
-      formData.append('email', this.usuario.email);
-      formData.append('senhaHash', this.senha);
-      formData.append('perfil', this.usuario.perfil);
-      formData.append('telemovel', this.usuario.telemovel);
-      formData.append('morada', this.usuario.morada);
-      formData.append('genero', this.usuario.genero);
-      formData.append('dataNascimento', dataNascimentoFormatada);
+      formData.append('Nome', this.usuario.nome);
+      formData.append('Email', this.usuario.email);
+      formData.append('SenhaHash', this.senha);
+      formData.append('Perfil', this.usuario.perfil);
+      formData.append('Telemovel', this.usuario.telemovel);
+      formData.append('Morada', this.usuario.morada);
+      formData.append('Genero', this.usuario.genero);
+      formData.append('DataNascimento', dataNascimentoFormatada);
+      formData.append('NumeroUtente', this.usuario.numeroUtente);
 
       this.usuarioService.cadastrarUsuario(formData).subscribe({
         next: (newUser: Usuario) => {

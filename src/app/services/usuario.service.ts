@@ -188,6 +188,7 @@ export class UsuarioService {
       telemovel: currentUser.telemovel || '',
       genero: currentUser.genero || '',
       senhaHash: novaSenha,
+      numeroUtente: currentUser.numeroUtente,
       dataNascimento: currentUser.dataNascimento,
       perfil: currentUser.perfil // Usar o perfil atual do usuário
     };

@@ -27,6 +27,7 @@ export class RegisterComponent implements OnInit {
     morada: '',
     dataNascimento: undefined,
     genero: '',
+    numeroUtente: ''
   };
   provinces: string[] = [
     'Bengo', 'Benguela', 'Bié', 'Cabinda', 'Cuando Cubango', 'Cuanza Norte',
@@ -90,6 +91,7 @@ export class RegisterComponent implements OnInit {
       dataNascimento: this.user.dataNascimento,
       genero: this.user.genero,
       provincia: this.provincia,
+      numeroUtente: this.user.numeroUtente,
       confirmarsenhaHash: this.confirmarsenhaHash,
       selectedFile: this.selectedFile,
     });
@@ -161,6 +163,8 @@ export class RegisterComponent implements OnInit {
     formData.append('Morada', this.user.morada);
     formData.append('DataNascimento', dataNascimentoFormatada); // Data formatada
     formData.append('Genero', this.user.genero); // PascalCase
+    formData.append('NumeroUtente', this.user.numeroUtente);
+    
 
     // DEBUG: Mostrar conteúdo do FormData
     for (let [key, value] of (formData as any).entries()) {

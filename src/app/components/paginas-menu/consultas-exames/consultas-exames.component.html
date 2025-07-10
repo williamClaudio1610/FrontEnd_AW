@@ -295,6 +295,16 @@
 
                 <div class="col-12">
                     <div class="form-group">
+                        <label for="numeroUtente" class="form-label">Número de Utente</label>
+                        <input pInputText formControlName="numeroUtente" id="numeroUtente" class="form-control" placeholder="Digite o número de utente" />
+                        <div *ngIf="anonUserForm.get('numeroUtente')?.invalid && anonUserForm.get('numeroUtente')?.touched" class="text-danger">
+                          <i class="pi pi-exclamation-triangle"></i> Número de Utente é obrigatório
+                      </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group">
                         <label for="fotografia" class="form-label">Fotografia</label>
                         <div class="file-input-container">
                             <input

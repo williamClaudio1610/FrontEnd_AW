@@ -1,6 +1,6 @@
 export interface UserDTO {
   id: number;
-  numeroUtente?: string;
+  numeroUtente: string;
   nome: string;
   email: string;
   perfil: string;
@@ -22,6 +22,7 @@ export interface CreateUserDTO {
   morada: string;
   senhaHash: string;
   perfil: string;
+  numeroUtente: string;
 }
 
 export interface CreateUserNaoRegistadoDTO {
@@ -33,6 +34,7 @@ export interface CreateUserNaoRegistadoDTO {
   email: string;
   morada: string;
   perfil?: string; // UtenteAnónimo, UtenteRegistado, etc.
+  numeroUtente: string;
 }
 
 export interface UpdateUserDTO {
@@ -46,6 +48,7 @@ export interface UpdateUserDTO {
   morada?: string;
   senhaHash?: string;
   perfil?: string;
+  numeroUtente: string;
 }
 
 export interface LoginDTO {
@@ -55,7 +58,7 @@ export interface LoginDTO {
 
 export interface Usuario {
   id: number;
-  numeroUtente?: string;
+  numeroUtente: string;
   nome: string;
   email: string;
   perfil: string;
