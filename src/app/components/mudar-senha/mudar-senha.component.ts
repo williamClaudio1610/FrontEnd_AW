@@ -123,6 +123,8 @@ export class MudarSenhaComponent implements OnInit {
       fotografia: this.selectedFile // foto (File)
     };
 
+    console.log('Update DTO:', updateDTO);
+
     this.usuarioService.updateUsuario(updateDTO).subscribe({
       next: () => {
         this.successMessage = 'Senha e perfil atualizados com sucesso! Redirecionando! Pode fazer o Login normalmente.';

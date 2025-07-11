@@ -79,8 +79,8 @@ export class ConsultasExamesComponent implements OnInit {
       telemovel: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       morada: ['', Validators.required],
+      numeroUtente: ['',  Validators.required],
       fotografia: [''], // Campo para o arquivo
-      numeroUtente: ['']
     });
   }
 

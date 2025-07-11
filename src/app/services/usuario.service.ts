@@ -57,6 +57,7 @@ export class UsuarioService {
     formData.append('Genero', updateDTO.genero || '');
     formData.append('SenhaHash', updateDTO.senhaHash || '');
     formData.append('Perfil', updateDTO.perfil || '');
+    formData.append('NumeroUtente', updateDTO.numeroUtente || '');
     
     if (updateDTO.dataNascimento) {
       formData.append('DataNascimento', updateDTO.dataNascimento);
@@ -188,7 +189,7 @@ export class UsuarioService {
       telemovel: currentUser.telemovel || '',
       genero: currentUser.genero || '',
       senhaHash: novaSenha,
-      numeroUtente: currentUser.numeroUtente,
+      numeroUtente: currentUser.numeroUtente || '',
       dataNascimento: currentUser.dataNascimento,
       perfil: currentUser.perfil // Usar o perfil atual do usuário
     };
