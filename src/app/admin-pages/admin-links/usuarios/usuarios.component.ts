@@ -110,6 +110,7 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
             <option value="Utente Registado">UtenteRegistado</option>
             <option value="Administrativo">Administrativo</option>
             <option value="UtenteAnónimo">Utente Anónimo</option>
+            <option value="UtenteAnónimo">Profissional</option>
           </select>
           <small *ngIf="formSubmitted && !usuario.perfil" class="error-message">Perfil é obrigatório.</small>
         </div>
@@ -131,6 +132,7 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
             <th>Data de Nascimento</th>
             <th>Gênero</th>
             <th>Perfil</th>
+            <th>Estado</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -146,11 +148,18 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
             <td>{{ u.genero || '-' }}</td>
             <td>{{ u.perfil || '-' }}</td>
             <td>
+              <span [ngClass]="u.estado === 'Bloqueado' ? 'text-danger' : 'text-success'">
+                {{ u.estado }}
+              </span>
+            </td>
+            <td>
               <button class="action-button" title="Editar" (click)="editUsuario(i)">
                 <i class="pi pi-pencil"></i>
               </button>
-              <button class="action-button" title="Excluir" (click)="confirmDelete(i)">
-                <i class="pi pi-trash"></i>
+              <button class="action-button" 
+                      [title]="u.estado === 'Bloqueado' ? 'Desbloquear' : 'Bloquear'" 
+                      (click)="toggleEstadoUsuario(i)">
+                <i class="pi" [ngClass]="u.estado === 'Bloqueado' ? 'pi-lock-open' : 'pi-lock'" ></i>
               </button>
             </td>
           </tr>
@@ -420,7 +429,8 @@ export class UsuariosComponent implements OnInit {
     dataNascimento: '',
     genero: '',
     fotografia: '',
-    token: ''
+    estado: '',
+    token: '',
   };
   usuarios: Usuario[] = [];
   editIndex: number | null = null;
@@ -471,6 +481,7 @@ export class UsuariosComponent implements OnInit {
       morada: '', 
       dataNascimento: new Date().toISOString().split('T')[0], 
       genero: '', 
+      estado: '',
       fotografia: '' 
     };
     this.senha = '';
@@ -487,7 +498,7 @@ export class UsuariosComponent implements OnInit {
     if (this.usuario.dataNascimento) {
       this.usuario.dataNascimento = this.formatarDataParaEnvio(this.usuario.dataNascimento);
     }
-    this.senha = ''; // Reset password field for updates
+    this.senha = '' ; // Reset password field for updates
     this.selectedFile = undefined; // Reset file selection
     this.formSubmitted = false;
     this.displayDialog = true;
@@ -600,7 +611,8 @@ export class UsuariosComponent implements OnInit {
         telemovel: this.usuario.telemovel,
         morada: this.usuario.morada,
         numeroUtente: this.usuario.numeroUtente,
-        senhaHash: this.senha || undefined,
+        estado: this.usuario.estado,
+        ...(this.senha ? { senhaHash: this.senha } : {}),
       };
       this.usuarioService.updateUsuario(updateDTO).subscribe({
         next: (updatedUser: Usuario) => {
@@ -653,33 +665,33 @@ export class UsuariosComponent implements OnInit {
       });
     }
   }
-  confirmDelete(index: number) {
-    this.confirmationService.confirm({
-      message: `Tem certeza que deseja excluir o usuário ${this.usuarios[index].nome}?`,
-      acceptLabel: 'Sim',
-      rejectLabel: 'Não',
-      accept: () => {
-        this.deleteUsuario(index);
-      }
-    });
-  }
-
-  deleteUsuario(index: number) {
-    const usuarioId = this.usuarios[index].id;
-    if (!usuarioId || usuarioId <= 0) {
-      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'ID do usuário inválido.' });
-      return;
-    }
-    this.usuarioService.deleteUsuario(usuarioId).subscribe({
-      next: () => {
-        this.usuarios.splice(index, 1);
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário excluído com sucesso!' });
+  // Remove confirmDelete and deleteUsuario methods, add toggleEstadoUsuario
+  toggleEstadoUsuario(index: number) {
+    const usuario = this.usuarios[index];
+    const novoEstado = usuario.estado === 'Bloqueado' ? 'Desbloqueado' : 'Bloqueado';
+    const updateDTO: UpdateUserDTO = {
+      id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
+      perfil: usuario.perfil,
+      fotografia: undefined, // Não muda
+      dataNascimento: usuario.dataNascimento,
+      genero: usuario.genero,
+      telemovel: usuario.telemovel,
+      morada: usuario.morada,
+      numeroUtente: usuario.numeroUtente,
+      estado: novoEstado,
+      // senhaHash não é enviado, assim a senha é mantida
+    };
+    this.usuarioService.updateUsuario(updateDTO).subscribe({
+      next: (updatedUser: Usuario) => {
+        this.usuarios[index] = updatedUser;
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: `Usuário ${novoEstado === 'Bloqueado' ? 'bloqueado' : 'desbloqueado'} com sucesso!` });
+        this.loadUsuarios();
       },
       error: (err) => {
-        const errorMessage = err.message || 'Erro desconhecido ao eliminar usuário.';
-        this.erro = `Erro ao eliminar usuário: ${errorMessage}`;
-        console.error('Erro ao eliminar usuário (ID:', usuarioId, '):', err);
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: errorMessage });
+        this.erro = `Erro ao atualizar estado do usuário: ${err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message)}`;
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.erro });
       }
     });
   }

@@ -27,7 +27,8 @@ export class RegisterComponent implements OnInit {
     morada: '',
     dataNascimento: undefined,
     genero: '',
-    numeroUtente: ''
+    numeroUtente: '',
+    estado: 'Desbloqueado'
   };
   provinces: string[] = [
     'Bengo', 'Benguela', 'Bié', 'Cabinda', 'Cuando Cubango', 'Cuanza Norte',

@@ -119,8 +119,9 @@ export class MudarSenhaComponent implements OnInit {
       dataNascimento: this.user.dataNascimento,
       numeroUtente: this.user.numeroUtente,
       perfil: 'UtenteRegistado', // Envia o valor atual do perfil
-      senhaHash: this.newPassword, // nova senha
-      fotografia: this.selectedFile // foto (File)
+      //senhaHash: this.newPassword, // nova senha
+      fotografia: this.selectedFile, // foto (File)
+      estado: this.user.estado
     };
 
     console.log('Update DTO:', updateDTO);
@@ -244,7 +245,8 @@ export class MudarSenhaComponent implements OnInit {
       fotografia: this.selectedFile,
       perfil: this.user.perfil,
       numeroUtente: this.user.numeroUtente,
-      senhaHash: currentPassword
+      estado: this.user.estado,
+     // senhaHash: currentPassword
     };
 
     this.usuarioService.updateUsuario(updateData).subscribe({

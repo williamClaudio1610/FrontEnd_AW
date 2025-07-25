@@ -10,6 +10,7 @@ export interface UserDTO {
   telemovel?: string;
   morada?: string;
   fotografia?: string;
+  estado: string;
 }
 
 export interface CreateUserDTO {
@@ -23,6 +24,7 @@ export interface CreateUserDTO {
   senhaHash: string;
   perfil: string;
   numeroUtente: string;
+  estado: string;
 }
 
 export interface CreateUserNaoRegistadoDTO {
@@ -35,6 +37,7 @@ export interface CreateUserNaoRegistadoDTO {
   morada: string;
   perfil?: string; // UtenteAnónimo, UtenteRegistado, etc.
   numeroUtente: string;
+  estado: string;
 }
 
 export interface UpdateUserDTO {
@@ -49,6 +52,7 @@ export interface UpdateUserDTO {
   senhaHash?: string;
   perfil?: string;
   numeroUtente: string;
+  estado: string;
 }
 
 export interface LoginDTO {
@@ -68,6 +72,7 @@ export interface Usuario {
   telemovel?: string;
   morada?: string;
   fotografia?: string;
+  estado: string;
 }
 
 export interface LoginResponse {

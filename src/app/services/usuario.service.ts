@@ -55,9 +55,10 @@ export class UsuarioService {
     formData.append('Telemovel', updateDTO.telemovel || '');
     formData.append('Morada', updateDTO.morada || '');
     formData.append('Genero', updateDTO.genero || '');
-    formData.append('SenhaHash', updateDTO.senhaHash || '');
+    //formData.append('SenhaHash', updateDTO.senhaHash || '');
     formData.append('Perfil', updateDTO.perfil || '');
     formData.append('NumeroUtente', updateDTO.numeroUtente || '');
+    formData.append('Estado', updateDTO.estado || '');
     
     if (updateDTO.dataNascimento) {
       formData.append('DataNascimento', updateDTO.dataNascimento);
@@ -188,9 +189,10 @@ export class UsuarioService {
       morada: currentUser.morada || '',
       telemovel: currentUser.telemovel || '',
       genero: currentUser.genero || '',
-      senhaHash: novaSenha,
+      //senhaHash: novaSenha,
       numeroUtente: currentUser.numeroUtente || '',
       dataNascimento: currentUser.dataNascimento,
+      estado: currentUser.estado,
       perfil: currentUser.perfil // Usar o perfil atual do usuário
     };
   
@@ -223,6 +225,7 @@ export class UsuarioService {
       genero: userDto.genero || '',
       telemovel: userDto.telemovel || '',
       morada: userDto.morada || '',
+      estado: userDto.estado || '',
       fotografia: userDto.fotografia || ''
     };
   }

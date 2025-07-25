@@ -285,8 +285,12 @@
               </div>
               
               <div class="d-flex gap-2 mt-4">
-                <button pButton pRipple label="Cancelar" class="p-button-outlined p-button-danger" *ngIf="marcacao.estado !== 'CANCELADO' && marcacao.estado !== 'Cancelada'"></button>
-                <button pButton pRipple label="Reagendar" class="p-button-outlined p-button-primary" *ngIf="marcacao.estado !== 'CANCELADO' && marcacao.estado !== 'Cancelada'"></button>
+                <button pButton pRipple label="Cancelar" class="p-button-outlined p-button-danger"
+                  *ngIf="marcacao.estado !== 'CANCELADO' && marcacao.estado !== 'Cancelada' && marcacao.estado !== 'Realizado' && marcacao.estado !== 'REALIZADO' && marcacao.estado !== 'Realizada' && marcacao.estado !== 'REALIZADA' && marcacao.estado !== 'Pedido Realizado'"
+                  (click)="solicitarCancelamento(marcacao)" [disabled]="cancelando"></button>
+                <button pButton pRipple label="Reagendar" class="p-button-outlined p-button-primary"
+                  *ngIf="(marcacao.estado === 'Agendado' || marcacao.estado === 'AGENDADO' || marcacao.estado === 'Pedido' || marcacao.estado === 'PEDIDO')"
+                  (click)="openReagendarDialog(marcacao)"></button>
                 <button pButton pRipple label="Detalhes" class="p-button-outlined p-button-secondary"></button>
                 <button pButton pRipple label="Baixar PDF" class="p-button-success" (click)="gerarPdfMarcacao(marcacao)"></button>
               </div>
@@ -307,3 +311,25 @@
 </div>
 
 <app-footer></app-footer>
+
+<!-- Diálogo de Reagendamento -->
+<p-dialog header="Solicitar Reagendamento" [(visible)]="showReagendarDialog" [modal]="true" [style]="{width: '400px'}" (onHide)="closeReagendarDialog()">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="novoDataInicioSoli">Nova Data de Início</label>
+      <input id="novoDataInicioSoli" type="date" pInputText [(ngModel)]="novoDataInicioSoli" />
+    </div>
+    <div class="field">
+      <label for="novoDataFimSoli">Nova Data de Fim</label>
+      <input id="novoDataFimSoli" type="date" pInputText [(ngModel)]="novoDataFimSoli" />
+    </div>
+    <div class="field">
+      <label for="novoHorarioSoli">Novo Horário</label>
+      <input id="novoHorarioSoli" type="time" pInputText [(ngModel)]="novoHorarioSoli" />
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Cancelar" class="p-button-text" (click)="closeReagendarDialog()"></button>
+    <button pButton pRipple label="Solicitar Reagendamento" class="p-button-success" (click)="solicitarReagendamento()" [disabled]="reagendando"></button>
+  </ng-template>
+</p-dialog>

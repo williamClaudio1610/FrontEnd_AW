@@ -319,6 +319,7 @@ export class ConsultasExamesComponent implements OnInit {
         morada: anonUserData.morada,
         perfil: 'UtenteAnónimo',
         numeroUtente: anonUserData.numeroUtente,
+        estado: 'Desbloqueado',
         fotografia: this.selectedFile ? this.selectedFile.name : 'nenhuma'
       };
       

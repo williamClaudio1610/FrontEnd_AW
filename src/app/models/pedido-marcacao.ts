@@ -10,6 +10,11 @@ export interface PedidoMarcacaoDTO {
   dataFim: string; // YYYY-MM-DD format
   horario: string; // HH:mm
   observacoes?: string;
+  solicitacaoReagendamento?: boolean;
+  solicitacaoCancelamento?: boolean;
+  novoDataInicioSoli?: string; // YYYY-MM-DD
+  novoDataFimSoli?: string; // YYYY-MM-DD
+  novoHorarioSoli?: string; // HH:mm
   actosClinicos: ActoClinicoDTO[];
 }
 
@@ -29,6 +34,11 @@ export interface UpdatePedidoMarcacaoDTO {
   dataFim: string; // YYYY-MM-DD format
   horario: string; // HH:mm
   observacoes: string; // Campo obrigatório conforme backend
+  solicitacaoReagendamento?: boolean;
+  solicitacaoCancelamento?: boolean;
+  novoDataInicioSoli?: string; // YYYY-MM-DD
+  novoDataFimSoli?: string; // YYYY-MM-DD
+  novoHorarioSoli?: string; // HH:mm
   actosClinicos: UpdateActoClinicoDTO[];
 }
 

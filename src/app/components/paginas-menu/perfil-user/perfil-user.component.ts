@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Usuario, UpdateUserDTO } from '../../../models/usuario';
-import { CreateUserDTO } from '../../../models/usuario';
 import { UsuarioService } from '../../../services/usuario.service';
 import { PedidoMarcacaoServiceService } from '../../../services/pedido-marcacao-service.service';
 import { PedidoMarcacaoDTO } from '../../../models/pedido-marcacao';
 import { MessageService } from 'primeng/api';
 import { SelectItem } from 'primeng/api';
 import { PdfGeneratorService } from '../../../services/pdf-generator.service';
+import { UpdatePedidoMarcacaoDTO } from '../../../models/pedido-marcacao';
 
 @Component({
   selector: 'app-perfil-user',
@@ -25,7 +25,8 @@ export class PerfilUserComponent implements OnInit {
     telemovel: '',
     morada: '',
     dataNascimento: '',
-    genero: ''
+    genero: '',
+    estado: ''
   };
   selectedFile: File | undefined = undefined;
   previewUrl: string | null = null;
@@ -37,6 +38,20 @@ export class PerfilUserComponent implements OnInit {
   loading = false;
   saving = false;
   changingPassword = false;
+
+  // Controle de diálogos/modal para reagendamento/cancelamento
+  showReagendarDialog: boolean = false;
+  showCancelamentoDialog: boolean = false;
+  reagendarMarcacao: PedidoMarcacaoDTO | null = null;
+  cancelamentoMarcacao: PedidoMarcacaoDTO | null = null;
+  novoDataInicioSoli: string = '';
+  novoDataFimSoli: string = '';
+  novoHorarioSoli: string = '';
+  motivoCancelamento: string = '';
+
+  // Controle de loading para reagendamento/cancelamento
+  reagendando: boolean = false;
+  cancelando: boolean = false;
 
   // Campos para alteração de senha
   passwordData = {
@@ -64,7 +79,6 @@ export class PerfilUserComponent implements OnInit {
   }
 
   loadUserData(): void {
-    // Carregar dados do usuário logado
     this.user = this.usuarioService.getCurrentUser();
     if (this.user) {
       this.editUser = {
@@ -76,9 +90,9 @@ export class PerfilUserComponent implements OnInit {
         morada: this.user.morada || '',
         dataNascimento: this.user.dataNascimento || '',
         genero: this.user.genero || '',
+        estado: this.user.estado,
         perfil: this.user.perfil
       };
-      // Salvar dados originais para comparação
       this.originalUserData = { ...this.editUser };
     }
   }
@@ -110,9 +124,226 @@ export class PerfilUserComponent implements OnInit {
     });
   }
 
+  // Verificar se o pedido pode ser reagendado ou cancelado
+  podeReagendarOuCancelar(marcacao: PedidoMarcacaoDTO): boolean {
+    const estadosPermitidos = ['Pedido', 'Agendado'];
+    return estadosPermitidos.includes(marcacao.estado) && 
+           !marcacao.solicitacaoReagendamento && 
+           !marcacao.solicitacaoCancelamento;
+  }
+
+  // Verificar se já existe solicitação pendente
+  temSolicitacaoPendente(marcacao: PedidoMarcacaoDTO): string | null {
+    if (marcacao.solicitacaoReagendamento) {
+      return 'Reagendamento solicitado';
+    }
+    if (marcacao.solicitacaoCancelamento) {
+      return 'Cancelamento solicitado';
+    }
+    return null;
+  }
+
+  // Abrir diálogo de reagendamento
+  openReagendarDialog(marcacao: PedidoMarcacaoDTO): void {
+    if (!this.podeReagendarOuCancelar(marcacao)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Este pedido não pode ser reagendado no estado atual.'
+      });
+      return;
+    }
+
+    this.reagendarMarcacao = marcacao;
+    this.novoDataInicioSoli = '';
+    this.novoDataFimSoli = '';
+    this.novoHorarioSoli = '';
+    this.showReagendarDialog = true;
+  }
+
+  // Fechar diálogo de reagendamento
+  closeReagendarDialog(): void {
+    this.showReagendarDialog = false;
+    this.reagendarMarcacao = null;
+    this.novoDataInicioSoli = '';
+    this.novoDataFimSoli = '';
+    this.novoHorarioSoli = '';
+  }
+
+  // Abrir diálogo de cancelamento
+  openCancelamentoDialog(marcacao: PedidoMarcacaoDTO): void {
+    if (!this.podeReagendarOuCancelar(marcacao)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Este pedido não pode ser cancelado no estado atual.'
+      });
+      return;
+    }
+
+    this.cancelamentoMarcacao = marcacao;
+    //this.motivoCancelamento = '';
+    this.showCancelamentoDialog = true;
+  }
+
+  // Fechar diálogo de cancelamento
+  closeCancelamentoDialog(): void {
+    this.showCancelamentoDialog = false;
+    this.cancelamentoMarcacao = null;
+    //this.motivoCancelamento = '';
+  }
+
+  // Validar data de reagendamento
+  validarDataReagendamento(): boolean {
+    if (!this.novoDataInicioSoli || !this.novoDataFimSoli || !this.novoHorarioSoli) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Preencha todas as informações do novo agendamento.'
+      });
+      return false;
+    }
+
+    const dataInicio = new Date(this.novoDataInicioSoli);
+    const dataFim = new Date(this.novoDataFimSoli);
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    if (dataInicio < hoje) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'A data de início deve ser hoje ou uma data futura.'
+      });
+      return false;
+    }
+
+    if (dataFim < dataInicio) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'A data de fim deve ser igual ou posterior à data de início.'
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  // Submeter solicitação de reagendamento
+  solicitarReagendamento(): void {
+    if (!this.reagendarMarcacao) return;
+    
+    if (!this.validarDataReagendamento()) return;
+
+    this.reagendando = true;
+
+    const update: UpdatePedidoMarcacaoDTO = {
+      id: this.reagendarMarcacao.id,
+      estado: this.reagendarMarcacao.estado,
+      dataInicio: this.reagendarMarcacao.dataInicio,
+      dataFim: this.reagendarMarcacao.dataFim,
+      horario: this.reagendarMarcacao.horario,
+      observacoes: this.reagendarMarcacao.observacoes || 'Solicitação de reagendamento enviada pelo usuário',
+      actosClinicos: this.reagendarMarcacao.actosClinicos.map(acto => ({
+        id: acto.id,
+        pedidoMarcacaoId: acto.pedidoMarcacaoId,
+        tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
+        subsistemaSaudeId: acto.subsistemaSaudeId,
+        dataHora: acto.dataHora || '',
+        anoMesDia: acto.anoMesDia || '',
+        profissionalId: acto.profissional?.id || 0
+      })),
+      solicitacaoReagendamento: true,
+      solicitacaoCancelamento: false,
+      novoDataInicioSoli: this.novoDataInicioSoli,
+      novoDataFimSoli: this.novoDataFimSoli,
+      novoHorarioSoli: this.novoHorarioSoli
+    };
+
+    this.pedidoMarcacaoService.atualizarPedido(update).subscribe({
+      next: (resp) => {
+        this.messageService.add({ 
+          severity: 'success', 
+          summary: 'Solicitação Enviada', 
+          detail: 'Solicitação de reagendamento enviada com sucesso! Aguarde o retorno da clínica.' 
+        });
+        this.closeReagendarDialog();
+        this.loadMarcacoes();
+        this.reagendando = false;
+      },
+      error: (err) => {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: err.message || 'Erro ao solicitar reagendamento.' 
+        });
+        this.reagendando = false;
+      }
+    });
+  }
+
+  // Solicitar cancelamento
+  solicitarCancelamento(): void {
+    if (!this.cancelamentoMarcacao) return;
+
+    /*
+    if (!this.motivoCancelamento?.trim()) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Por favor, informe o motivo do cancelamento.'
+      });
+      return;
+    }*/
+
+    this.cancelando = true;
+
+    const update: UpdatePedidoMarcacaoDTO = {
+      id: this.cancelamentoMarcacao.id,
+      estado: this.cancelamentoMarcacao.estado,
+      dataInicio: this.cancelamentoMarcacao.dataInicio,
+      dataFim: this.cancelamentoMarcacao.dataFim,
+      horario: this.cancelamentoMarcacao.horario,
+      observacoes: this.cancelamentoMarcacao.observacoes || 'Solicitação de cancelamento enviada pelo usuário',
+      actosClinicos: this.cancelamentoMarcacao.actosClinicos.map(acto => ({
+        id: acto.id,
+        pedidoMarcacaoId: acto.pedidoMarcacaoId,
+        tipoDeConsultaExameId: acto.tipoDeConsultaExameId,
+        subsistemaSaudeId: acto.subsistemaSaudeId,
+        dataHora: acto.dataHora || '',
+        anoMesDia: acto.anoMesDia || '',
+        profissionalId: acto.profissional?.id || 0
+      })),
+      solicitacaoReagendamento: false,
+      solicitacaoCancelamento: true
+    };
+
+    this.pedidoMarcacaoService.atualizarPedido(update).subscribe({
+      next: (resp) => {
+        this.messageService.add({ 
+          severity: 'success', 
+          summary: 'Solicitação Enviada', 
+          detail: 'Solicitação de cancelamento enviada com sucesso! Aguarde o retorno da clínica.' 
+        });
+        this.closeCancelamentoDialog();
+        this.loadMarcacoes();
+        this.cancelando = false;
+      },
+      error: (err) => {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: err.message || 'Erro ao solicitar cancelamento.' 
+        });
+        this.cancelando = false;
+      }
+    });
+  }
+
+  // Métodos auxiliares existentes (mantidos iguais)
   toggleEdit(): void {
     if (this.isEditing) {
-      // Verificar se há mudanças antes de cancelar
       if (this.hasChanges()) {
         if (confirm('Tem certeza que deseja cancelar? As alterações serão perdidas.')) {
           this.cancelEdit();
@@ -128,7 +359,6 @@ export class PerfilUserComponent implements OnInit {
   togglePasswordChange(): void {
     this.isChangingPassword = !this.isChangingPassword;
     if (!this.isChangingPassword) {
-      // Limpar campos de senha ao cancelar
       this.passwordData = {
         currentPassword: '',
         newPassword: '',
@@ -142,15 +372,6 @@ export class PerfilUserComponent implements OnInit {
     this.isEditing = false;
     this.selectedFile = undefined;
     this.previewUrl = null;
-  }
-
-  cancelPasswordChange(): void {
-    this.isChangingPassword = false;
-    this.passwordData = {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    };
   }
 
   hasChanges(): boolean {
@@ -209,7 +430,6 @@ export class PerfilUserComponent implements OnInit {
     if (this.hasChanges()) {
       this.saving = true;
       
-      // Obter a senha atual do serviço
       const currentPassword = this.usuarioService.getCurrentPassword();
       
       if (!currentPassword) {
@@ -222,7 +442,6 @@ export class PerfilUserComponent implements OnInit {
         return;
       }
 
-      // Preparar dados para atualização
       const updateData: UpdateUserDTO = {
         id: this.user!.id,
         nome: this.editUser.nome.trim(),
@@ -234,7 +453,7 @@ export class PerfilUserComponent implements OnInit {
         dataNascimento: this.formatDateForBackend(this.editUser.dataNascimento ?? ''),
         fotografia: this.selectedFile,
         perfil: this.user!.perfil,
-        senhaHash: currentPassword // Usar a senha atual armazenada
+        estado: this.user?.estado ?? '',
       };
 
       this.usuarioService.updateUsuario(updateData).subscribe({
@@ -249,7 +468,6 @@ export class PerfilUserComponent implements OnInit {
           this.saving = false;
           this.selectedFile = undefined;
           this.previewUrl = null;
-          // Atualizar dados originais após sucesso
           this.loadUserData();
         },
         error: (error) => {
@@ -265,7 +483,6 @@ export class PerfilUserComponent implements OnInit {
     }
   }
 
-  // Método auxiliar para formatar data para o backend
   formatDateForBackend(date: string | Date): string {
     if (!date) return '';
     
@@ -276,12 +493,10 @@ export class PerfilUserComponent implements OnInit {
       dateObj = date;
     }
     
-    // Formato YYYY-MM-DD para o backend
     return dateObj.toISOString().split('T')[0];
   }
 
   onSubmitPassword(): void {
-    // Validações para alteração de senha
     if (!this.passwordData.currentPassword?.trim()) {
       this.messageService.add({
         severity: 'error',
@@ -318,7 +533,6 @@ export class PerfilUserComponent implements OnInit {
       return;
     }
 
-    // Verificar se a senha atual digitada confere com a senha armazenada
     const storedPassword = this.usuarioService.getCurrentPassword();
     if (this.passwordData.currentPassword !== storedPassword) {
       this.messageService.add({
@@ -331,16 +545,13 @@ export class PerfilUserComponent implements OnInit {
 
     this.changingPassword = true;
 
-    // Usar o método alterarSenha que já inclui todos os campos necessários
     this.usuarioService.alterarSenha(this.passwordData.newPassword).subscribe({
       next: (updatedUser) => {
         this.changingPassword = false;
         this.isChangingPassword = false;
         
-        // Atualizar a senha armazenada no serviço
         localStorage.setItem('current_password', this.passwordData.newPassword);
         
-        // Limpar campos de senha
         this.passwordData = {
           currentPassword: '',
           newPassword: '',
@@ -377,11 +588,9 @@ export class PerfilUserComponent implements OnInit {
   }
 
   newAppointment(): void {
-    // Lógica para nova marcação
     this.messageService.add({ severity: 'info', summary: 'Informação', detail: 'Funcionalidade de nova marcação' });
   }
 
-  // Métodos auxiliares para formatação
   formatDate(date: string | Date): string {
     if (!date) return '';
     const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -394,14 +603,11 @@ export class PerfilUserComponent implements OnInit {
     return dateObj.toLocaleString('pt-BR');
   }
 
-  // Exibe hora (HH:mm) se for só hora, ou data/hora se for datetime
   formatTimeOrDateTime(value: string): string {
     if (!value) return '';
-    // Se for só hora (HH:mm ou HH:mm:ss)
     if (/^\d{2}:\d{2}(:\d{2})?$/.test(value)) {
-      return value.substring(0,5); // HH:mm
+      return value.substring(0,5);
     }
-    // Se for data/hora completa
     return this.formatDateTime(value);
   }
 
@@ -431,7 +637,6 @@ export class PerfilUserComponent implements OnInit {
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      // Validar tipo de arquivo
       if (!file.type.startsWith('image/')) {
         this.messageService.add({
           severity: 'error',
@@ -441,7 +646,6 @@ export class PerfilUserComponent implements OnInit {
         return;
       }
 
-      // Validar tamanho (máximo 5MB)
       if (file.size > 5 * 1024 * 1024) {
         this.messageService.add({
           severity: 'error',
@@ -453,7 +657,6 @@ export class PerfilUserComponent implements OnInit {
 
       this.selectedFile = file;
       
-      // Criar preview
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.previewUrl = e.target.result;
@@ -474,7 +677,7 @@ export class PerfilUserComponent implements OnInit {
     if (this.user?.fotografia) {
       return 'https://localhost:7273' + this.user.fotografia;
     }
-    return ''; // Retorna string vazia para mostrar o ícone padrão
+    return '';
   }
 
   openFileSelector(): void {
