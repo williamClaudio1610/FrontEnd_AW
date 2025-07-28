@@ -48,8 +48,15 @@
     </thead>
     <tbody>
       <ng-container *ngFor="let pedido of filteredPedidos; let i = index">
-        <tr>
-          <td>{{ pedido.id }}</td>
+        <tr [ngClass]="{'notificacao-barra': pedido.solicitacaoCancelamento || pedido.solicitacaoReagendamento}">
+          <td>
+            <ng-container *ngIf="pedido.solicitacaoCancelamento || pedido.solicitacaoReagendamento">
+              <span class="notificacao-indicador" title="Solicitação pendente">
+                <i class="pi pi-exclamation-triangle"></i>
+              </span>
+            </ng-container>
+            {{ pedido.id }}
+          </td>
           <td>{{ pedido.userId }}</td>
           <td>{{ formatDate(pedido.dataSolicitacao) }}</td>
           <td>{{ formatDate(pedido.dataInicio) }} - {{ formatDate(pedido.dataFim) }}</td>
@@ -72,6 +79,7 @@
           </td>
           <td>
             <button 
+              *ngIf="pedido.estado !== 'Realizado' && pedido.estado !== 'Cancelado'" 
               class="action-button edit-button" 
               title="Editar Pedido" 
               (click)="openEditDialog(pedido)"
@@ -167,6 +175,21 @@
   *ngIf="pedidoForm"
 >
   <form [formGroup]="pedidoForm" (ngSubmit)="onSubmitEdit()">
+    <div *ngIf="pedidoForm.get('solicitacaoCancelamento')?.value || pedidoForm.get('solicitacaoReagendamento')?.value" class="solicitacao-alerta p-mb-3">
+      <ng-container *ngIf="pedidoForm.get('solicitacaoCancelamento')?.value">
+        <div class="alerta-cancelamento">
+          <i class="pi pi-ban"></i> Solicitação de <b>cancelamento</b> pendente para este pedido.
+        </div>
+      </ng-container>
+      <ng-container *ngIf="pedidoForm.get('solicitacaoReagendamento')?.value">
+        <div class="alerta-reagendamento">
+          <i class="pi pi-calendar-plus"></i> Solicitação de <b>reagendamento</b> pendente.<br>
+          <span *ngIf="pedidoForm.get('novoDataInicioSoli')?.value">Nova Data Início: <b>{{ pedidoForm.get('novoDataInicioSoli')?.value | date:'dd/MM/yyyy' }}</b></span><br>
+          <span *ngIf="pedidoForm.get('novoDataFimSoli')?.value">Nova Data Fim: <b>{{ pedidoForm.get('novoDataFimSoli')?.value | date:'dd/MM/yyyy' }}</b></span><br>
+          <span *ngIf="pedidoForm.get('novoHorarioSoli')?.value">Novo Horário: <b>{{ pedidoForm.get('novoHorarioSoli')?.value }}</b></span>
+        </div>
+      </ng-container>
+    </div>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12 p-md-6">
         <label>Estado *</label>
@@ -230,6 +253,10 @@
       </div>
     </div>
     <div class="p-d-flex p-jc-end p-mt-4">
+      <ng-container *ngIf="pedidoForm.get('solicitacaoCancelamento')?.value || pedidoForm.get('solicitacaoReagendamento')?.value">
+        <button type="button" pButton label="Aceitar Solicitação" class="p-button-success p-mr-2" (click)="onAceitarSolicitacao()"></button>
+        <button type="button" pButton label="Recusar Solicitação" class="p-button-danger" (click)="onRecusarSolicitacao()"></button>
+      </ng-container>
       <button type="button" pButton label="Cancelar" class="p-button-text" (click)="showEditDialog = false"></button>
       <button type="submit" pButton label="Salvar" [disabled]="pedidoForm.invalid"></button>
     </div>

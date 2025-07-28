@@ -195,6 +195,11 @@ export class PedidoMarcacaoComponent implements OnInit {
       dataFim: [pedido.dataFim, Validators.required],
       horario: [pedido.horario, Validators.required],
       observacoes: [pedido.observacoes || '', Validators.required],
+      solicitacaoCancelamento: [pedido.solicitacaoCancelamento || false],
+      solicitacaoReagendamento: [pedido.solicitacaoReagendamento || false],
+      novoDataInicioSoli: [this.parseDateString(pedido.novoDataInicioSoli ?? '') || null],
+      novoDataFimSoli: [this.parseDateString(pedido.novoDataFimSoli ?? '') || null],
+      novoHorarioSoli: [pedido.novoHorarioSoli || null],
       actosClinicos: this.fb.array((pedido.actosClinicos || []).map((acto: any) => this.fb.group({
         id: [acto.id],
         pedidoMarcacaoId: [pedido.id],
@@ -345,6 +350,48 @@ export class PedidoMarcacaoComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Aceitar solicitação de reagendamento ou cancelamento
+  onAceitarSolicitacao(): void {
+    if (!this.pedidoForm) return;
+    const formValue = this.pedidoForm.value;
+    // Se for solicitação de reagendamento
+    if (formValue.solicitacaoReagendamento) {
+      this.pedidoForm.patchValue({
+        dataInicio: formValue.novoDataInicioSoli || formValue.dataInicio,
+        dataFim: formValue.novoDataFimSoli || formValue.dataFim,
+        horario: formValue.novoHorarioSoli || formValue.horario,
+        estado: 'Pedido',
+        solicitacaoReagendamento: false,
+        novoDataInicioSoli: null,
+        novoDataFimSoli: null,
+        novoHorarioSoli: null
+      });
+    }
+    // Se for solicitação de cancelamento
+    if (formValue.solicitacaoCancelamento) {
+      this.pedidoForm.patchValue({
+        estado: 'Cancelado',
+        solicitacaoCancelamento: false
+      });
+    }
+    // Salvar alterações
+    this.onSubmitEdit();
+  }
+
+  // Recusar solicitação de reagendamento ou cancelamento
+  onRecusarSolicitacao(): void {
+    if (!this.pedidoForm) return;
+    this.pedidoForm.patchValue({
+      solicitacaoReagendamento: false,
+      solicitacaoCancelamento: false,
+      novoDataInicioSoli: null,
+      novoDataFimSoli: null,
+      novoHorarioSoli: null
+    });
+    // Salvar alterações
+    this.onSubmitEdit();
   }
 
   carregarOpcoes(): void {

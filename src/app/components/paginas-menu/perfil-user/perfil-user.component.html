@@ -198,14 +198,14 @@
                 </div>
               </div>
             </div>
-            
+            <!--
             <div class="button-group">
               <button pButton pRipple type="button" label="Cancelar" (click)="cancelPasswordChange()" class="p-button-outlined p-button-secondary" [disabled]="changingPassword"></button>
               <button pButton pRipple type="submit" label="Alterar Senha" class="p-button-warning" [disabled]="changingPassword">
                 <i *ngIf="changingPassword" class="pi pi-spin pi-spinner" style="margin-right: 8px;"></i>
                 {{ changingPassword ? 'Alterando...' : 'Alterar Senha' }}
               </button>
-            </div>
+            </div>-->
           </form>
         </div>
       </p-tabPanel>
@@ -287,7 +287,7 @@
               <div class="d-flex gap-2 mt-4">
                 <button pButton pRipple label="Cancelar" class="p-button-outlined p-button-danger"
                   *ngIf="marcacao.estado !== 'CANCELADO' && marcacao.estado !== 'Cancelada' && marcacao.estado !== 'Realizado' && marcacao.estado !== 'REALIZADO' && marcacao.estado !== 'Realizada' && marcacao.estado !== 'REALIZADA' && marcacao.estado !== 'Pedido Realizado'"
-                  (click)="solicitarCancelamento(marcacao)" [disabled]="cancelando"></button>
+                  (click)="solicitarCancelamento()" [disabled]="cancelando"></button>
                 <button pButton pRipple label="Reagendar" class="p-button-outlined p-button-primary"
                   *ngIf="(marcacao.estado === 'Agendado' || marcacao.estado === 'AGENDADO' || marcacao.estado === 'Pedido' || marcacao.estado === 'PEDIDO')"
                   (click)="openReagendarDialog(marcacao)"></button>
