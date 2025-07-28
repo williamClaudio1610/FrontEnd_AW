@@ -234,6 +234,19 @@ export class ConsultasExamesComponent implements OnInit {
     const horario = this.registerForm.get('horario')?.value || '';
     const observacoes = this.registerForm.get('observacoes')?.value || '';
 
+    const dataHoje = new Date();
+    dataHoje.setHours(0, 0, 0, 0);
+
+    //verificação de data
+    if (dataInicio < dataHoje || dataFim < dataHoje) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'A data de início e Fim não pode ser anterior a hoje'
+      });
+      return;
+    }
+
     if (!dataInicio || !dataFim) {
       this.messageService.add({
         severity: 'warn',
@@ -242,6 +255,7 @@ export class ConsultasExamesComponent implements OnInit {
       });
       return;
     }
+
 
     if (this.usuarioService.isAuthenticated()) {
       const userId = this.usuarioService.getCurrentUser()?.id || 0;
