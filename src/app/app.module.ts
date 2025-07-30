@@ -54,7 +54,7 @@ import { ContacteNosComponent } from './components/paginas-menu/contacte-nos/con
 import { EquipaComponent } from './components/paginas-menu/equipa/equipa.component';
 import { PedidoMarcacaoComponent } from './admin-pages/admin-links/pedido-marcacao/pedido-marcacao.component';
 import { PerfilUserComponent } from './components/paginas-menu/perfil-user/perfil-user.component';
-import { MudarSenhaComponent } from './components/mudar-senha/mudar-senha.component';
+
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
@@ -71,7 +71,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     ContacteNosComponent,
     EquipaComponent,
     PerfilUserComponent,
-    MudarSenhaComponent
   ],
   imports: [
     BrowserModule,
@@ -101,6 +100,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     PasswordModule, // Adicionar PasswordModule aos imports
     DialogModule,
     PedidoMarcacaoComponent,
+    
     ReactiveFormsModule, ServiceWorkerModule.register('ngsw-worker.js', {
   enabled: !isDevMode(),
   // Register the ServiceWorker as soon as the application is stable

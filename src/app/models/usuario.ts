@@ -10,7 +10,7 @@ export interface UserDTO {
   telemovel?: string;
   morada?: string;
   fotografia?: string;
-  estado: string;
+  isBloqueado: boolean; // Alterado de estado para isBloqueado
 }
 
 export interface CreateUserDTO {
@@ -21,7 +21,7 @@ export interface CreateUserDTO {
   telemovel: string;
   email: string;
   morada: string;
-  senhaHash: string;
+  senhaHash: string; // Mantido, necessário para criação
   perfil: string;
   numeroUtente: string;
 }
@@ -36,7 +36,6 @@ export interface CreateUserNaoRegistadoDTO {
   morada: string;
   perfil?: string; // UtenteAnónimo, UtenteRegistado, etc.
   numeroUtente: string;
-  estado: string;
 }
 
 export interface UpdateUserDTO {
@@ -48,15 +47,25 @@ export interface UpdateUserDTO {
   telemovel?: string;
   email?: string;
   morada?: string;
-  senhaHash?: string;
   perfil?: string;
   numeroUtente: string;
-  estado: string;
+  isBloqueado: boolean; // Alterado de estado para isBloqueado
 }
 
 export interface LoginDTO {
   email: string;
   senha: string;
+}
+
+export interface ChangePasswordDTO {
+  id: number; // Adicionado para corresponder ao backend
+  senhaAtual: string; // Renomeado para português
+  novaSenha: string; // Renomeado para português
+}
+
+export interface ChangeStatusDTO {
+  id: number;
+  isBloqueado: boolean;
 }
 
 export interface Usuario {
@@ -71,15 +80,10 @@ export interface Usuario {
   telemovel?: string;
   morada?: string;
   fotografia?: string;
-  estado: string;
+  isBloqueado: boolean; // Alterado de estado para isBloqueado
 }
 
 export interface LoginResponse {
   message: string;
   user: UserDTO;
-}
-
-export interface ChangePasswordDTO {
-  currentPassword: string;
-  newPassword: string;
 }

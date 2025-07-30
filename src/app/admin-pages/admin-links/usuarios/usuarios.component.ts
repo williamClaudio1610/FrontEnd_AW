@@ -8,7 +8,8 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UsuarioService } from '../../../services/usuario.service';
-import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
+import { CreateUserDTO, UpdateUserDTO, Usuario, ChangeStatusDTO } from '../../../models/usuario';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-usuarios',
@@ -69,13 +70,13 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
           <input pInputText id="email" name="email" [(ngModel)]="usuario.email" [ngClass]="{'invalid': formSubmitted && !usuario.email}" />
           <small *ngIf="formSubmitted && !usuario.email" class="error-message">E-mail é obrigatório.</small>
         </div>
-        <!--
         <div class="form-field" *ngIf="editIndex === null">
-          -->
-        <div class="form-field">
           <label for="senha">Senha *</label>
-          <input pInputText type="password" id="senha" name="senha" [(ngModel)]="senha" [ngClass]="{'invalid': formSubmitted && !senha && editIndex === null}" />
-          <small *ngIf="formSubmitted && !senha && editIndex === null" class="error-message">Senha é obrigatória.</small>
+          <input pInputText type="password" id="senha" name="senha" [(ngModel)]="senha" (input)="checkPasswordStrength()" [ngClass]="{'invalid': formSubmitted && !senha}" />
+          <div *ngIf="passwordStrength" class="password-strength">
+            <small [ngClass]="getPasswordStrengthClass()">Força da senha: {{ getPasswordStrengthText() }}</small>
+          </div>
+          <small *ngIf="formSubmitted && !senha" class="error-message">Senha é obrigatória.</small>
         </div>
         <div class="form-field">
           <label for="telemovel">Telemóvel *</label>
@@ -107,10 +108,10 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
           <select id="perfil" name="perfil" [(ngModel)]="usuario.perfil" [ngClass]="{'invalid': formSubmitted && !usuario.perfil}">
             <option value="">Selecione um perfil</option>
             <option value="Administrador">Administrador</option>
-            <option value="Utente Registado">UtenteRegistado</option>
+            <option value="UtenteRegistado">UtenteRegistado</option>
             <option value="Administrativo">Administrativo</option>
-            <option value="UtenteAnónimo">Utente Anónimo</option>
-            <option value="UtenteAnónimo">Profissional</option>
+            <option value="UtenteAnonimo">UtenteAnonimo</option>
+            <option value="Profissional">Profissional</option>
           </select>
           <small *ngIf="formSubmitted && !usuario.perfil" class="error-message">Perfil é obrigatório.</small>
         </div>
@@ -148,8 +149,8 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
             <td>{{ u.genero || '-' }}</td>
             <td>{{ u.perfil || '-' }}</td>
             <td>
-              <span [ngClass]="u.estado === 'Bloqueado' ? 'text-danger' : 'text-success'">
-                {{ u.estado }}
+              <span [ngClass]="u.isBloqueado ? 'text-danger' : 'text-success'">
+                {{ u.isBloqueado ? 'Bloqueado' : 'Ativo' }}
               </span>
             </td>
             <td>
@@ -157,9 +158,9 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
                 <i class="pi pi-pencil"></i>
               </button>
               <button class="action-button" 
-                      [title]="u.estado === 'Bloqueado' ? 'Desbloquear' : 'Bloquear'" 
+                      [title]="u.isBloqueado ? 'Desbloquear' : 'Bloquear'" 
                       (click)="toggleEstadoUsuario(i)">
-                <i class="pi" [ngClass]="u.estado === 'Bloqueado' ? 'pi-lock-open' : 'pi-lock'" ></i>
+                <i class="pi" [ngClass]="u.isBloqueado ? 'pi-lock-open' : 'pi-lock'" ></i>
               </button>
             </td>
           </tr>
@@ -280,6 +281,23 @@ import { CreateUserDTO, UpdateUserDTO, Usuario } from '../../../models/usuario';
       color: #6c757d;
       font-size: 0.85rem;
       margin-top: 5px;
+    }
+
+    /* Estilos para força da senha */
+    .password-strength {
+      margin-top: 4px;
+    }
+
+    .password-strength.weak {
+      color: #ef4444;
+    }
+
+    .password-strength.medium {
+      color: #f59e0b;
+    }
+
+    .password-strength.strong {
+      color: #10b981;
     }
 
     @media (max-width: 768px) {
@@ -429,14 +447,18 @@ export class UsuariosComponent implements OnInit {
     dataNascimento: '',
     genero: '',
     fotografia: '',
-    estado: '',
-    token: '',
+    isBloqueado: false,
   };
   usuarios: Usuario[] = [];
   editIndex: number | null = null;
   formSubmitted: boolean = false;
   erro: string | null = null;
   senha: string = '';
+  passwordStrength: string = '';
+
+  // Propriedades para foto de perfil
+  selectedFile: File | null = null;
+  previewUrl: string | null = null;
 
   @ViewChild('nomeInput') nomeInput!: ElementRef;
 
@@ -476,16 +498,17 @@ export class UsuariosComponent implements OnInit {
       nome: '', 
       email: '', 
       perfil: '', 
-      token: undefined, 
       telemovel: '', 
       morada: '', 
       dataNascimento: new Date().toISOString().split('T')[0], 
       genero: '', 
-      estado: '',
+      isBloqueado: false,
       fotografia: '' 
     };
     this.senha = '';
-    this.selectedFile = undefined;
+    this.passwordStrength = '';
+    this.selectedFile = null;
+    this.previewUrl = null;
     this.editIndex = null;
     this.formSubmitted = false;
     this.displayDialog = true;
@@ -498,47 +521,85 @@ export class UsuariosComponent implements OnInit {
     if (this.usuario.dataNascimento) {
       this.usuario.dataNascimento = this.formatarDataParaEnvio(this.usuario.dataNascimento);
     }
-    this.senha = '' ; // Reset password field for updates
-    this.selectedFile = undefined; // Reset file selection
+    this.senha = ''; // Reset password field for updates
+    this.passwordStrength = '';
+    this.selectedFile = null; // Reset file selection
+    this.previewUrl = null;
     this.formSubmitted = false;
     this.displayDialog = true;
   }
 
-  // Add this property to the component
-  selectedFile: File | undefined = undefined;
+  // Métodos para validação de senha
+  checkPasswordStrength() {
+    if (!this.senha) {
+      this.passwordStrength = '';
+      return;
+    }
 
-  // Add this method to handle file selection
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      
-      // Validar tipo de arquivo
+    const hasLetters = /[a-zA-Z]/.test(this.senha);
+    const hasNumbers = /[0-9]/.test(this.senha);
+    const hasSpecial = /[^a-zA-Z0-9]/.test(this.senha);
+    const length = this.senha.length;
+
+    let strength = 0;
+    if (length >= 8) strength++;
+    if (length >= 12) strength++;
+    if (hasLetters && hasNumbers) strength++;
+    if (hasSpecial) strength++;
+
+    if (strength <= 2) this.passwordStrength = 'weak';
+    else if (strength === 3) this.passwordStrength = 'medium';
+    else this.passwordStrength = 'strong';
+  }
+
+  getPasswordStrengthText(): string {
+    switch (this.passwordStrength) {
+      case 'weak': return 'Fraca';
+      case 'medium': return 'Média';
+      case 'strong': return 'Forte';
+      default: return '';
+    }
+  }
+
+  getPasswordStrengthClass(): string {
+    return `password-strength ${this.passwordStrength}`;
+  }
+
+  // Métodos para upload de foto
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
       if (!file.type.startsWith('image/')) {
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Por favor, selecione apenas arquivos de imagem'
+          detail: 'Por favor, selecione apenas arquivos de imagem.'
         });
         return;
       }
 
-      // Validar tamanho (máximo 5MB)
       if (file.size > 5 * 1024 * 1024) {
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'A imagem deve ter no máximo 5MB'
+          detail: 'A imagem deve ter no máximo 5MB.'
         });
         return;
       }
 
       this.selectedFile = file;
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.previewUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
   removeSelectedFile(): void {
-    this.selectedFile = undefined;
+    this.selectedFile = null;
+    this.previewUrl = null;
   }
 
   openFileSelector(): void {
@@ -549,20 +610,19 @@ export class UsuariosComponent implements OnInit {
   }
 
   getCurrentPhotoUrl(): string {
-    if (this.selectedFile) {
-      return URL.createObjectURL(this.selectedFile);
+    if (this.previewUrl) {
+      return this.previewUrl;
     }
     if (this.usuario?.fotografia) {
-      return 'https://localhost:7273' + this.usuario.fotografia;
+      return 'https://localhost:7273' + (this.usuario.fotografia.startsWith('/') ? this.usuario.fotografia : `/Uploads/${this.usuario.fotografia}`);
     }
-    return ''; // Retorna string vazia para mostrar o ícone padrão
+    return '';
   }
 
   formatarDataParaEnvio(dateString: string | Date): string {
     let date: Date;
 
     if (typeof dateString === 'string') {
-      // Converte string para objeto Date
       date = new Date(dateString);
     } else {
       date = dateString;
@@ -574,8 +634,7 @@ export class UsuariosComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-
-  saveUsuario() {
+  async saveUsuario() {
     this.formSubmitted = true;
 
     // Validate required fields
@@ -583,6 +642,12 @@ export class UsuariosComponent implements OnInit {
       !this.usuario.morada || !this.usuario.dataNascimento || !this.usuario.genero ||
       !this.usuario.perfil || !this.usuario.numeroUtente || (this.editIndex === null && !this.senha)) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Preencha todos os campos obrigatórios.' });
+      return;
+    }
+
+    // Validate password strength for new users
+    if (this.editIndex === null && this.passwordStrength === 'weak') {
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'A senha é muito fraca. Escolha uma senha mais forte.' });
       return;
     }
 
@@ -599,40 +664,36 @@ export class UsuariosComponent implements OnInit {
     }
 
     if (this.editIndex !== null) {
-      // Existing update logic remains unchanged
+      // Update existing user using UpdateUserDTO
       const updateDTO: UpdateUserDTO = {
         id: this.usuario.id,
         nome: this.usuario.nome,
         email: this.usuario.email,
         perfil: this.usuario.perfil,
-        fotografia: this.selectedFile,
+        fotografia: this.selectedFile || undefined,
         dataNascimento: this.formatarDataParaEnvio(this.usuario.dataNascimento!),
         genero: this.usuario.genero,
         telemovel: this.usuario.telemovel,
         morada: this.usuario.morada,
         numeroUtente: this.usuario.numeroUtente,
-        estado: this.usuario.estado,
-        ...(this.senha ? { senhaHash: this.senha } : {}),
+        isBloqueado: this.usuario.isBloqueado
       };
-      this.usuarioService.updateUsuario(updateDTO).subscribe({
-        next: (updatedUser: Usuario) => {
-          this.usuarios[this.editIndex!] = updatedUser;
-          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado com sucesso!' });
-          this.loadUsuarios();
-          this.displayDialog = false;
-          this.selectedFile = undefined;
-        },
-        error: (err) => {
-          this.erro = `Erro ao atualizar usuário: ${err.error?.message || 
-            (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message)}`;
-          console.error('Erro ao atualizar usuário:', err);
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || 
-            (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message) });
-        }
-      });
+
+      try {
+        const updatedUser = await firstValueFrom(this.usuarioService.updateUsuario(updateDTO));
+        this.usuarios[this.editIndex!] = updatedUser;
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado com sucesso!' });
+        this.loadUsuarios();
+        this.displayDialog = false;
+        this.selectedFile = null;
+        this.previewUrl = null;
+      } catch (err: any) {
+        this.erro = `Erro ao atualizar usuário: ${err.message || 'Erro desconhecido'}`;
+        console.error('Erro ao atualizar usuário:', err);
+        this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.erro });
+      }
     } else {
       // Create new user
-
       const dataNascimentoFormatada = this.formatarDataParaEnvio(new Date(this.usuario.dataNascimento!));
 
       const formData = new FormData();
@@ -649,51 +710,44 @@ export class UsuariosComponent implements OnInit {
       formData.append('DataNascimento', dataNascimentoFormatada);
       formData.append('NumeroUtente', this.usuario.numeroUtente);
 
-      this.usuarioService.cadastrarUsuario(formData).subscribe({
-        next: (newUser: Usuario) => {
-          this.usuarios.push(newUser);
-          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado com sucesso!' });
-          this.loadUsuarios();
-          this.displayDialog = false;
-          this.selectedFile = undefined; // Reset file input
-        },
-        error: (err) => {
-          this.erro = `Erro ao adicionar usuário: ${err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message)}`;
-          console.error('Erro ao adicionar usuário:', err);
-          this.messageService.add({ severity: 'error', summary: 'Erro', detail: err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message) });
-        }
-      });
-    }
-  }
-  // Remove confirmDelete and deleteUsuario methods, add toggleEstadoUsuario
-  toggleEstadoUsuario(index: number) {
-    const usuario = this.usuarios[index];
-    const novoEstado = usuario.estado === 'Bloqueado' ? 'Desbloqueado' : 'Bloqueado';
-    const updateDTO: UpdateUserDTO = {
-      id: usuario.id,
-      nome: usuario.nome,
-      email: usuario.email,
-      perfil: usuario.perfil,
-      fotografia: undefined, // Não muda
-      dataNascimento: usuario.dataNascimento,
-      genero: usuario.genero,
-      telemovel: usuario.telemovel,
-      morada: usuario.morada,
-      numeroUtente: usuario.numeroUtente,
-      estado: novoEstado,
-      // senhaHash não é enviado, assim a senha é mantida
-    };
-    this.usuarioService.updateUsuario(updateDTO).subscribe({
-      next: (updatedUser: Usuario) => {
-        this.usuarios[index] = updatedUser;
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: `Usuário ${novoEstado === 'Bloqueado' ? 'bloqueado' : 'desbloqueado'} com sucesso!` });
+      try {
+        const newUser = await firstValueFrom(this.usuarioService.cadastrarUsuario(formData));
+        this.usuarios.push(newUser);
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário adicionado com sucesso!' });
         this.loadUsuarios();
-      },
-      error: (err) => {
-        this.erro = `Erro ao atualizar estado do usuário: ${err.error?.message || (typeof err.error === 'object' ? JSON.stringify(err.error) : err.message)}`;
+        this.displayDialog = false;
+        this.selectedFile = null;
+        this.previewUrl = null;
+      } catch (err: any) {
+        this.erro = `Erro ao adicionar usuário: ${err.message || 'Erro desconhecido'}`;
+        console.error('Erro ao adicionar usuário:', err);
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.erro });
       }
-    });
+    }
+  }
+
+  async toggleEstadoUsuario(index: number) {
+    const usuario = this.usuarios[index];
+    const novoEstado = !usuario.isBloqueado;
+    
+    const changeStatusDTO: ChangeStatusDTO = {
+      id: usuario.id,
+      isBloqueado: novoEstado
+    };
+
+    try {
+      const updatedUser = await firstValueFrom(this.usuarioService.changeStatus(changeStatusDTO));
+      this.usuarios[index] = updatedUser;
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Sucesso', 
+        detail: `Usuário ${novoEstado ? 'bloqueado' : 'desbloqueado'} com sucesso!` 
+      });
+      this.loadUsuarios();
+    } catch (err: any) {
+      this.erro = `Erro ao atualizar estado do usuário: ${err.message || 'Erro desconhecido'}`;
+      this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.erro });
+    }
   }
 
   onDialogShow() {
@@ -704,6 +758,8 @@ export class UsuariosComponent implements OnInit {
 
   onDialogHide() {
     this.formSubmitted = false;
-    this.selectedFile = undefined;
+    this.selectedFile = null;
+    this.previewUrl = null;
+    this.passwordStrength = '';
   }
 }

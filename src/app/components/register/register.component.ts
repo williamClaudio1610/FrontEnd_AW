@@ -142,17 +142,13 @@ export class RegisterComponent implements OnInit {
       return;
     }
     
-
+    // Concatenar província em Morada
     this.user.morada = `${this.user.morada}, ${this.provincia}`;
 
     // Corrigir o formato da data
     const dataNascimentoFormatada = this.formatarDataParaEnvio(new Date(this.user.dataNascimento!));
 
     const formData = new FormData();
-
-    if (this.selectedFile) {
-      formData.append('Fotografia', this.selectedFile); // PascalCase
-    }
 
     // Todos os campos em PascalCase para corresponder ao DTO do backend
     formData.append('Nome', this.user.nome);
@@ -164,7 +160,8 @@ export class RegisterComponent implements OnInit {
     formData.append('DataNascimento', dataNascimentoFormatada); // Data formatada
     formData.append('Genero', this.user.genero); // PascalCase
     formData.append('NumeroUtente', this.user.numeroUtente);
-    
+    // Sempre envie o campo Fotografia, mesmo que vazio
+    formData.append('Fotografia', this.selectedFile ? this.selectedFile : new Blob());
 
     // DEBUG: Mostrar conteúdo do FormData
     for (let [key, value] of (formData as any).entries()) {
@@ -205,7 +202,6 @@ export class RegisterComponent implements OnInit {
           severity: 'error',
           summary: 'Erro',
           detail: errorMessage,
-
         });
       },
     });

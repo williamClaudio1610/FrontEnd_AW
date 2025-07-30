@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { UserDTO, CreateUserDTO, UpdateUserDTO, LoginDTO, Usuario, ChangePasswordDTO } from '../models/usuario';
+import { UserDTO, CreateUserDTO, UpdateUserDTO, LoginDTO, Usuario, ChangePasswordDTO, ChangeStatusDTO } from '../models/usuario';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -12,7 +12,6 @@ export class UsuarioService {
   private apiUrl = 'https://localhost:7273/api/Usuario';
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'current_user';
-  private readonly PASSWORD_KEY = 'current_password'; // Chave para armazenar senha atual
 
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -20,7 +19,15 @@ export class UsuarioService {
   constructor(private http: HttpClient, private router: Router) {
     const storedUser = localStorage.getItem(this.USER_KEY);
     if (storedUser) {
-      this.currentUserSubject.next(JSON.parse(storedUser));
+      try {
+        const parsedUser: Usuario = JSON.parse(storedUser);
+        this.currentUserSubject.next(parsedUser);
+      } catch (e) {
+        console.error('Error parsing stored user:', e);
+        this.currentUserSubject.next(null);
+      }
+    } else {
+      this.currentUserSubject.next(null);
     }
   }
 
@@ -47,28 +54,36 @@ export class UsuarioService {
 
   updateUsuario(updateDTO: UpdateUserDTO): Observable<Usuario> {
     const formData = new FormData();
-    
-    // Adicionar campos ao FormData
     formData.append('Id', updateDTO.id.toString());
     formData.append('Nome', updateDTO.nome || '');
     formData.append('Email', updateDTO.email || '');
     formData.append('Telemovel', updateDTO.telemovel || '');
     formData.append('Morada', updateDTO.morada || '');
     formData.append('Genero', updateDTO.genero || '');
-    //formData.append('SenhaHash', updateDTO.senhaHash || '');
     formData.append('Perfil', updateDTO.perfil || '');
     formData.append('NumeroUtente', updateDTO.numeroUtente || '');
-    formData.append('Estado', updateDTO.estado || '');
-    
-    if (updateDTO.dataNascimento) {
-      formData.append('DataNascimento', updateDTO.dataNascimento);
-    }
-    
+    formData.append('IsBloqueado', updateDTO.isBloqueado.toString());
+    formData.append('DataNascimento', updateDTO.dataNascimento || '');
+
     if (updateDTO.fotografia) {
       formData.append('Fotografia', updateDTO.fotografia);
     }
-    
+
     return this.http.put<UserDTO>(`${this.apiUrl}/atualizarUser/${updateDTO.id}`, formData).pipe(
+      map(this.mapUserDtoToUsuario),
+      catchError(this.handleError)
+    );
+  }
+
+  changeStatus(changeStatusDTO: ChangeStatusDTO): Observable<Usuario> {
+    return this.http.put<UserDTO>(`${this.apiUrl}/mudar-estado`, changeStatusDTO).pipe(
+      map(this.mapUserDtoToUsuario),
+      catchError(this.handleError)
+    );
+  }
+
+  changePassword(changePasswordDTO: ChangePasswordDTO): Observable<Usuario> {
+    return this.http.put<UserDTO>(`${this.apiUrl}/mudar-senha`, changePasswordDTO).pipe(
       map(this.mapUserDtoToUsuario),
       catchError(this.handleError)
     );
@@ -83,64 +98,49 @@ export class UsuarioService {
   login(loginDTO: LoginDTO): Observable<Usuario> {
     return this.http.post<{ message: string; user: UserDTO }>(`${this.apiUrl}/login`, loginDTO).pipe(
       map(response => {
-        //console.log('Resposta completa:', response);
         const userDto = response.user;
         const user: Usuario = this.mapUserDtoToUsuario(userDto);
-        //console.log('Usuário mapeado:', user);
         if (user.token) {
           localStorage.setItem(this.TOKEN_KEY, user.token);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+          this.currentUserSubject.next(user);
         }
-        // Armazenar a senha atual para uso em atualizações
-        localStorage.setItem(this.PASSWORD_KEY, loginDTO.senha);
-        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-        this.currentUserSubject.next(user);
         return user;
       }),
       catchError(this.handleError)
     );
   }
 
-
   logout(): void {
-    // Remove dados do localStorage
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.PASSWORD_KEY); // Limpar senha armazenada
     this.currentUserSubject.next(null);
-  
-    // Limpa cache do Service Worker, se registrado
+
     if ('caches' in window) {
       caches.keys().then(cacheNames => {
         cacheNames.forEach(cacheName => {
-          caches.delete(cacheName); // Deleta todos os caches
+          caches.delete(cacheName);
         });
       });
     }
-  
-    // Limpa dados de sessão (opcional)
+
     sessionStorage.clear();
-  
-    // Força recarregamento da página para garantir que o cache do navegador seja limpo
-    window.location.href = '/paginaInicial'; // Substitui router.navigate para evitar cache
+    window.location.href = '/paginaInicial';
   }
 
   logoutSemRedirect(): void {
-    // Remove dados do localStorage
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.PASSWORD_KEY); // Limpar senha armazenada
     this.currentUserSubject.next(null);
 
-    // Limpa cache do Service Worker, se registrado
     if ('caches' in window) {
       caches.keys().then(cacheNames => {
         cacheNames.forEach(cacheName => {
-          caches.delete(cacheName); // Deleta todos os caches
+          caches.delete(cacheName);
         });
       });
     }
 
-    // Limpa dados de sessão (opcional)
     sessionStorage.clear();
   }
 
@@ -149,71 +149,27 @@ export class UsuarioService {
   }
 
   getCurrentUser(): Usuario | null {
-    return this.currentUserSubject.value;
-  }
-
-  getCurrentPassword(): string | null {
-    return localStorage.getItem(this.PASSWORD_KEY);
+    const user = this.currentUserSubject.value;
+    return user as Usuario | null;
   }
 
   isAuthenticated(): boolean {
     return !!this.getCurrentUser() && !!this.getToken();
   }
 
-  public getUserPhotoUrl(): string | null {
+  getUserPhotoUrl(): string | null {
     const user = this.getCurrentUser();
     const baseUrl = 'https://localhost:7273';
     if (user?.fotografia) {
-      // Se já começa com '/', não adicione 'uploads' de novo
       if (user.fotografia.startsWith('/')) {
         return `${baseUrl}${user.fotografia}`;
       }
-      // Se for só o nome do arquivo, adicione '/uploads/'
-      return `${baseUrl}/uploads/${user.fotografia}`;
+      return `${baseUrl}/Uploads/${user.fotografia}`;
     }
     return '/assets/default-user.png';
   }
 
-  alterarSenha(novaSenha: string): Observable<Usuario> {
-    const currentUser = this.getCurrentUser();
-    
-    if (!currentUser) {
-      return throwError(() => new Error('Usuário não autenticado'));
-    }
-  
-    // Criar objeto de atualização com todos os campos obrigatórios
-    const updateDTO: UpdateUserDTO = {
-      id: currentUser.id,
-      nome: currentUser.nome,
-      email: currentUser.email,
-      morada: currentUser.morada || '',
-      telemovel: currentUser.telemovel || '',
-      genero: currentUser.genero || '',
-      //senhaHash: novaSenha,
-      numeroUtente: currentUser.numeroUtente || '',
-      dataNascimento: currentUser.dataNascimento,
-      estado: currentUser.estado,
-      perfil: currentUser.perfil // Usar o perfil atual do usuário
-    };
-  
-    return this.updateUsuario(updateDTO).pipe(
-      map(updatedUser => {
-        // Atualizar localmente o usuário com os dados retornados
-        const updated = this.mapUserDtoToUsuario(updatedUser);
-        
-        // Atualizar armazenamento local
-        localStorage.setItem(this.USER_KEY, JSON.stringify(updated));
-        this.currentUserSubject.next(updated);
-        
-        return updated;
-      }),
-      catchError(this.handleError)
-    );
-  }
-
-
   private mapUserDtoToUsuario(userDto: UserDTO): Usuario {
-    //console.log('Mapeando UserDTO:', userDto);
     return {
       id: userDto.id,
       numeroUtente: userDto.numeroUtente || '',
@@ -225,7 +181,7 @@ export class UsuarioService {
       genero: userDto.genero || '',
       telemovel: userDto.telemovel || '',
       morada: userDto.morada || '',
-      estado: userDto.estado || '',
+      isBloqueado: userDto.isBloqueado,
       fotografia: userDto.fotografia || ''
     };
   }
@@ -234,21 +190,14 @@ export class UsuarioService {
     let errorMessage = 'Ocorreu um erro ao processar a solicitação.';
 
     if (error.status === 400) {
-      // Se vier um objeto ModelState
       if (error.error && error.error.errors && typeof error.error.errors === 'object') {
-        // Extrai todas as mensagens e as junta numa string única
-        const allErrors = Object
-          .values(error.error.errors)        // pega cada array de mensagens
-          .flat()                            // achata num único array
-          .filter(msg => !!msg);            // remove vazios
+        const allErrors = Object.values(error.error.errors)
+          .flat()
+          .filter(msg => !!msg);
         errorMessage = allErrors.join(' | ');
       } else {
-        // Caso venha uma string simples ou outro formato
-        errorMessage = typeof error.error === 'string'
-          ? error.error
-          : JSON.stringify(error.error);
+        errorMessage = typeof error.error === 'string' ? error.error : JSON.stringify(error.error);
       }
-
     } else if (error.status === 409) {
       errorMessage = 'Um usuário com este email já existe.';
     } else if (error.status === 401) {

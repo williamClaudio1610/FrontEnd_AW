@@ -34,6 +34,7 @@ export class LoginComponent {
   onSubmit(): void {
     this.mensagemErro = undefined;
 
+
     if (this.userbLocked) {
       this.messageService.add({
         severity: 'error',
@@ -42,7 +43,7 @@ export class LoginComponent {
       });
       return;
     }
-
+    
     if (!this.loginDTO.email || !this.loginDTO.senha) {
       this.messageService.add({
         severity: 'error',
@@ -56,7 +57,7 @@ export class LoginComponent {
     this.usuarioService.login(this.loginDTO).subscribe({
       next: (usuario: Usuario) => {
 
-        if(usuario.estado === 'Bloqueado'){
+        if(usuario.isBloqueado === true){
           console.log('Usuário recebido no LoginComponent:', usuario); // Depuração
           this.messageService.add({
           severity: 'success',
@@ -66,6 +67,7 @@ export class LoginComponent {
         });
         return;
         }
+       
         //resetar as tentativas caso tenha conseguido logar antes do bloqueio
         this.numTentativas = 0;
         this.userbLocked = false;
@@ -92,7 +94,7 @@ export class LoginComponent {
         }, 2000);
       },
       error: (err) => {
-        this.numTentativas++;
+        //this.numTentativas++;
         this.mensagemErro = err.message;
         this.messageService.add({
           severity: 'error',
@@ -100,7 +102,9 @@ export class LoginComponent {
           detail: this.mensagemErro,
         });
 
+    
         // se ele tentar pela terceira vez o login (ou mais)
+        
         if (this.numTentativas >= 3) {
           this.messageService.add({
             severity: 'error',
@@ -122,10 +126,9 @@ export class LoginComponent {
                   telemovel: usuario.telemovel, // nunca vazio
                   email: usuario.email, // nunca vazio
                   morada: usuario.morada, // nunca vazio
-                  estado: 'Bloqueado',
+                  isBloqueado: true,
                   perfil: usuario.perfil,
                   numeroUtente: usuario.numeroUtente,
-                  senhaHash: '', // se não for alterar senha
                 };
                 this.usuarioService.updateUsuario(updateDTO).subscribe({
                   next: () => {
@@ -165,5 +168,7 @@ export class LoginComponent {
         }
       },
     });
+    
   }
+    
 }

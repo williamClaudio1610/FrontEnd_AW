@@ -900,6 +900,21 @@
     margin-top: 5px;
   }
 
+  /* Estilos para força da senha */
+  .password-strength {
+    margin-top: 4px;
+  }
+
+  .password-strength.weak {
+    color: #ef4444;
+  }
+
+
+
+  .password-strength.strong {
+    color: #10b981;
+  }
+
   @media (max-width: 768px) {
     .photo-upload-section {
       flex-direction: column;

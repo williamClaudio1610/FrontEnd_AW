@@ -33,7 +33,7 @@
         </div>
       </div>
   
-      <form (ngSubmit)="onSubmit()" #passwordForm="ngForm" class="password-change-form">
+      <form (ngSubmit)="onSubmit(passwordForm)" #passwordForm="ngForm" class="password-change-form">
         <div class="field">
           <label for="currentPassword">Senha Atual</label>
           <p-password 
@@ -58,11 +58,10 @@
             [feedback]="true"
             [toggleMask]="true"
             placeholder="Digite a nova senha"
+            (input)="checkPasswordStrength()"
           ></p-password>
           <div class="password-strength">
-            <div class="strength-bar" [class.weak]="passwordStrength === 'weak'"></div>
-            <div class="strength-bar" [class.medium]="passwordStrength === 'medium'"></div>
-            <div class="strength-bar" [class.strong]="passwordStrength === 'strong'"></div>
+            <div class="strength-bar" [class.weak]="passwordStrength === 'weak'" [class.strong]="passwordStrength === 'strong'"></div>
             <div class="strength-label">{{ getPasswordStrengthText() }}</div>
           </div>
         </div>
@@ -77,6 +76,7 @@
             [feedback]="false"
             [toggleMask]="true"
             placeholder="Confirme a nova senha"
+            (input)="checkPasswordsMatch()"
           ></p-password>
           <small *ngIf="passwordsMismatch" class="p-error">As senhas não coincidem</small>
         </div>
@@ -87,7 +87,7 @@
             type="submit" 
             label="Alterar Senha" 
             class="p-button-primary" 
-            [disabled]="passwordForm.invalid || passwordsMismatch || loading"
+            [disabled]="passwordForm.invalid || passwordsMismatch || loading || passwordStrength === 'weak'"
           ></button>
         </div>
         

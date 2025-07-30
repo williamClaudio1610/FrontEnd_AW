@@ -88,10 +88,6 @@
     background-color: var(--error-color);
   }
   
-  .strength-bar.medium {
-    background-color: #f59e0b;
-  }
-  
   .strength-bar.strong {
     background-color: var(--success-color);
   }

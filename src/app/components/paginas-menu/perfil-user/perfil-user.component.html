@@ -182,9 +182,13 @@
                   <label for="newPassword">Nova Senha *</label>
                   <p-password id="newPassword" [(ngModel)]="passwordData.newPassword" name="newPassword" 
                     [feedback]="true" [toggleMask]="true" placeholder="Digite a nova senha"
-                    [class.invalid]="passwordData.newPassword && passwordData.newPassword.length < 6">
+                    (input)="checkPasswordStrength()"
+                    [class.invalid]="passwordData.newPassword && passwordStrength === 'weak'">
                   </p-password>
-                  <small *ngIf="passwordData.newPassword && passwordData.newPassword.length < 6" class="error-message">Senha deve ter pelo menos 6 caracteres</small>
+                  <div *ngIf="passwordStrength" class="password-strength">
+                    <small [ngClass]="getPasswordStrengthClass()">{{ getPasswordStrengthText() }}</small>
+                  </div>
+                  <small *ngIf="passwordData.newPassword && passwordStrength === 'weak'" class="error-message">A senha deve ter pelo menos 8 caracteres.</small>
                 </div>
               </div>
               <div class="col-md-6">
@@ -192,20 +196,20 @@
                   <label for="confirmPassword">Confirmar Nova Senha *</label>
                   <p-password id="confirmPassword" [(ngModel)]="passwordData.confirmPassword" name="confirmPassword" 
                     [feedback]="false" [toggleMask]="true" placeholder="Confirme a nova senha"
-                    [class.invalid]="passwordData.confirmPassword && passwordData.newPassword !== passwordData.confirmPassword">
+                    (input)="checkPasswordsMatch()"
+                    [class.invalid]="passwordsMismatch">
                   </p-password>
-                  <small *ngIf="passwordData.confirmPassword && passwordData.newPassword !== passwordData.confirmPassword" class="error-message">Senhas não conferem</small>
+                  <small *ngIf="passwordsMismatch" class="error-message">Senhas não conferem</small>
                 </div>
               </div>
             </div>
-            <!--
             <div class="button-group">
-              <button pButton pRipple type="button" label="Cancelar" (click)="cancelPasswordChange()" class="p-button-outlined p-button-secondary" [disabled]="changingPassword"></button>
-              <button pButton pRipple type="submit" label="Alterar Senha" class="p-button-warning" [disabled]="changingPassword">
+              <button pButton pRipple type="button" label="Cancelar" (click)="togglePasswordChange()" class="p-button-outlined p-button-secondary" [disabled]="changingPassword"></button>
+              <button pButton pRipple type="submit" label="Alterar Senha" class="p-button-warning" [disabled]="changingPassword || passwordStrength === 'weak' || passwordsMismatch">
                 <i *ngIf="changingPassword" class="pi pi-spin pi-spinner" style="margin-right: 8px;"></i>
                 {{ changingPassword ? 'Alterando...' : 'Alterar Senha' }}
               </button>
-            </div>-->
+            </div>
           </form>
         </div>
       </p-tabPanel>

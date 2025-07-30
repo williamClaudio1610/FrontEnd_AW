@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Usuario, UpdateUserDTO } from '../../../models/usuario';
+import { Usuario, UpdateUserDTO, ChangePasswordDTO } from '../../../models/usuario';
 import { UsuarioService } from '../../../services/usuario.service';
 import { PedidoMarcacaoServiceService } from '../../../services/pedido-marcacao-service.service';
 import { PedidoMarcacaoDTO } from '../../../models/pedido-marcacao';
@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { SelectItem } from 'primeng/api';
 import { PdfGeneratorService } from '../../../services/pdf-generator.service';
 import { UpdatePedidoMarcacaoDTO } from '../../../models/pedido-marcacao';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-perfil-user',
@@ -26,9 +27,9 @@ export class PerfilUserComponent implements OnInit {
     morada: '',
     dataNascimento: '',
     genero: '',
-    estado: ''
+    isBloqueado: false
   };
-  selectedFile: File | undefined = undefined;
+  selectedFile: File | null = null;
   previewUrl: string | null = null;
   originalUserData: UpdateUserDTO | null = null;
   isEditing = false;
@@ -60,6 +61,10 @@ export class PerfilUserComponent implements OnInit {
     confirmPassword: ''
   };
 
+  // Validação de força da senha
+  passwordStrength: string = '';
+  passwordsMismatch: boolean = false;
+
   genders: SelectItem[] = [
     { label: 'Masculino', value: 'Masculino' },
     { label: 'Feminino', value: 'Feminino' },
@@ -88,9 +93,9 @@ export class PerfilUserComponent implements OnInit {
         email: this.user.email,
         telemovel: this.user.telemovel || '',
         morada: this.user.morada || '',
-        dataNascimento: this.user.dataNascimento || '',
+        dataNascimento: this.user.dataNascimento || new Date().toISOString().split('T')[0],
         genero: this.user.genero || '',
-        estado: this.user.estado,
+        isBloqueado: this.user.isBloqueado,
         perfil: this.user.perfil
       };
       this.originalUserData = { ...this.editUser };
@@ -122,6 +127,38 @@ export class PerfilUserComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Métodos para validação de senha
+  checkPasswordStrength() {
+    if (!this.passwordData.newPassword) {
+      this.passwordStrength = '';
+      return;
+    }
+
+    const length = this.passwordData.newPassword.length;
+    
+    if (length < 8) {
+      this.passwordStrength = 'weak';
+    } else {
+      this.passwordStrength = 'strong';
+    }
+  }
+
+  checkPasswordsMatch() {
+    this.passwordsMismatch = this.passwordData.newPassword !== this.passwordData.confirmPassword && this.passwordData.confirmPassword !== '';
+  }
+
+  getPasswordStrengthText(): string {
+    switch (this.passwordStrength) {
+      case 'weak': return 'Mínimo 8 caracteres';
+      case 'strong': return 'Senha válida';
+      default: return '';
+    }
+  }
+
+  getPasswordStrengthClass(): string {
+    return `password-strength ${this.passwordStrength}`;
   }
 
   // Verificar se o pedido pode ser reagendado ou cancelado
@@ -182,7 +219,6 @@ export class PerfilUserComponent implements OnInit {
     }
 
     this.cancelamentoMarcacao = marcacao;
-    //this.motivoCancelamento = '';
     this.showCancelamentoDialog = true;
   }
 
@@ -190,7 +226,6 @@ export class PerfilUserComponent implements OnInit {
   closeCancelamentoDialog(): void {
     this.showCancelamentoDialog = false;
     this.cancelamentoMarcacao = null;
-    //this.motivoCancelamento = '';
   }
 
   // Validar data de reagendamento
@@ -231,7 +266,7 @@ export class PerfilUserComponent implements OnInit {
   }
 
   // Submeter solicitação de reagendamento
-  solicitarReagendamento(): void {
+  async solicitarReagendamento(): Promise<void> {
     if (!this.reagendarMarcacao) return;
     
     if (!this.validarDataReagendamento()) return;
@@ -261,41 +296,29 @@ export class PerfilUserComponent implements OnInit {
       novoHorarioSoli: this.novoHorarioSoli
     };
 
-    this.pedidoMarcacaoService.atualizarPedido(update).subscribe({
-      next: (resp) => {
-        this.messageService.add({ 
-          severity: 'success', 
-          summary: 'Solicitação Enviada', 
-          detail: 'Solicitação de reagendamento enviada com sucesso! Aguarde o retorno da clínica.' 
-        });
-        this.closeReagendarDialog();
-        this.loadMarcacoes();
-        this.reagendando = false;
-      },
-      error: (err) => {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: err.message || 'Erro ao solicitar reagendamento.' 
-        });
-        this.reagendando = false;
-      }
-    });
+    try {
+      await firstValueFrom(this.pedidoMarcacaoService.atualizarPedido(update));
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Solicitação Enviada', 
+        detail: 'Solicitação de reagendamento enviada com sucesso! Aguarde o retorno da clínica.' 
+      });
+      this.closeReagendarDialog();
+      this.loadMarcacoes();
+    } catch (err: any) {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: err.message || 'Erro ao solicitar reagendamento.' 
+      });
+    } finally {
+      this.reagendando = false;
+    }
   }
 
   // Solicitar cancelamento
-  solicitarCancelamento(): void {
+  async solicitarCancelamento(): Promise<void> {
     if (!this.cancelamentoMarcacao) return;
-
-    /*
-    if (!this.motivoCancelamento?.trim()) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'Por favor, informe o motivo do cancelamento.'
-      });
-      return;
-    }*/
 
     this.cancelando = true;
 
@@ -319,26 +342,24 @@ export class PerfilUserComponent implements OnInit {
       solicitacaoCancelamento: true
     };
 
-    this.pedidoMarcacaoService.atualizarPedido(update).subscribe({
-      next: (resp) => {
-        this.messageService.add({ 
-          severity: 'success', 
-          summary: 'Solicitação Enviada', 
-          detail: 'Solicitação de cancelamento enviada com sucesso! Aguarde o retorno da clínica.' 
-        });
-        this.closeCancelamentoDialog();
-        this.loadMarcacoes();
-        this.cancelando = false;
-      },
-      error: (err) => {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: err.message || 'Erro ao solicitar cancelamento.' 
-        });
-        this.cancelando = false;
-      }
-    });
+    try {
+      await firstValueFrom(this.pedidoMarcacaoService.atualizarPedido(update));
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Solicitação Enviada', 
+        detail: 'Solicitação de cancelamento enviada com sucesso! Aguarde o retorno da clínica.' 
+      });
+      this.closeCancelamentoDialog();
+      this.loadMarcacoes();
+    } catch (err: any) {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erro', 
+        detail: err.message || 'Erro ao solicitar cancelamento.' 
+      });
+    } finally {
+      this.cancelando = false;
+    }
   }
 
   // Métodos auxiliares existentes (mantidos iguais)
@@ -364,13 +385,15 @@ export class PerfilUserComponent implements OnInit {
         newPassword: '',
         confirmPassword: ''
       };
+      this.passwordStrength = '';
+      this.passwordsMismatch = false;
     }
   }
 
   cancelEdit(): void {
     this.loadUserData();
     this.isEditing = false;
-    this.selectedFile = undefined;
+    this.selectedFile = null;
     this.previewUrl = null;
   }
 
@@ -385,11 +408,11 @@ export class PerfilUserComponent implements OnInit {
       this.editUser.morada !== this.originalUserData.morada ||
       this.editUser.dataNascimento !== this.originalUserData.dataNascimento ||
       this.editUser.genero !== this.originalUserData.genero ||
-      this.selectedFile !== undefined
+      this.selectedFile !== null
     );
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     // Validações básicas
     if (!this.editUser.nome?.trim()) {
       this.messageService.add({
@@ -430,56 +453,42 @@ export class PerfilUserComponent implements OnInit {
     if (this.hasChanges()) {
       this.saving = true;
       
-      const currentPassword = this.usuarioService.getCurrentPassword();
-      
-      if (!currentPassword) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Senha atual não encontrada. Faça login novamente.'
-        });
-        this.saving = false;
-        return;
-      }
-
       const updateData: UpdateUserDTO = {
         id: this.user!.id,
         nome: this.editUser.nome.trim(),
         email: this.editUser.email.trim().toLowerCase(),
-        numeroUtente: this.editUser.numeroUtente.trim().toLowerCase(),
+        numeroUtente: this.editUser.numeroUtente.trim(),
         telemovel: this.editUser.telemovel.trim(),
         morada: this.editUser.morada.trim(),
-        genero: this.editUser.genero,
+        genero: this.editUser.genero || '',
         dataNascimento: this.formatDateForBackend(this.editUser.dataNascimento ?? ''),
-        fotografia: this.selectedFile,
+        fotografia: this.selectedFile || undefined,
         perfil: this.user!.perfil,
-        estado: this.user?.estado ?? '',
+        isBloqueado: this.user!.isBloqueado
       };
 
-      this.usuarioService.updateUsuario(updateData).subscribe({
-        next: (updatedUser) => {
-          this.user = updatedUser;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Perfil atualizado com sucesso!'
-          });
-          this.isEditing = false;
-          this.saving = false;
-          this.selectedFile = undefined;
-          this.previewUrl = null;
-          this.loadUserData();
-        },
-        error: (error) => {
-          console.error('Erro ao atualizar perfil:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: error.message || 'Erro ao atualizar perfil'
-          });
-          this.saving = false;
-        }
-      });
+      try {
+        const updatedUser = await firstValueFrom(this.usuarioService.updateUsuario(updateData));
+        this.user = updatedUser;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Perfil atualizado com sucesso!'
+        });
+        this.isEditing = false;
+        this.selectedFile = null;
+        this.previewUrl = null;
+        this.loadUserData();
+      } catch (error: any) {
+        console.error('Erro ao atualizar perfil:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: error.message || 'Erro ao atualizar perfil'
+        });
+      } finally {
+        this.saving = false;
+      }
     }
   }
 
@@ -493,10 +502,15 @@ export class PerfilUserComponent implements OnInit {
       dateObj = date;
     }
     
+    // Verificar se a data é válida
+    if (isNaN(dateObj.getTime())) {
+      return '';
+    }
+    
     return dateObj.toISOString().split('T')[0];
   }
 
-  onSubmitPassword(): void {
+  async onSubmitPassword(): Promise<void> {
     if (!this.passwordData.currentPassword?.trim()) {
       this.messageService.add({
         severity: 'error',
@@ -515,11 +529,11 @@ export class PerfilUserComponent implements OnInit {
       return;
     }
 
-    if (this.passwordData.newPassword.length < 6) {
+    if (this.passwordStrength === 'weak') {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
-        detail: 'Nova senha deve ter pelo menos 6 caracteres'
+        detail: 'A senha é muito fraca. Escolha uma senha mais forte.'
       });
       return;
     }
@@ -533,46 +547,51 @@ export class PerfilUserComponent implements OnInit {
       return;
     }
 
-    const storedPassword = this.usuarioService.getCurrentPassword();
-    if (this.passwordData.currentPassword !== storedPassword) {
+    if (!this.user) {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
-        detail: 'Senha atual incorreta'
+        detail: 'Usuário não identificado'
       });
       return;
     }
 
     this.changingPassword = true;
 
-    this.usuarioService.alterarSenha(this.passwordData.newPassword).subscribe({
-      next: (updatedUser) => {
-        this.changingPassword = false;
-        this.isChangingPassword = false;
-        
-        localStorage.setItem('current_password', this.passwordData.newPassword);
-        
-        this.passwordData = {
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        };
-        
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Senha alterada com sucesso!'
-        });
-      },
-      error: (error) => {
-        this.changingPassword = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'Erro ao alterar senha: ' + (error.message || 'Erro desconhecido')
-        });
-      }
-    });
+    const changePasswordDTO: ChangePasswordDTO = {
+      id: this.user.id,
+      senhaAtual: this.passwordData.currentPassword,
+      novaSenha: this.passwordData.newPassword
+    };
+
+    try {
+      const updatedUser = await firstValueFrom(this.usuarioService.changePassword(changePasswordDTO));
+      this.user = updatedUser;
+      localStorage.setItem('current_user', JSON.stringify(updatedUser));
+      
+      this.passwordData = {
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      };
+      this.passwordStrength = '';
+      this.passwordsMismatch = false;
+      this.isChangingPassword = false;
+      
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Senha alterada com sucesso!'
+      });
+    } catch (error: any) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Erro ao alterar senha: ' + (error.message || 'Erro desconhecido')
+      });
+    } finally {
+      this.changingPassword = false;
+    }
   }
 
   getMarcacoesByEstado(estado: string): number {
@@ -666,7 +685,7 @@ export class PerfilUserComponent implements OnInit {
   }
 
   removeSelectedFile(): void {
-    this.selectedFile = undefined;
+    this.selectedFile = null;
     this.previewUrl = null;
   }
 
@@ -675,7 +694,7 @@ export class PerfilUserComponent implements OnInit {
       return this.previewUrl;
     }
     if (this.user?.fotografia) {
-      return 'https://localhost:7273' + this.user.fotografia;
+      return 'https://localhost:7273' + (this.user.fotografia.startsWith('/') ? this.user.fotografia : `/Uploads/${this.user.fotografia}`);
     }
     return '';
   }
