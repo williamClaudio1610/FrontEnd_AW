@@ -1,52 +1,69 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-lg py-3 fixed-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-gradient-primary shadow-lg py-3 fixed-top">
   <div class="container-fluid px-5">
     <!-- Logo + Nome -->
     <a class="navbar-brand d-flex align-items-center" routerLink="/">
-      <img src="/ChatGPT_logo.png" alt="Insove" height="70" />
-      <span class="ms-3 text-primary fs-3 fw-bold">ClinicaXPTO</span>
+      <div class="logo-container me-3">
+        <i class="pi pi-heart-fill text-white fs-2"></i>
+      </div>
+      <div class="brand-text">
+        <span class="text-white fs-3 fw-bold">ClinicaXPTO</span>
+        <small class="text-white-50 d-block">Cuidando da sua saúde</small>
+      </div>
     </a>
 
     <!-- Botão de mobile -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+      <span class="navbar-toggler-icon text-white"></span>
     </button>
 
     <!-- Links de Navegação -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/']">Início</a>
+          <a class="nav-link px-3 text-white fw-medium nav-link-hover" [routerLink]="['/']">
+            <i class="pi pi-home me-1"></i>Início
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/sobre']">Sobre Nós</a>
+          <a class="nav-link px-3 text-white fw-medium nav-link-hover" [routerLink]="['/sobreNos']">
+            <i class="pi pi-info-circle me-1"></i>Sobre Nós
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/consultasExames']">Marcação</a>
+          <a class="nav-link px-3 text-white fw-medium nav-link-hover" [routerLink]="['/consultasExames']">
+            <i class="pi pi-calendar me-1"></i>Marcação
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/medicos']">Médicos</a>
+          <a class="nav-link px-3 text-white fw-medium nav-link-hover" [routerLink]="['/medicos']">
+            <i class="pi pi-users me-1"></i>Médicos
+          </a>
         </li>
+        <!--
         <li class="nav-item">
-          <a class="nav-link px-3 text-dark fw-medium" [routerLink]="['/contato']">Contacte-nos</a>
+          <a class="nav-link px-3 text-white fw-medium nav-link-hover" [routerLink]="['/contato']">
+            <i class="pi pi-phone me-1"></i>Contacte-nos
+          </a>
         </li>
+      -->
       </ul>
 
       <!-- Barra de Pesquisa + Contact + Perfil/Logins -->
       <div class="d-flex align-items-center gap-3">
         <!-- Localização e Telefone (visível apenas em telas grandes) -->
-        <div class="d-none d-lg-flex align-items-center me-4">
-          <i class="pi pi-map-marker text-secondary me-2"></i>
-          <small class="text-secondary">ISPTEC, Talatona, Luanda</small>
+        <div class="d-none d-lg-flex align-items-center me-4 contact-info">
+          <i class="pi pi-map-marker text-white me-2"></i>
+          <small class="text-white">ISPTEC, Talatona, Luanda</small>
         </div>
-        <div class="d-none d-lg-flex align-items-center me-4">
-          <i class="pi pi-phone text-secondary me-2"></i>
-          <small class="text-secondary">(+244) 949-276-083</small>
+        <div class="d-none d-lg-flex align-items-center me-4 contact-info">
+          <i class="pi pi-phone text-white me-2"></i>
+          <small class="text-white">(+244) 949-276-083</small>
         </div>
 
         <!-- Perfil ou Botões de Login -->
-        <div class="profile-section" (mouseleave)="showDropdown = false" *ngIf="usuario; else loginButtons">
-          <div class="profile-trigger" (mouseenter)="toggleDropdown()">
+        <div class="profile-section" *ngIf="usuario; else loginButtons">
+          <div class="profile-trigger" [class.active]="showDropdown" (click)="toggleDropdown($event)">
             <img *ngIf="usuario.fotografia && !hasImageError" 
                  [src]="getUserPhotoUrl()" 
                  alt="Foto de Perfil" 
@@ -55,16 +72,21 @@
                  (load)="onImgLoad()"
                  (error)="onImgError()" />
             <i *ngIf="!usuario.fotografia || hasImageError" class="pi pi-user profile-icon"></i>
-            <span class="ms-2">{{ usuario.nome }}</span>
+            <span class="ms-2 text-white">{{ usuario.nome }}</span>
+            <i class="pi pi-chevron-down ms-1 text-white" [class.pi-chevron-up]="showDropdown"></i>
           </div>
           <div class="dropdown-menu" *ngIf="showDropdown">
-            <a [routerLink]="['/perfilUser']" class="dropdown-item" (click)="showDropdown = false">Ir para Perfil</a>
-            <a class="dropdown-item" (click)="logout(); showDropdown = false">Logout</a>
+            <a [routerLink]="['/perfilUser']" class="dropdown-item" (click)="showDropdown = false">
+              <i class="pi pi-user me-2"></i>Ir para Perfil
+            </a>
+            <a class="dropdown-item" (click)="logout(); showDropdown = false">
+              <i class="pi pi-sign-out me-2"></i>Logout
+            </a>
           </div>
         </div>
         <ng-template #loginButtons>
           <div class="d-flex gap-2">
-            <button pButton type="button" label="Entrar" icon="pi pi-sign-in" class="p-button-primary"
+            <button pButton type="button" label="Entrar" icon="pi pi-sign-in" class="p-button-outlined p-button-white"
               [routerLink]="['/login']"></button>
             <button pButton type="button" label="Criar Conta" icon="pi pi-user-plus" class="p-button-primary"
               [routerLink]="['/register']"></button>

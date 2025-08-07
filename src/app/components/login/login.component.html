@@ -1,17 +1,30 @@
-<div class="pagina-login d-flex align-items-center justify-content-center">
-  <div class="caixa-login container bg-white shadow-lg rounded-3 p-4 p-md-5">
-    <!-- Formulário de login -->
-    <p-toast></p-toast>
-    <h2 class="mb-3 fw-bold display-6">Bem-vindo de volta</h2>
-    <p class="text-muted mb-4">Por favor, introduza os seus dados</p>
+<div class="login-container">
+  <div class="login-background">
+    <div class="login-overlay"></div>
+  </div>
+  
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-icon">
+        <i class="pi pi-heart-fill"></i>
+      </div>
+      <h2 class="login-title">Bem-vindo de volta</h2>
+      <p class="login-subtitle">Faça login na sua conta da ClinicaXPTO</p>
+    </div>
 
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="d-flex flex-column gap-3">
+    <!-- Toast para mensagens -->
+    <p-toast position="top-right"></p-toast>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
       <!-- Campo Email -->
-      <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
+      <div class="form-group">
+        <label for="email" class="form-label">
+          <i class="pi pi-envelope me-2"></i>
+          Email
+        </label>
         <input
           type="email"
-          class="form-control rounded"
+          class="form-control"
           id="email"
           name="email"
           [(ngModel)]="loginDTO.email"
@@ -19,49 +32,64 @@
           required
           email
         />
-        <div *ngIf="loginForm.submitted && loginForm.controls['email']?.errors?.['required']" class="text-danger small mt-1">
+        <div *ngIf="loginForm.submitted && loginForm.controls['email']?.errors?.['required']" class="error-message">
+          <i class="pi pi-exclamation-triangle me-1"></i>
           O email é obrigatório.
         </div>
-        <div *ngIf="loginForm.submitted && loginForm.controls['email']?.errors?.['email']" class="text-danger small mt-1">
+        <div *ngIf="loginForm.submitted && loginForm.controls['email']?.errors?.['email']" class="error-message">
+          <i class="pi pi-exclamation-triangle me-1"></i>
           O email deve ser válido.
         </div>
       </div>
 
       <!-- Campo Senha -->
-      <div class="mb-3">
-        <label for="senha" class="form-label">Palavra-passe</label>
-        <div class="position-relative">
+      <div class="form-group">
+        <label for="senha" class="form-label">
+          <i class="pi pi-lock me-2"></i>
+          Palavra-passe
+        </label>
+        <div class="password-input">
           <input
             [type]="mostrarPassword ? 'text' : 'password'"
-            class="form-control rounded"
+            class="form-control"
             id="senha"
             name="senha"
             [(ngModel)]="loginDTO.senha"
             placeholder="Insira a sua palavra-passe"
             required
           />
-          <span class="position-absolute end-0 top-50 translate-middle-y pe-3 cursor-pointer" (click)="clicarMostrarPassword()">
-            <i class="fa" [ngClass]="mostrarPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleIcon"></i>
-          </span>
+          <button type="button" class="password-toggle" (click)="clicarMostrarPassword()">
+            <i class="pi" [ngClass]="mostrarPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+          </button>
         </div>
-        <div *ngIf="loginForm.submitted && loginForm.controls['senha']?.errors?.['required']" class="text-danger small mt-1">
+        <div *ngIf="loginForm.submitted && loginForm.controls['senha']?.errors?.['required']" class="error-message">
+          <i class="pi pi-exclamation-triangle me-1"></i>
           A palavra-passe é obrigatória.
         </div>
       </div>
 
       <!-- Lembrar e Esqueceu -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="#" class="text-primary fw-bold text-decoration-none">Esqueceu-se da palavra-passe?</a>
+      <div class="form-options">
+        <a href="#" class="forgot-password">
+          <i class="pi pi-question-circle me-1"></i>
+          Esqueceu-se da palavra-passe?
+        </a>
       </div>
 
       <!-- Botão Login -->
-      <button type="submit" class="btn btn-dark w-100 rounded py-2 mb-3">
-        <i class="fa fa-sign-in me-2"></i> Entrar
+      <button type="submit" class="btn btn-primary btn-login">
+        <i class="pi pi-sign-in me-2"></i>
+        Entrar
       </button>
 
+      <!-- Divisor -->
+      <div class="divider">
+        <span>ou</span>
+      </div>
+
       <!-- Login com Google -->
-      <button type="button" class="btn btn-outline-secondary w-100 rounded py-2 mb-3">
-        <svg class="me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20px">
+      <button type="button" class="btn btn-google">
+        <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18px">
           <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
           <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
           <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
@@ -71,9 +99,12 @@
       </button>
 
       <!-- Criar Conta -->
-      <div class="text-center text-muted">
-        Ainda não tem conta?
-        <a [routerLink]="['/register']" class="fw-bold text-dark text-decoration-none">Crie uma gratuitamente</a>
+      <div class="register-link">
+        <span>Ainda não tem conta?</span>
+        <a [routerLink]="['/register']" class="link-primary">
+          <i class="pi pi-user-plus me-1"></i>
+          Crie uma gratuitamente
+        </a>
       </div>
     </form>
   </div>

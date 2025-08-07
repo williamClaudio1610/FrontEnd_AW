@@ -1,102 +1,124 @@
 <div class="register-container">
-  <!-- Componente Toast do PrimeNG para exibir mensagens -->
-  <p-toast></p-toast>
-  <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="register-form">
-    <h2 class="mb-3 fw-bold display-6">Criar conta</h2>
-    <p class="text-muted mb-4">Por favor, introduza os seus dados</p>
+  <div class="register-background">
+    <div class="register-overlay"></div>
+  </div>
+  
+  <div class="register-card">
+    <div class="register-header">
+      <div class="register-icon">
+        <i class="pi pi-user-plus"></i>
+      </div>
+      <h2 class="register-title">Criar conta</h2>
+      <p class="register-subtitle">Junte-se à ClinicaXPTO e cuide da sua saúde</p>
+    </div>
+
+    <!-- Componente Toast do PrimeNG para exibir mensagens -->
+    <p-toast position="top-right"></p-toast>
     
-    <!-- Nome e Email -->
-    <div class="row mb-5">
-      <div class="col-md-6 mb-3 mb-md-0">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-user"></i></span>
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="register-form">
+      <!-- Nome e Email -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nome" class="form-label">
+            <i class="pi pi-user me-2"></i>
+            Nome completo
+          </label>
           <input
             type="text"
             class="form-control"
             id="nome"
             name="nome"
-            placeholder="Nome completo"
+            placeholder="Digite o seu nome completo"
             [(ngModel)]="user.nome"
-            name="nome"
             #nome="ngModel"
             required
           />
+          <div *ngIf="registerForm.submitted && nome.errors?.['required']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            O nome completo é obrigatório.
+          </div>
         </div>
-        <div *ngIf="registerForm.submitted && nome.errors?.['required']" class="text-danger small">
-          O nome completo é obrigatório.
-        </div>
-      </div>
-      <div class="col-md-6 mb-3 mb-md-0">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+        
+        <div class="form-group">
+          <label for="numeroUtente" class="form-label">
+            <i class="pi pi-id-card me-2"></i>
+            Número de Utente
+          </label>
           <input
             type="text"
             class="form-control"
             id="numeroUtente"
             name="numeroUtente"
-            placeholder="Número de Utente"
+            placeholder="Digite o número de utente"
             [(ngModel)]="user.numeroUtente"
             #numeroUtente="ngModel"
           />
-        </div>
-        <div *ngIf="registerForm.submitted && numeroUtente.errors?.['required']" class="text-danger small">
-          O Número de Utente é obrigatório.
+          <div *ngIf="registerForm.submitted && numeroUtente.errors?.['required']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            O Número de Utente é obrigatório.
+          </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            placeholder="Email"
-            [(ngModel)]="user.email"
-            name="email"
-            #email="ngModel"
-            required
-            email
-          />
-        </div>
-        <div *ngIf="registerForm.submitted && email.errors?.['required']" class="text-danger small">
+
+      <div class="form-group">
+        <label for="email" class="form-label">
+          <i class="pi pi-envelope me-2"></i>
+          Email
+        </label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          name="email"
+          placeholder="Digite o seu email"
+          [(ngModel)]="user.email"
+          #email="ngModel"
+          required
+          email
+        />
+        <div *ngIf="registerForm.submitted && email.errors?.['required']" class="error-message">
+          <i class="pi pi-exclamation-triangle me-1"></i>
           O email é obrigatório.
         </div>
-        <div *ngIf="registerForm.submitted && email.errors?.['email']" class="text-danger small">
+        <div *ngIf="registerForm.submitted && email.errors?.['email']" class="error-message">
+          <i class="pi pi-exclamation-triangle me-1"></i>
           O email deve ser válido.
         </div>
       </div>
-    </div>
 
-    <!-- Número e Telemóvel -->
-    <div class="row mb-5">
-      <div class="col-md-6">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-phone"></i></span>
+      <!-- Número e Telemóvel -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="telemovel" class="form-label">
+            <i class="pi pi-phone me-2"></i>
+            Número de telefone
+          </label>
           <input
             type="text"
             class="form-control"
             id="telemovel"
             name="telemovel"
-            placeholder="Número de telefone"
+            placeholder="+244 9XX XXX XXX"
             [(ngModel)]="user.telemovel"
-            name="telemovel"
             #telemovel="ngModel"
             required
             pattern="\+2449[0-9]{8}"
           />
+          <div *ngIf="registerForm.submitted && telemovel.errors?.['required']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            O número de telefone é obrigatório.
+          </div>
+          <div *ngIf="registerForm.submitted && telemovel.errors?.['pattern']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            O número deve começar com +244 seguido de 9 dígitos numéricos.
+          </div>
         </div>
-        <div *ngIf="registerForm.submitted && telemovel.errors?.['required']" class="text-danger small">
-          O número de telefone é obrigatório.
-        </div>
-        <div *ngIf="registerForm.submitted && telemovel.errors?.['pattern']" class="text-danger small">
-          O número deve começar com +244 seguido de 9 dígitos numéricos.
-        </div>
-      </div>
-      
-      <div class="col-md-6 mb-3 mb-md-0">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        
+        <div class="form-group">
+          <label for="dataNascimento" class="form-label">
+            <i class="pi pi-calendar me-2"></i>
+            Data de Nascimento
+          </label>
           <input
             type="date"
             class="form-control"
@@ -106,24 +128,25 @@
             #dataNascimento="ngModel"
             required
           />
-        </div>
-        <div *ngIf="registerForm.submitted && dataNascimento.errors?.['required']" class="text-danger small">
-          A data de nascimento é obrigatória.
+          <div *ngIf="registerForm.submitted && dataNascimento.errors?.['required']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            A data de nascimento é obrigatória.
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Gênero e morada -->
-    <div class="row mb-5">
-      <div class="col-md-6">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-venus-mars"></i></span>
+      <!-- Gênero e morada -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="genero" class="form-label">
+            <i class="pi pi-venus-mars me-2"></i>
+            Gênero
+          </label>
           <select
             class="form-control"
             id="genero"
             name="genero"
             [(ngModel)]="user.genero"
-            name="genero"
             #genero="ngModel"
             required
           >
@@ -132,133 +155,171 @@
             <option value="Feminino">Feminino</option>
             <option value="Outro">Outro</option>
           </select>
+          <div *ngIf="registerForm.submitted && genero.errors?.['required']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            O gênero é obrigatório.
+          </div>
         </div>
-        <div *ngIf="registerForm.submitted && genero.errors?.['required']" class="text-danger small">
-          O gênero é obrigatório.
-        </div>
-      </div>
-      <div class="col-md-6 mb-3 mb-md-0">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-map-marker"></i></span>
+        
+        <div class="form-group">
+          <label for="morada" class="form-label">
+            <i class="pi pi-map-marker me-2"></i>
+            Morada
+          </label>
           <input
             type="text"
             class="form-control"
             id="morada"
             name="morada"
-            placeholder="Morada"
+            placeholder="Digite a sua morada"
             [(ngModel)]="user.morada"
-            name="morada"
             #morada="ngModel"
             required
           />
-        </div>
-        <div *ngIf="registerForm.submitted && morada.errors?.['required']" class="text-danger small">
-          A morada é obrigatória.
+          <div *ngIf="registerForm.submitted && morada.errors?.['required']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            A morada é obrigatória.
+          </div>
         </div>
       </div>
-      <div class="input-group">
-        <span class="input-group-text"><i class="fa fa-map"></i></span>
+
+      <div class="form-group">
+        <label for="provincia" class="form-label">
+          <i class="pi pi-map me-2"></i>
+          Província
+        </label>
         <select
           class="form-control"
           id="provincia"
           name="provincia"
           required
         >
-          <option value="" disabled selected>Selecione a provincia</option>
+          <option value="" disabled selected>Selecione a província</option>
           <option *ngFor="let provincia of provinces" [value]="provincia">{{ provincia }}</option>
         </select>
       </div>
-      <!--
-      <div *ngIf="registerForm.submitted" class="text-danger small">
-        A provincia é obrigatória.
-      </div>
-      -->
-    </div>
 
-    <!-- senhaHash e Confirmar senhaHash -->
-    <div class="row mb-5">
-      <div class="col-md-6 mb-3 mb-md-0">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-lock"></i></span>
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            class="form-control"
-            id="senhaHash"
-            name="senhaHash"
-            placeholder="senhaHash"
-            [(ngModel)]="user.senhaHash"
-            name="senhaHash"
-            #senhaHash="ngModel"
-            required
-            minlength="6"
-          />
-          <span class="input-group-text toggle-password" (click)="togglePassword()">
-            <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleIcon"></i>
-          </span>
+      <!-- senhaHash e Confirmar senhaHash -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="senhaHash" class="form-label">
+            <i class="pi pi-lock me-2"></i>
+            Palavra-passe
+          </label>
+          <div class="password-input">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control"
+              id="senhaHash"
+              name="senhaHash"
+              placeholder="Digite a sua palavra-passe"
+              [(ngModel)]="user.senhaHash"
+              #senhaHash="ngModel"
+              required
+              minlength="6"
+            />
+            <button type="button" class="password-toggle" (click)="togglePassword()">
+              <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </div>
+          <div *ngIf="registerForm.submitted && senhaHash.errors?.['required']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            A palavra-passe é obrigatória.
+          </div>
+          <div *ngIf="registerForm.submitted && senhaHash.errors?.['minlength']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            A palavra-passe deve ter pelo menos 6 caracteres.
+          </div>
         </div>
-        <div *ngIf="registerForm.submitted && senhaHash.errors?.['required']" class="text-danger small">
-          A senhaHash é obrigatória.
-        </div>
-        <div *ngIf="registerForm.submitted && senhaHash.errors?.['minlength']" class="text-danger small">
-          A senhaHash deve ter pelo menos 6 caracteres.
+        
+        <div class="form-group">
+          <label for="confirmarsenhaHash" class="form-label">
+            <i class="pi pi-lock me-2"></i>
+            Confirmar palavra-passe
+          </label>
+          <div class="password-input">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              class="form-control"
+              id="confirmarsenhaHash"
+              name="confirmarsenhaHash"
+              placeholder="Confirme a sua palavra-passe"
+              [(ngModel)]="confirmarsenhaHash"
+              #confirmarsenhaHashInput="ngModel"
+              required
+            />
+            <button type="button" class="password-toggle" (click)="toggleConfirmPassword()">
+              <i class="pi" [ngClass]="showConfirmPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </div>
+          <div *ngIf="registerForm.submitted && confirmarsenhaHashInput.errors?.['required']" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            A confirmação de palavra-passe é obrigatória.
+          </div>
+          <div *ngIf="registerForm.submitted && user.senhaHash !== confirmarsenhaHash" class="error-message">
+            <i class="pi pi-exclamation-triangle me-1"></i>
+            As palavras-passe não coincidem.
+          </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-lock"></i></span>
-          <input
-            [type]="showConfirmPassword ? 'text' : 'password'"
-            class="form-control"
-            id="confirmarsenhaHash"
-            name="confirmarsenhaHash"
-            placeholder="Confirmar senhaHash"
-            [(ngModel)]="confirmarsenhaHash"
-            name="confirmarsenhaHash"
-            #confirmarsenhaHashInput="ngModel"
-            required
-          />
-          <span class="input-group-text toggle-password" (click)="toggleConfirmPassword()">
-            <i class="fa" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleConfirmIcon"></i>
-          </span>
-        </div>
-        <div *ngIf="registerForm.submitted && confirmarsenhaHashInput.errors?.['required']" class="text-danger small">
-          A confirmação de senhaHash é obrigatória.
-        </div>
-        <div *ngIf="registerForm.submitted && user.senhaHash !== confirmarsenhaHash" class="text-danger small">
-          As senhaHashs não coincidem.
-        </div>
-      </div>
-    </div>
 
-    <!--Fotografia -->
-    <div class="row mb-5">
-      <div class="col-md-12">
-        <div class="input-group">
-          <span class="input-group-text"><i class="fa fa-camera"></i></span>
+      <!-- Fotografia -->
+      <div class="form-group">
+        <label for="fotografia" class="form-label">
+          <i class="pi pi-camera me-2"></i>
+          Fotografia
+        </label>
+        
+        <!-- Preview da foto selecionada -->
+        <div *ngIf="previewUrl" class="photo-preview-container">
+          <div class="photo-preview">
+            <img [src]="previewUrl" alt="Preview da foto" class="preview-image" />
+            <button type="button" class="remove-photo-btn" (click)="removeSelectedFile()">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Input de arquivo -->
+        <div class="file-input-container" [class.hidden]="previewUrl">
           <input
             type="file"
-            class="form-control"
+            class="file-input"
             id="fotografia"
             (change)="onFileChange($event)"
             name="fotografia"
+            accept="image/*"
           />
+          <label for="fotografia" class="file-input-label">
+            <i class="pi pi-upload"></i>
+            <span>Clique para selecionar uma fotografia</span>
+            <small>Formatos aceitos: JPG, PNG, GIF</small>
+          </label>
+        </div>
+        
+        <!-- Botão para selecionar nova foto quando já há preview -->
+        <div *ngIf="previewUrl" class="change-photo-container">
+          <button type="button" class="btn btn-outline-secondary change-photo-btn" (click)="openFileSelector()">
+            <i class="pi pi-camera me-2"></i>
+            Alterar Foto
+          </button>
         </div>
       </div>
-    </div>
 
-    <!-- Botão Registrar -->
-    <div class="d-grid mb-3">
-      <button
-        type="submit"
-        class="btn btn-dark text-white">
-        <i class="fa fa-user-plus"></i> Criar conta
+      <!-- Botão Registrar -->
+      <button type="submit" class="btn btn-primary btn-register">
+        <i class="pi pi-user-plus me-2"></i>
+        Criar conta
       </button>
-    </div>
 
-    <!-- Link Fazer Login -->
-    <div class="text-center mb-3">
-      <span>Já tem conta?</span>
-      <a [routerLink]="['/login']" class="text-primary text-decoration-none">Fazer login</a>
-    </div>
-  </form>
+      <!-- Link Fazer Login -->
+      <div class="login-link">
+        <span>Já tem conta?</span>
+        <a [routerLink]="['/login']" class="link-primary">
+          <i class="pi pi-sign-in me-1"></i>
+          Fazer login
+        </a>
+      </div>
+    </form>
+  </div>
 </div>

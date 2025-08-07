@@ -41,16 +41,16 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="nome">Nome *</label>
+                    <label for="nome"><i class="pi pi-user"></i>Nome *</label>
                     <input pInputText id="nome" [(ngModel)]="editUser.nome" name="nome" required class="form-control" placeholder="Seu nome completo" [class.invalid]="!editUser.nome?.trim() && editUser.nome !== ''">
-                    <small *ngIf="!editUser.nome?.trim() && editUser.nome !== ''" class="error-message">Nome é obrigatório</small>
+                    <small *ngIf="!editUser.nome?.trim() && editUser.nome !== ''" class="error-message"><i class="pi pi-exclamation-triangle"></i>Nome é obrigatório</small>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="email">Email *</label>
+                    <label for="email"><i class="pi pi-envelope"></i>Email *</label>
                     <input pInputText id="email" [(ngModel)]="editUser.email" name="email" required type="email" class="form-control" placeholder="seu.email@exemplo.com" [class.invalid]="!editUser.email?.trim() && editUser.email !== ''">
-                    <small *ngIf="!editUser.email?.trim() && editUser.email !== ''" class="error-message">Email é obrigatório</small>
+                    <small *ngIf="!editUser.email?.trim() && editUser.email !== ''" class="error-message"><i class="pi pi-exclamation-triangle"></i>Email é obrigatório</small>
                   </div>
                 </div>
               </div>
@@ -58,14 +58,14 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="telemovel">Telemóvel *</label>
+                    <label for="telemovel"><i class="pi pi-phone"></i>Telemóvel *</label>
                     <input pInputText id="telemovel" [(ngModel)]="editUser.telemovel" name="telemovel" required class="form-control" placeholder="(00) 00000-0000" [class.invalid]="!editUser.telemovel?.trim() && editUser.telemovel !== ''">
-                    <small *ngIf="!editUser.telemovel?.trim() && editUser.telemovel !== ''" class="error-message">Telemóvel é obrigatório</small>
+                    <small *ngIf="!editUser.telemovel?.trim() && editUser.telemovel !== ''" class="error-message"><i class="pi pi-exclamation-triangle"></i>Telemóvel é obrigatório</small>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="genero">Gênero</label>
+                    <label for="genero"><i class="pi pi-venus-mars"></i>Gênero</label>
                     <p-dropdown [options]="genders" [(ngModel)]="editUser.genero" name="genero" placeholder="Selecione seu gênero" styleClass="w-full"></p-dropdown>
                   </div>
                 </div>
@@ -74,15 +74,15 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="dataNascimento">Data de Nascimento</label>
+                    <label for="dataNascimento"><i class="pi pi-calendar"></i>Data de Nascimento</label>
                     <p-calendar id="dataNascimento" [(ngModel)]="editUser.dataNascimento" name="dataNascimento" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="field">
-                    <label for="morada">Morada *</label>
+                    <label for="morada"><i class="pi pi-map-marker"></i>Morada *</label>
                     <input pInputText id="morada" [(ngModel)]="editUser.morada" name="morada" required class="form-control" placeholder="Sua morada completa" [class.invalid]="!editUser.morada?.trim() && editUser.morada !== ''">
-                    <small *ngIf="!editUser.morada?.trim() && editUser.morada !== ''" class="error-message">Morada é obrigatória</small>
+                    <small *ngIf="!editUser.morada?.trim() && editUser.morada !== ''" class="error-message"><i class="pi pi-exclamation-triangle"></i>Morada é obrigatória</small>
                   </div>
                 </div>
               </div>
@@ -91,7 +91,7 @@
               <div class="row">
                 <div class="col-12">
                   <div class="field">
-                    <label>Foto de Perfil</label>
+                    <label><i class="pi pi-camera"></i>Foto de Perfil</label>
                     <div class="photo-upload-section">
                       <div class="current-photo">
                         <img *ngIf="getCurrentPhotoUrl()" [src]="getCurrentPhotoUrl()" alt="Foto de Perfil" class="profile-photo-preview">
@@ -127,27 +127,27 @@
           <ng-template #viewMode>
             <div>
               <p>
-                <strong>Nome:</strong> 
+                <strong><i class="pi pi-user"></i>Nome:</strong> 
                 <span>{{ user?.nome }}</span>
               </p>
               <p>
-                <strong>Email:</strong> 
+                <strong><i class="pi pi-envelope"></i>Email:</strong> 
                 <span>{{ user?.email }}</span>
               </p>
               <p>
-                <strong>Telemóvel:</strong> 
+                <strong><i class="pi pi-phone"></i>Telemóvel:</strong> 
                 <span>{{ user?.telemovel }}</span>
               </p>
               <p>
-                <strong>Morada:</strong> 
+                <strong><i class="pi pi-map-marker"></i>Morada:</strong> 
                 <span>{{ user?.morada }}</span>
               </p>
               <p>
-                <strong>Data de Nascimento:</strong> 
+                <strong><i class="pi pi-calendar"></i>Data de Nascimento:</strong> 
                 <span>{{ user?.dataNascimento | date:'dd/MM/yyyy' }}</span>
               </p>
               <p>
-                <strong>Gênero:</strong> 
+                <strong><i class="pi pi-venus-mars"></i>Gênero:</strong> 
                 <span>{{ user?.genero }}</span>
               </p>
               
@@ -166,12 +166,12 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="field">
-                  <label for="currentPassword">Senha Atual *</label>
+                  <label for="currentPassword"><i class="pi pi-key"></i>Senha Atual *</label>
                   <p-password id="currentPassword" [(ngModel)]="passwordData.currentPassword" name="currentPassword" 
                     [feedback]="false" [toggleMask]="true" placeholder="Digite sua senha atual" 
                     [class.invalid]="!passwordData.currentPassword.trim() && passwordData.currentPassword !== ''">
                   </p-password>
-                  <small *ngIf="!passwordData.currentPassword?.trim() && passwordData.currentPassword !== ''" class="error-message">Senha atual é obrigatória</small>
+                  <small *ngIf="!passwordData.currentPassword?.trim() && passwordData.currentPassword !== ''" class="error-message"><i class="pi pi-exclamation-triangle"></i>Senha atual é obrigatória</small>
                 </div>
               </div>
             </div>
@@ -179,7 +179,7 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="field">
-                  <label for="newPassword">Nova Senha *</label>
+                  <label for="newPassword"><i class="pi pi-lock"></i>Nova Senha *</label>
                   <p-password id="newPassword" [(ngModel)]="passwordData.newPassword" name="newPassword" 
                     [feedback]="true" [toggleMask]="true" placeholder="Digite a nova senha"
                     (input)="checkPasswordStrength()"
@@ -188,18 +188,18 @@
                   <div *ngIf="passwordStrength" class="password-strength">
                     <small [ngClass]="getPasswordStrengthClass()">{{ getPasswordStrengthText() }}</small>
                   </div>
-                  <small *ngIf="passwordData.newPassword && passwordStrength === 'weak'" class="error-message">A senha deve ter pelo menos 8 caracteres.</small>
+                  <small *ngIf="passwordData.newPassword && passwordStrength === 'weak'" class="error-message"><i class="pi pi-exclamation-triangle"></i>A senha deve ter pelo menos 8 caracteres.</small>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="field">
-                  <label for="confirmPassword">Confirmar Nova Senha *</label>
+                  <label for="confirmPassword"><i class="pi pi-check-circle"></i>Confirmar Nova Senha *</label>
                   <p-password id="confirmPassword" [(ngModel)]="passwordData.confirmPassword" name="confirmPassword" 
                     [feedback]="false" [toggleMask]="true" placeholder="Confirme a nova senha"
                     (input)="checkPasswordsMatch()"
                     [class.invalid]="passwordsMismatch">
                   </p-password>
-                  <small *ngIf="passwordsMismatch" class="error-message">Senhas não conferem</small>
+                  <small *ngIf="passwordsMismatch" class="error-message"><i class="pi pi-exclamation-triangle"></i>Senhas não conferem</small>
                 </div>
               </div>
             </div>
@@ -218,13 +218,13 @@
       <p-tabPanel header="Minhas Marcações">
         <div class="appointments-card">
           <div class="appointment-header">
-            <h3>Minhas Marcações</h3>
+            <h3><i class="pi pi-calendar"></i> Minhas Marcações</h3>
             <button pButton pRipple label="Nova Marcação" class="p-button-outlined p-button-help" (click)="newAppointment()"></button>
           </div>
           
           <!-- Loading State -->
           <div *ngIf="loading" class="text-center py-5">
-            <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: #3b82f6;"></i>
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: #0EA5E9;"></i>
             <p class="mt-3">Carregando marcações...</p>
           </div>
           
@@ -303,7 +303,7 @@
           
           <!-- Empty State -->
           <div *ngIf="!loading && (!marcacoes || marcacoes.length === 0)" class="text-center py-5">
-            <i class="pi pi-calendar" style="font-size: 3rem; color: #ced4da;"></i>
+            <i class="pi pi-calendar" style="font-size: 3rem; color: #BAE6FD;"></i>
             <h4 class="mt-3">Nenhuma marcação encontrada</h4>
             <p class="text-muted">Você ainda não possui marcações agendadas</p>
             <button pButton pRipple label="Agendar Consulta" class="p-button-primary mt-3"></button>

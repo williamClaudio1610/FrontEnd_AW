@@ -36,6 +36,7 @@ export class RegisterComponent implements OnInit {
   ];
 
   selectedFile: File | null = null; // Para armazenar o arquivo bruto
+  previewUrl: string | null = null; // Para armazenar a URL de preview
   errorMessage: string = '';
   successMessage: string = '';
 
@@ -58,9 +59,34 @@ export class RegisterComponent implements OnInit {
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0]; // Armazena o arquivo
+      this.selectedFile = input.files[0];
+      
+      // Criar URL de preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.previewUrl = e.target.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
     } else {
       this.selectedFile = null;
+      this.previewUrl = null;
+    }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = null;
+    this.previewUrl = null;
+    // Limpar o input file
+    const fileInput = document.getElementById('fotografia') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
+  openFileSelector(): void {
+    const fileInput = document.getElementById('fotografia') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
     }
   }
 

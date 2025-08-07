@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
@@ -22,6 +22,16 @@ export class HeaderComponent implements OnInit {
   imageLoading: boolean = false;
   
   constructor(private usuarioService: UsuarioService) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    // Verifica se o clique foi fora da seção do perfil
+    const target = event.target as HTMLElement;
+    if (!target.closest('.profile-section')) {
+      this.showDropdown = false;
+    }
+  }
+
   onSearch() {
     console.log('Pesquisando:', this.searchQuery);
     // Adicione sua lógica de busca aqui
@@ -34,7 +44,10 @@ export class HeaderComponent implements OnInit {
     this.imageLoading = false;
   }
 
-  toggleDropdown() {
+  toggleDropdown(event?: Event) {
+    if (event) {
+      event.stopPropagation(); // Previne que o clique se propague
+    }
     this.showDropdown = !this.showDropdown;
   }
 
@@ -44,6 +57,7 @@ export class HeaderComponent implements OnInit {
     this.showDropdown = false;
     //location.reload();
   }
+
   onImgError() {
     this.hasImageError = true; // Marca o erro para forçar o fallback
   }

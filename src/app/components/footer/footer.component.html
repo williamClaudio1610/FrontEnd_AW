@@ -1,73 +1,147 @@
-<footer class="bg-primary-dark shadow-lg py-4 mt-5">
+<footer class="footer-modern">
+  <div class="footer-wave">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </div>
+  
+  <div class="footer-content">
     <div class="container-fluid px-5">
       <div class="row">
         <!-- Seção de Contato -->
         <div class="col-lg-4 col-md-6 mb-4">
-          <h5 class="text-white fw-bold mb-3">Contato</h5>
-          <ul class="list-unstyled">
-            <li class="d-flex align-items-center mb-2">
-              <i class="pi pi-map-marker text-light me-2"></i>
-              <span class="text-light">ISPTEC, Talaton, LD</span>
-            </li>
-            <li class="d-flex align-items-center mb-2">
-              <i class="pi pi-phone text-light me-2"></i>
-              <span class="text-light">(+244) 949-276-083</span>
-            </li>
-            <li class="d-flex align-items-center mb-2">
-              <i class="pi pi-envelope text-light me-2"></i>
-              <span class="text-light">contato&#64;clinicaxpto.com</span>
-            </li>
-          </ul>
+          <div class="footer-section">
+            <div class="section-header">
+              <i class="pi pi-phone section-icon"></i>
+              <h5 class="section-title">Contactos</h5>
+            </div>
+            <ul class="contact-list">
+              <li class="contact-item">
+                <i class="pi pi-map-marker contact-icon"></i>
+                <div class="contact-info">
+                  <span class="contact-label">Endereço</span>
+                  <span class="contact-value">ISPTEC, Talatona, Luanda</span>
+                </div>
+              </li>
+              <li class="contact-item">
+                <i class="pi pi-phone contact-icon"></i>
+                <div class="contact-info">
+                  <span class="contact-label">Telefone</span>
+                  <span class="contact-value">(+244) 949-276-083</span>
+                </div>
+              </li>
+              <li class="contact-item">
+                <i class="pi pi-envelope contact-icon"></i>
+                <div class="contact-info">
+                  <span class="contact-label">Email</span>
+                  <span class="contact-value">williamazevedo16&#64;gmail.com</span>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
   
         <!-- Links de Navegação -->
         <div class="col-lg-4 col-md-6 mb-4">
-          <h5 class="text-white fw-bold mb-3">Navegação</h5>
-          <ul class="list-unstyled">
-            <li class="mb-2">
-              <a class="text-light text-decoration-none" [routerLink]="['/']">Início</a>
-            </li>
-            <li class="mb-2">
-              <a class="text-light text-decoration-none" [routerLink]="['/sobre']">Sobre Nós</a>
-            </li>
-            <li class="mb-2">
-              <a class="text-light text-decoration-none" [routerLink]="['/servicos']">Serviços</a>
-            </li>
-            <li class="mb-2">
-              <a class="text-light text-decoration-none" [routerLink]="['/agendamento']">Agendamento</a>
-            </li>
-            <li class="mb-2">
-              <a class="text-light text-decoration-none" [routerLink]="['/medicos']">Médicos</a>
-            </li>
-            <li class="mb-2">
-              <a class="text-light text-decoration-none" [routerLink]="['/contato']">Contato</a>
-            </li>
-          </ul>
+          <div class="footer-section">
+            <div class="section-header">
+              <i class="pi pi-compass section-icon"></i>
+              <h5 class="section-title">Navegação</h5>
+            </div>
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/']">
+                  <i class="pi pi-home me-2"></i>Início
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/sobre']">
+                  <i class="pi pi-info-circle me-2"></i>Sobre Nós
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/servicos']">
+                  <i class="pi pi-briefcase me-2"></i>Serviços
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/agendamento']">
+                  <i class="pi pi-calendar me-2"></i>Agendamento
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/medicos']">
+                  <i class="pi pi-users me-2"></i>Médicos
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/contato']">
+                  <i class="pi pi-phone me-2"></i>Contato
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
   
         <!-- Redes Sociais -->
         <div class="col-lg-4 col-md-12 mb-4">
-          <h5 class="text-white fw-bold mb-3">Siga-nos</h5>
-          <div class="d-flex gap-3">
-            <a href="https://facebook.com" target="_blank" class="text-light">
-              <i class="pi pi-facebook fs-5"></i>
-            </a>
-            <a href="https://twitter.com" target="_blank" class="text-light">
-              <i class="pi pi-twitter fs-5"></i>
-            </a>
-            <a href="https://instagram.com" target="_blank" class="text-light">
-              <i class="pi pi-instagram fs-5"></i>
-            </a>
-            <a href="https://linkedin.com" target="_blank" class="text-light">
-              <i class="pi pi-linkedin fs-5"></i>
-            </a>
+          <div class="footer-section">
+            <div class="section-header">
+              <i class="pi pi-share-alt section-icon"></i>
+              <h5 class="section-title">Siga-nos</h5>
+            </div>
+            <p class="social-description">Mantenha-se conectado conosco através das nossas redes sociais</p>
+            <div class="social-links">
+              <a href="https://facebook.com" target="_blank" class="social-link facebook">
+                <i class="pi pi-facebook"></i>
+              </a>
+              <a href="https://twitter.com" target="_blank" class="social-link twitter">
+                <i class="pi pi-twitter"></i>
+              </a>
+              <a href="https://instagram.com" target="_blank" class="social-link instagram">
+                <i class="pi pi-instagram"></i>
+              </a>
+              <a href="https://linkedin.com" target="_blank" class="social-link linkedin">
+                <i class="pi pi-linkedin"></i>
+              </a>
+            </div>
+            
+            <!-- Newsletter -->
+            <div class="newsletter-section mt-4">
+              <h6 class="newsletter-title">Newsletter</h6>
+              <p class="newsletter-text">Receba as últimas notícias sobre saúde</p>
+              <div class="newsletter-form">
+                <input type="email" class="newsletter-input" placeholder="Seu email">
+                <button class="newsletter-btn">
+                  <i class="pi pi-send"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
   
       <!-- Direitos Autorais -->
-      <div class="text-center border-top pt-3">
-        <p class="text-light mb-0">© 2025 ClinicaXPTO. Todos os direitos reservados.</p>
+      <div class="footer-bottom">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <p class="copyright-text">© 2025 William Vaz de Azevedo. Todos os direitos reservados.</p>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <div class="footer-badges">
+              <span class="badge bg-success me-2">
+                <i class="pi pi-check-circle me-1"></i>Certificado
+              </span>
+              <span class="badge bg-info me-2">
+                <i class="pi pi-shield me-1"></i>Seguro
+              </span>
+              <span class="badge bg-warning">
+                <i class="pi pi-star me-1"></i>Qualidade
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </footer>
+  </div>
+</footer>

@@ -1,74 +1,117 @@
 <app-header></app-header>
 
-<!-- Fundo claro / hero -->
-<div class="hero-section d-flex align-items-center">
+<!-- Hero Section com gradiente médico -->
+<div class="hero-section">
+  <div class="hero-background">
+    <div class="hero-overlay"></div>
+  </div>
   <div class="container">
-    <div class="row align-items-center">
+    <div class="row align-items-center min-vh-100">
       <!-- Texto -->
-      <div class="col-md-6 mb-4 mb-md-0">
-        <small class="text-uppercase text-info fw-bold">Viva com saúde</small>
-        <h1 class="display-4 fw-bold mt-2">A sua Saude é a nossa preocupação!</h1>
-        <p class="text-secondary my-4">
-          Faça uma consulta com um dos nossos médicos e tenha acesso a um atendimento de qualidade, com profissionais qualificados e prontos para cuidar de você.
-        </p>
-        <button class="btn btn-info px-4 py-2 text-white">Contacte-nos</button>
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <i class="pi pi-heart-fill me-2"></i>
+            <span>Cuidando da sua saúde</span>
+          </div>
+          <h1 class="hero-title">
+            Sua Saúde é Nossa 
+            <span class="text-gradient">Prioridade</span>
+          </h1>
+          <p class="hero-description">
+            Oferecemos cuidados médicos de excelência com uma equipe de profissionais qualificados, 
+            tecnologia avançada e atendimento humanizado. Sua saúde e bem-estar são nossa missão.
+          </p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary btn-lg me-3">
+              <i class="pi pi-calendar-plus me-2"></i>
+              Marcar Consulta
+            </button>
+            <button class="btn btn-outline-light btn-lg">
+              <i class="pi pi-phone me-2"></i>
+              Fale Conosco
+            </button>
+          </div>
+        </div>
       </div>
       <!-- Carousel de imagens -->
-      <div class="col-md-6">
-        <p-carousel
-          [value]="carouselImages"
-          [numVisible]="1"
-          [numScroll]="1"
-          [circular]="true"
-          [autoplayInterval]="4000"
-        >
-          <ng-template pTemplate="item" let-img>
-            <div class="carousel-item-card">
-              <img [src]="img" alt="serviço" class="img-fluid rounded" />
-            </div>
-          </ng-template>
-        </p-carousel>
+      <div class="col-lg-6">
+        <div class="hero-carousel">
+          <p-carousel
+            [value]="carouselImages"
+            [numVisible]="1"
+            [numScroll]="1"
+            [circular]="true"
+            [autoplayInterval]="5000"
+            [showNavigators]="false"
+            [showIndicators]="true"
+          >
+            <ng-template pTemplate="item" let-img>
+              <div class="carousel-item-card">
+                <img [src]="img" alt="Serviços médicos" class="carousel-image" />
+                <div class="carousel-overlay">
+                  <div class="carousel-content">
+                    <h3>Atendimento de Qualidade</h3>
+                    <p>Profissionais experientes e tecnologia avançada</p>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </p-carousel>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Estatísticas animadas -->
-<div class="stats-section py-5">
+<div class="stats-section">
   <div class="container">
+    <div class="stats-header text-center mb-5">
+      <h2 class="stats-title">Nossos Números</h2>
+      <p class="stats-subtitle">Resultados que comprovam nossa excelência</p>
+    </div>
     <div class="row text-center">
       <div class="col-6 col-md-3 mb-4" *ngFor="let stat of stats">
-        <h2 class="fw-bold mb-1">
-          <span>{{ animatedCounts[stat.key] }}</span><small>+</small>
-        </h2>
-        <p class="text-secondary">{{ stat.label }}</p>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="pi pi-users"></i>
+          </div>
+          <h2 class="stat-number">
+            <span>{{ animatedCounts[stat.key] }}</span><small>+</small>
+          </h2>
+          <p class="stat-label">{{ stat.label }}</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Seção de Serviços 1 -->
-<section class="services-section py-5">
+<section class="services-section">
   <div class="container">
-    <div class="row align-items-start mb-4">
-      <div class="col-md-6">
-        <h2 class="h3 mb-2">Nossa especialidade</h2>
+    <div class="row align-items-center mb-5">
+      <div class="col-lg-6">
+        <div class="section-header">
+          <h2 class="section-title">Por que escolher a ClinicaXPTO?</h2>
+          <p class="section-description">
+            Combinamos experiência médica com tecnologia de ponta para oferecer 
+            o melhor atendimento possível aos nossos pacientes.
+          </p>
+        </div>
       </div>
-      <div class="col-md-6">
-        <p class="text-white-50">
-          Estamos aqui para cuidar de você e da sua saúde. Nossa equipe de profissionais está pronta para oferecer o melhor atendimento
-           e os melhores serviços.
-        </p>
-      </div>
-    </div>
-
-    <div class="row g-4">
-      <div class="col-6 col-md-3" *ngFor="let srv of services">
-        <div class="card service-card h-100 border-0 shadow-sm text-center">
-          <div class="card-body">
-            <i [class]="srv.icon + ' service-icon mb-3'"></i>
-            <h5 class="card-title">{{ srv.title }}</h5>
-            <p class="card-text text-secondary">{{srv.desc }}</p>
+      <div class="col-lg-6">
+        <div class="services-grid">
+          <div class="row g-4">
+            <div class="col-6" *ngFor="let srv of services">
+              <div class="service-card">
+                <div class="service-icon">
+                  <i [class]="srv.icon"></i>
+                </div>
+                <h5 class="service-title">{{ srv.title }}</h5>
+                <p class="service-description">{{ srv.desc }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -77,47 +120,51 @@
 </section>
 
 <!-- Seção de Serviços 2 -->
-<section class="services-section2 py-5">
+<section class="services-section2">
   <div class="container">
-    <div class="row align-items-start mb-4">
-      <div class="col-md-6">
-        <h2 class="h3 mb-2">Os melhores serviços para o servir</h2>
-      </div>
-      <div class="col-md-6">
-        <p class="text-secondary">
-          Lorem ipsum dolor sit amet consectetur adipiscing elit. Reprehendisse similique praesent nobis reprehenderit et explicabo saepe sapiente dolore maxime.
-        </p>
-      </div>
-    </div>
-
-    <!-- Primeira Fila de Cards -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-4" *ngFor="let servico of servicos">
-        <div class="card service-card h-100 border-0 shadow-sm">
-          <img [src]="servico.imagem" class="card-img-top" [alt]="servico.alt">
-          <div class="card-body">
-            <h5 class="card-title">{{ servico.titulo }}</h5>
-            <p class="card-text">{{ servico.descricao }}</p>
-          </div>
+    <div class="row align-items-center mb-5">
+      <div class="col-lg-6">
+        <div class="section-header">
+          <h2 class="section-title">Nossos Serviços Especializados</h2>
+          <p class="section-description">
+            Oferecemos uma ampla gama de serviços médicos para atender todas as suas necessidades de saúde, 
+            desde consultas de rotina até tratamentos especializados.
+          </p>
         </div>
       </div>
+      <div class="col-lg-6 text-lg-end">
+        <button class="btn btn-primary btn-lg" [routerLink]="['/consultasExames']">
+          <i class="pi pi-calendar-plus me-2"></i>
+          Ver Todos os Serviços
+        </button>
+      </div>
     </div>
 
-    <!-- Segunda Fila de Cards -->
+    <!-- Grid de Serviços -->
     <div class="row g-4">
       <div class="col-md-4" *ngFor="let servico of servicos">
-        <div class="card service-card h-100 border-0 shadow-sm">
-          <img [src]="servico.imagem" class="card-img-top" [alt]="servico.alt">
-          <div class="card-body">
-            <h5 class="card-title">{{ servico.titulo }}</h5>
-            <p class="card-text">{{ servico.descricao }}</p>
+        <div class="service-card-modern">
+          <div class="service-image">
+            <img [src]="servico.imagem" class="card-img-top" [alt]="servico.alt">
+            <div class="service-overlay">
+              <button class="btn btn-light btn-sm">
+                <i class="pi pi-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+          <div class="service-content">
+            <h5 class="service-title">{{ servico.titulo }}</h5>
+            <p class="service-text">{{ servico.descricao }}</p>
+            <div class="service-footer">
+              <span class="service-badge">
+                <i class="pi pi-check-circle me-1"></i>
+                Disponível
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>    
-  </div>
-  <div class="text-center">
-    <button pButton type="button" label="ver serviços" class="mt-4 p-button-primary btn-blue" [routerLink]="['/consultasExames']"></button>
+    </div>
   </div>
 </section>
 

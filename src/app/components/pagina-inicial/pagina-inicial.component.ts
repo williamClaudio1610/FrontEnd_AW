@@ -9,65 +9,83 @@ import { MessageService } from 'primeng/api';
   providers: [MessageService]
 })
 export class PaginaInicialComponent implements OnInit, AfterViewInit {
-  // Imagens públicas para o carousel
+  // Imagens médicas para o carousel
   carouselImages: string[] = [
-    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
-    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
-    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
+    'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1950&q=80',
+    'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=1950&q=80',
+    'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=1950&q=80',
   ];
 
   email: string = '';
 
   services = [
     {
-      icon: 'fa fa-hospital-alt',
-      title: 'General Practitioners',
-      desc: 'Lorem ipsum dolor sit amet consectetur adipiscing elit.',
+      icon: 'pi pi-user-md',
+      title: 'Médicos Especialistas',
+      desc: 'Equipe de médicos altamente qualificados e experientes para cuidar da sua saúde.',
     },
     {
-      icon: 'fa fa-baby',
-      title: 'Pregnancy Support',
-      desc: 'Lorem ipsum dolor sit amet consectetur adipiscing elit.',
+      icon: 'pi pi-heart',
+      title: 'Cuidados Personalizados',
+      desc: 'Atendimento personalizado e humanizado, focado no bem-estar do paciente.',
     },
     {
-      icon: 'fa fa-apple-alt',
-      title: 'Acompanhamento Nutricional',
-      desc: 'Lorem ipsum dolor sit amet consectetur adipiscing elit.',
+      icon: 'pi pi-calendar-plus',
+      title: 'Agendamento Online',
+      desc: 'Marque suas consultas de forma rápida e conveniente através do nosso sistema.',
     },
     {
-      icon: 'fa fa-pills',
-      title: 'Serviços farmacéuticos',
-      desc: 'Lorem ipsum dolor sit amet consectetur adipiscing elit.',
+      icon: 'pi pi-shield',
+      title: 'Tecnologia Avançada',
+      desc: 'Utilizamos equipamentos modernos e tecnologia de ponta para diagnósticos precisos.',
     }
   ];
 
   // Estatísticas que queremos mostrar
   stats = [
     { key: 'pacientes', label: 'Pacientes satisfeitos', value: 5120 },
-    { key: 'categorias', label: 'Total Branches', value: 26 },
-    { key: 'doutor', label: 'Doutores certificados', value: 53 },
-    { key: 'experiencia', label: 'Anos de experiencia', value: 10 },
+    { key: 'categorias', label: 'Especialidades médicas', value: 26 },
+    { key: 'doutor', label: 'Médicos certificados', value: 53 },
+    { key: 'experiencia', label: 'Anos de experiência', value: 10 },
   ];
 
   servicos = [
     {
-    titulo: 'Consulta de rotina',
-    descricao: 'Consulta médica de rotina para avaliação geral da saúde.',
-    imagem: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
-    alt: 'Imagem de consulta médica'
+    titulo: 'Consulta de Rotina',
+    descricao: 'Avaliação médica completa para manter sua saúde em dia com exames preventivos.',
+    imagem: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=800&q=80',
+    alt: 'Consulta médica de rotina'
     },
     {
-      titulo: 'Exames laboratoriais',
-      descricao: 'Realização de exames laboratoriais para diagnóstico preciso.',
-      imagem: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
-      alt: 'Imagem de exames laboratoriais'
+      titulo: 'Exames Laboratoriais',
+      descricao: 'Exames precisos e rápidos para diagnóstico e acompanhamento da sua saúde.',
+      imagem: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=800&q=80',
+      alt: 'Exames laboratoriais'
     },
     {
       titulo: 'Vacinação',
-      descricao: 'Aplicação de vacinas para prevenção de doenças.',
-      imagem: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80',
-      alt: 'Imagem de vacinação'
+      descricao: 'Programa completo de vacinação para todas as idades e necessidades.',
+      imagem: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=800&q=80',
+      alt: 'Serviço de vacinação'
     },
+    {
+      titulo: 'Cardiologia',
+      descricao: 'Especialistas em saúde cardiovascular com equipamentos de última geração.',
+      imagem: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=800&q=80',
+      alt: 'Especialidade de cardiologia'
+    },
+    {
+      titulo: 'Cardiologia',
+      descricao: 'Cuidados especializados para crianças com ambiente acolhedor e seguro.',
+      imagem: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=800&q=80',
+      alt: 'Especialidade de pediatria'
+    },
+    {
+      titulo: 'Cardiologia',
+      descricao: 'Atenção integral à saúde da mulher com profissionais especializados.',
+      imagem: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=800&q=80',
+      alt: 'Especialidade de ginecologia'
+    }
   ]
 
   // Contadores animados

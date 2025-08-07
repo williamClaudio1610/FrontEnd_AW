@@ -1,69 +1,100 @@
-<section class="newsletter-section py-5">
-    <div class="container text-center">
-      <h2 class="h3 mb-3">Subscreva a Nossa Newsletter</h2>
-      <p class="text-secondary mb-4">Receba atualizações sobre saúde, promoções e novidades diretamente no seu e-mail.</p>
-      <div class="row justify-content-center">
-
-      </div>
-    </div>
-  </section>
-  
-  
-  <section class="newsletter-faq-section py-5">
-    <div class="container">
-      <div class="row">
-        <!-- Subscrição à Newsletter -->
-        <div class="col-md-6 mb-4 mb-md-0">
-          <div class="newsletter-section p-4">
-            <h2 class="h3 mb-2">Subscreva a Nossa Newsletter</h2>
-            <p class="text-center mb-4 text-white">Receba atualizações sobre saúde, promoções e novidades diretamente no seu e-mail.</p>
-            <div class="d-flex justify-content-center">
-              <div class="w-75">
-                <div class="d-flex align-items-center gap-2">
-                  <input
-                  pInputText
-                  name="email"
-                  [(ngModel)]="email"
-                  placeholder="Digite seu e-mail"
-                  class="form-control newsletter-input"
-                  required
-                    />
-                  <button
-                    pButton
-                    type="button"
-                    label="Subscrever"
-                    icon="pi pi-envelope"
-                    class="p-button-primary"
-                    (click)="onSubscribe()"
-                  ></button>
-                </div>
-              </div>
+<section class="newsletter-faq-section">
+  <div class="container">
+    <div class="row">
+      <!-- Subscrição à Newsletter -->
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <div class="newsletter-card">
+          <div class="newsletter-header">
+            <div class="newsletter-icon">
+              <i class="pi pi-envelope"></i>
             </div>
+            <h2 class="newsletter-title">Fique por Dentro</h2>
+            <p class="newsletter-subtitle">
+              Receba dicas de saúde, novidades e promoções exclusivas diretamente no seu e-mail
+            </p>
+          </div>
+          <div class="newsletter-form-container">
+            <div class="newsletter-form">
+              <input
+                pInputText
+                name="email"
+                [(ngModel)]="email"
+                placeholder="Digite seu e-mail"
+                class="newsletter-input"
+                required
+              />
+              <button
+                pButton
+                type="button"
+                icon="pi pi-send"
+                class="newsletter-btn"
+                (click)="onSubscribe()"
+              ></button>
+            </div>
+            <small class="newsletter-note">
+              <i class="pi pi-shield me-1"></i>
+              Seus dados estão seguros conosco
+            </small>
           </div>
         </div>
-        <!-- Perguntas Frequentes -->
-        <div class="col-md-6">
-          <div class="faq-section p-4">
-            <h3 class="mb-3">Dúvidas Frequentes</h3>
+      </div>
+      
+      <!-- Perguntas Frequentes -->
+      <div class="col-lg-6">
+        <div class="faq-card">
+          <div class="faq-header">
+            <div class="faq-icon">
+              <i class="pi pi-question-circle"></i>
+            </div>
+            <h2 class="faq-title">Dúvidas Frequentes</h2>
+            <p class="faq-subtitle">
+              Encontre respostas para as principais dúvidas sobre nossos serviços
+            </p>
+          </div>
+          <div class="faq-content">
             <p-accordion>
-              <p-accordionTab header="Sobre a nova variante COVID-19">
-                <p>Informações atualizadas sobre a nova variante do coronavírus e medidas de prevenção.</p>
+              <p-accordionTab header="Como agendar uma consulta?">
+                <div class="faq-answer">
+                  <p>Você pode agendar sua consulta de forma rápida e fácil através do nosso sistema online, 
+                  pelo telefone ou diretamente na recepção da clínica.</p>
+                  <button class="btn btn-sm btn-outline-primary mt-2">
+                    <i class="pi pi-calendar-plus me-1"></i>
+                    Agendar Agora
+                  </button>
+                </div>
               </p-accordionTab>
-              <p-accordionTab header="Achados e perdidos">
-                <p>Entre em contato com nossa recepção para relatar itens perdidos ou encontrados.</p>
+              
+              <p-accordionTab header="Quais documentos preciso levar?">
+                <div class="faq-answer">
+                  <p>Para sua primeira consulta, traga documento de identidade, cartão do seguro (se aplicável) 
+                  e histórico médico anterior, se disponível.</p>
+                </div>
               </p-accordionTab>
-              <p-accordionTab header="Alimentação para internados">
-                <p>Oferecemos refeições balanceadas para pacientes internados, com opções personalizadas.</p>
+              
+              <p-accordionTab header="Aceitam seguros de saúde?">
+                <div class="faq-answer">
+                  <p>Sim, trabalhamos com os principais planos de saúde. Entre em contato conosco para 
+                  verificar a cobertura do seu plano.</p>
+                </div>
               </p-accordionTab>
-              <p-accordionTab header="Internamento e altas">
-                <p>Consulte os procedimentos para internação e alta com nossa equipe administrativa.</p>
+              
+              <p-accordionTab header="Qual o horário de funcionamento?">
+                <div class="faq-answer">
+                  <p>Atendemos de segunda a sexta das 8h às 20h, e aos sábados das 8h às 12h. 
+                  Para emergências, temos plantão 24 horas.</p>
+                </div>
               </p-accordionTab>
-              <p-accordionTab header="Parque de estacionamento">
-                <p>Disponibilizamos estacionamento gratuito para visitantes e pacientes.</p>
+              
+              <p-accordionTab header="Como funciona o estacionamento?">
+                <div class="faq-answer">
+                  <p>Oferecemos estacionamento gratuito para nossos pacientes e visitantes, 
+                  com segurança 24 horas e fácil acesso à clínica.</p>
+                </div>
               </p-accordionTab>
             </p-accordion>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
