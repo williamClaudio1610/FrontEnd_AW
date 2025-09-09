@@ -9,7 +9,7 @@
       <div class="profile-name">{{ user?.nome || 'Seu Nome' }}</div>
     </div>
     <div class="profile-pic-container">
-      <img *ngIf="user?.fotografia" [src]="'https://localhost:7273' + user?.fotografia" alt="Foto de Perfil" class="profile-pic" />
+      <img *ngIf="user?.fotografia" [src]="'http://localhost:7273' + user?.fotografia" alt="Foto de Perfil" class="profile-pic" />
       <i *ngIf="!user?.fotografia" class="pi pi-user profile-icon"></i>
     </div>
     <div class="profile-content">

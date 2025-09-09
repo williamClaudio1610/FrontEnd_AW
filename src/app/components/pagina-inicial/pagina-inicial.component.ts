@@ -12,7 +12,7 @@ export class PaginaInicialComponent implements OnInit, AfterViewInit {
   // Imagens médicas para o carousel
   carouselImages: string[] = [
     'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1950&q=80',
-    '../../public/ChatGPT_logo.png',
+    'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1950&q=80',
     'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=1950&q=80',
   ];
 
@@ -59,7 +59,7 @@ export class PaginaInicialComponent implements OnInit, AfterViewInit {
     {
       titulo: 'Exames Laboratoriais',
       descricao: 'Exames precisos e rápidos para diagnóstico e acompanhamento da sua saúde.',
-      imagem: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=800&q=80',
+      imagem: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=800&q=80',
       alt: 'Exames laboratoriais'
     },
     {
@@ -69,15 +69,15 @@ export class PaginaInicialComponent implements OnInit, AfterViewInit {
       alt: 'Serviço de vacinação'
     },
     {
-      titulo: 'Cardiologia',
+      titulo: 'Exame de Sangue',
       descricao: 'Especialistas em saúde cardiovascular com equipamentos de última geração.',
       imagem: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=800&q=80',
       alt: 'Especialidade de cardiologia'
     },
     {
-      titulo: 'Cardiologia',
+      titulo: 'Oftalmologia',
       descricao: 'Cuidados especializados para crianças com ambiente acolhedor e seguro.',
-      imagem: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=800&q=80',
+      imagem: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=800&q=80',
       alt: 'Especialidade de pediatria'
     },
     {

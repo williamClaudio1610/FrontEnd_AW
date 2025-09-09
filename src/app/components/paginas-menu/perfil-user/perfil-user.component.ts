@@ -694,7 +694,7 @@ export class PerfilUserComponent implements OnInit {
       return this.previewUrl;
     }
     if (this.user?.fotografia) {
-      return 'https://localhost:7273' + (this.user.fotografia.startsWith('/') ? this.user.fotografia : `/Uploads/${this.user.fotografia}`);
+      return 'http://localhost:7273' + (this.user.fotografia.startsWith('/') ? this.user.fotografia : `/Uploads/${this.user.fotografia}`);
     }
     return '';
   }
