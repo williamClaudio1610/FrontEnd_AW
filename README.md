@@ -1,44 +1,45 @@
-# 🏥 FrontEndAW - Gestor de Clínica
+# 🏥 FrontEndAW - Clinic Management System
 
-Este é o **frontend** do sistema de gestão de clínicas, desenvolvido em **Angular 19**, com **Bootstrap** e **PrimeNG** para a construção de uma interface moderna, responsiva e intuitiva.  
+This is the **frontend** of the clinic management system, built with **Angular 19**, **Bootstrap**, and **PrimeNG** to provide a modern, responsive, and user-friendly interface.  
 
-A aplicação tem como objetivo facilitar a gestão de utentes, consultas, exames e operações administrativas de uma clínica/hospital.  
-
----
-
-## ✨ Principais Funcionalidades
-
-### 👤 Utentes (Pacientes)
-- Criar conta e fazer login
-- Gerir os seus dados pessoais
-- Solicitar marcação de consultas
-- Visualizar o histórico de consultas e exames
-
-### 🧑‍💼 Administrativos
-- Gerir solicitações de consultas e exames feitas pelos utentes
-- Validar, aprovar ou rejeitar pedidos
-- Apoiar no fluxo administrativo da clínica
-
-### 🛡️ Administradores
-- Acesso total a todas as funcionalidades do sistema
-- Gestão de utentes, médicos, administrativos e especialidades
-- Configuração e administração global do sistema
+The application aims to simplify the management of patients, appointments, exams, and administrative operations within a clinic or hospital.  
 
 ---
 
-## 🚀 Tecnologias
-- [Angular 19](https://angular.dev/) – Framework frontend
-- [TypeScript](https://www.typescriptlang.org/) – Linguagem
-- [Bootstrap](https://getbootstrap.com/) – Layout responsivo
-- [PrimeNG](https://primeng.org/) – Componentes UI avançados
+## ✨ Main Features
+
+### 👤 Patients (Users)
+- Create an account and log in
+- Manage personal data
+- Request appointment bookings
+- View appointment and exam history
+
+### 🧑‍💼 Administrative Staff
+- Manage consultation and exam requests submitted by patients
+- Validate, approve, or reject requests
+- Support the clinic’s administrative workflow
+
+### 🛡️ Administrators
+- Full access to all system features
+- Manage patients, doctors, staff, and specialties
+- Global configuration and system administration
 
 ---
 
-## 📦 Instalação
+## 🚀 Technologies
+- [Angular 19](https://angular.dev/) – Frontend framework
+- [TypeScript](https://www.typescriptlang.org/) – Programming language
+- [Bootstrap](https://getbootstrap.com/) – Responsive layout
+- [PrimeNG](https://primeng.org/) – Advanced UI components
+- [RxJS](https://rxjs.dev/) – Reactive programming
 
-Clone o repositório e instale as dependências:
+---
+
+## 📦 Installation
+
+Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/seu-usuario/FrontEndAW.git
+git clone https://github.com/your-username/FrontEndAW.git
 cd FrontEndAW
 npm install
