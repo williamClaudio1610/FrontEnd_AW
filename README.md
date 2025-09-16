@@ -43,3 +43,62 @@ Clone the repository and install dependencies:
 git clone https://github.com/your-username/FrontEndAW.git
 cd FrontEndAW
 npm install
+````
+
+---
+
+## ▶️ Run in Development Mode
+
+```bash
+ng serve
+```
+
+Then open: **[http://localhost:4200/](http://localhost:4200/)**
+The application will auto-reload whenever you save changes.
+
+---
+
+## 🔗 Backend
+
+The backend of this system is located in a separate private repository.
+To request access, please contact via email: **\[[your-email@domain.com](mailto:your-email@domain.com)]**.
+
+---
+
+## 🧪 Testing
+
+### Unit Tests
+
+```bash
+ng test
+```
+
+### End-to-End (E2E)
+
+```bash
+ng e2e
+```
+
+> Note: E2E can be set up using **Cypress** or other frameworks.
+
+---
+
+## 📂 Project Structure
+
+* `/src/app` → main components, services, and modules
+* `/assets` → static files (images, icons, styles)
+* `/environments` → environment configuration (dev/prod)
+
+---
+
+## 📄 License
+
+This project was developed for academic/professional purposes. License to be defined.
+
+---
+
+## 📚 Additional Resources
+
+* [Angular CLI Documentation](https://angular.dev/tools/cli)
+* [PrimeNG Components](https://primeng.org/)
+* [Bootstrap](https://getbootstrap.com/)
