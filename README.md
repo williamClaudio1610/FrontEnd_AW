@@ -61,7 +61,7 @@ The application will auto-reload whenever you save changes.
 ## 🔗 Backend
 
 The backend of this system is located in a separate private repository.
-To request access, please contact via email: **\[[your-email@domain.com](mailto:your-email@domain.com)]**.
+To request access, please contact via email: **claudiosva1@gmail.com**.
 
 ---
 
