@@ -40,7 +40,7 @@ The application aims to simplify the management of patients, appointments, exams
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/your-username/FrontEndAW.git
+git clone https://github.com/williamClaudio1610/FrontEndAW.git
 cd FrontEndAW
 npm install
 ````
