@@ -65,29 +65,10 @@ To request access, please contact via email: **claudiosva1@gmail.com**.
 
 ---
 
-## 🧪 Testing
-
-### Unit Tests
-
-```bash
-ng test
-```
-
-### End-to-End (E2E)
-
-```bash
-ng e2e
-```
-
-> Note: E2E can be set up using **Cypress** or other frameworks.
-
----
-
 ## 📂 Project Structure
 
 * `/src/app` → main components, services, and modules
 * `/assets` → static files (images, icons, styles)
-* `/environments` → environment configuration (dev/prod)
 
 ---
 
